@@ -1,0 +1,217 @@
+﻿<UserControl x:Class="Perlin.TabControls.TabConfigurationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enum="clr-namespace:Perlin.Extensions"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="300"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <UserControl.Resources>
+        <Style x:Key="ElementBorder" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="Teal"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="CornerRadius" Value="0,12,0,0"/>
+            <Setter Property="Height" Value="90"/>
+        </Style>
+        <Style x:Key="InfoLabel" TargetType="{x:Type Label}">
+            <Setter Property="FontWeight" Value="Heavy"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,0,20,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Margin="5"
+            Padding="5"
+            BorderBrush="Navy"
+            CornerRadius="0,12,12,12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <!-- Select ASM/C -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                               Content="Biblioteka"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <RadioButton Content="ASM" 
+                                     IsChecked="True"
+                                     VerticalAlignment="Center"
+                                     Margin="25,0,0,0"/>
+                            <RadioButton Content="C"
+                                     IsChecked="False"
+                                     VerticalAlignment="Center"
+                                     Margin="25,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Select bitmap/gif -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                               Content="Rodzaj obiektu"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <RadioButton Content="Bitmap" 
+                                     IsChecked="True"
+                                     VerticalAlignment="Center"
+                                     Margin="25,0,0,0"/>
+                            <RadioButton Content="GIF"
+                                     IsChecked="False"
+                                     VerticalAlignment="Center"
+                                     Margin="25,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Select number of threads -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                               Content="Liczba wątków"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Slider Minimum="1" Maximum="16" 
+                                Width="100" x:Name="SliderNumOfThreads"
+                                Value="{Binding NumberOfThreads}"
+                                VerticalAlignment="Center"
+                                Margin="25,0,0,0"/>
+                            <Label Style="{StaticResource InfoLabel}" 
+                               Content="{Binding ElementName=SliderNumOfThreads, Path=Value}"/>
+                            <Expander VerticalAlignment="Center"
+                              ExpandDirection="Right">
+                                <Expander.Content>
+                                    <Canvas Margin="10,0,0,0">
+                                        <Border BorderBrush="Blue"
+                                        BorderThickness="2"
+                                        CornerRadius="10"
+                                        Background="LightBlue">
+                                            <Frame Padding="10"
+                                       Content="Wybierz liczbę wątków, na których ma być uruchomiony program."/>
+                                        </Border>
+                                    </Canvas>
+                                </Expander.Content>
+                            </Expander>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox VerticalAlignment="Center"
+                                  Content="Wykryj automatycznie"
+                                  Command="{Binding AutodetectionRelayCommand}"
+                                  CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <!-- Get number of octaves -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                               Content="Liczba oktaw"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Slider Minimum="1" Maximum="50" 
+                                Width="100"
+                                Value="{Binding NumberOfOctaves}"
+                                VerticalAlignment="Center"
+                                Margin="25,0,0,0"/>
+                            <Label Style="{StaticResource InfoLabel}" 
+                               Content="{Binding NumberOfOctaves}"/>
+                            <Expander VerticalAlignment="Center"
+                                  ExpandDirection="Right">
+                                <Expander.Content>
+                                    <Canvas Margin="10,0,0,0">
+                                        <Border BorderBrush="Blue"
+                                            BorderThickness="2"
+                                            CornerRadius="10"
+                                            Background="LightBlue">
+                                            <Frame Padding="10"
+                                           Content="Znacząco wpływa na czas generacji obiektu."/>
+                                        </Border>
+                                    </Canvas>
+                                </Expander.Content>
+                            </Expander>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Select output effect -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                           Content="Efekt"/>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox ItemsSource="{Binding Source={enum:Enumeration {x:Type enum:NoiseEffects}}}"
+                                  DisplayMemberPath="Description"
+                                  SelectedValue="{Binding NoiseEffect}"
+                                  SelectedValuePath="Value"
+                                  Margin="25,0,25,0"
+                                  Width="100"/>
+
+                            <Expander ExpandDirection="Right"
+                              VerticalAlignment="Center">
+                                <Expander.Content>
+                                    <Canvas Margin="10,0,0,0">
+                                        <Border BorderBrush="Blue"
+                                        BorderThickness="2"
+                                        CornerRadius="10"
+                                        Background="LightBlue">
+                                            <Frame Padding="10"
+                                       Content="Efekt nakładany na wyjściowy szum."/>
+                                        </Border>
+                                    </Canvas>
+                                </Expander.Content>
+                                <Expander.Tag>
+                                    Info
+                                </Expander.Tag>
+                            </Expander>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Select output color -->
+                <Border Style="{StaticResource ElementBorder}">
+                    <StackPanel>
+                        <Label Style="{StaticResource InfoLabel}"
+                           Content="Kolor"/>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox ItemsSource="{Binding Source={enum:Enumeration {x:Type enum:NoiseColor}}}"
+                                  DisplayMemberPath="Description"
+                                  SelectedValue="{Binding CurrentNoiseColor}"
+                                  SelectedValuePath="Value"
+                                  Margin="25,0,25,0"
+                                  Width="100"/>
+                            <Expander ExpandDirection="Right">
+                                <Expander.Content>
+                                    <Canvas Margin="10,0,0,0">
+
+                                        <Border BorderBrush="Blue"
+                                        BorderThickness="2"
+                                        CornerRadius="10"
+                                        Background="LightBlue">
+                                            <Frame Padding="10"
+                                       Content="Kolorowanie obrazu."/>
+                                        </Border>
+                                    </Canvas>
+                                </Expander.Content>
+                                <Expander.Tag>
+                                    Info
+                                </Expander.Tag>
+                            </Expander>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <Button Grid.Row="1" Grid.ColumnSpan="2"
+                    Content="GENERUJ" 
+                    Click="GenerujButton_Clicked"/>
+        </Grid>
+    </Border>
+</UserControl>
