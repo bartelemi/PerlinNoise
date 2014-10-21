@@ -1,22 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Perlin.TabControls
 {
@@ -32,7 +18,11 @@ namespace Perlin.TabControls
         public string BitmapPath 
         {
             get { return _bitmapPath; }
-            set { SetField(ref _bitmapPath, value, "BitmapPath"); }
+            set
+            {
+                _bitmapPath = value;
+                OnPropertyChanged();
+            }
         }
         #endregion
 
@@ -41,11 +31,6 @@ namespace Perlin.TabControls
         {
             _bitmapList = new FileList(FileType.Bitmap);
             InitializeComponent();
-
-            if (_bitmapList.Length == 0)
-            {
-
-            }
         }
         #endregion
 
@@ -81,22 +66,12 @@ namespace Perlin.TabControls
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        protected bool SetField<T>(ref T field, T value, string propertyName)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-                return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
         #endregion
     }
 }
