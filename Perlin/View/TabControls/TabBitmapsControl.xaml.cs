@@ -7,81 +7,73 @@ using System.Windows.Data;
 using Perlin.GUI.Helpers;
 using Perlin.GUI.Models;
 using Perlin.GUI.Properties;
+using Perlin.GUI.ViewModel;
 
 namespace Perlin.GUI.View.TabControls
 {
     /// <summary>
     /// Interaction logic for TabBitmapsControl.xaml
     /// </summary>
-    public partial class TabBitmapsControl : INotifyPropertyChanged
+    public partial class TabBitmapsControl
     {
-        #region Properties
-        readonly FileList _bitmapList = null;
-
-        string _bitmapPath = null;
-        public string BitmapPath 
-        {
-            get { return _bitmapPath; }
-            set
-            {
-                if (value == _bitmapPath) return;
-                _bitmapPath = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion // Properties
-
         #region Constructor
         public TabBitmapsControl()
         {
+            //_bitmapList = new FileList(FileType.Bitmap);
             InitializeComponent();
-            _bitmapList = new FileList(FileType.Bitmap);
+            DataContext = new BitmapsViewModel();
         }
         #endregion // Constructor
 
         #region Events
         private void BitmapsTab_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_bitmapList.Length > 0)
-                BitmapPath = _bitmapList.Peek();
+            var vm = DataContext as BitmapsViewModel;
+            if (vm != null)
+            {
+                vm.TabLoaded();
+            }
         }
 
         #region Main image navigation
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_bitmapList.Length > 0)
-                BitmapPath = _bitmapList.Prev();
+            var vm = DataContext as BitmapsViewModel;
+            if (vm != null)
+            {
+                vm.DisplayPreviousImage();
+            }
         }
 
         private void NextButton_click(object sender, RoutedEventArgs e)
         {
-            if (_bitmapList.Length > 0)
-                BitmapPath = _bitmapList.Next();
+            var vm = DataContext as BitmapsViewModel;
+            if (vm != null)
+            {
+                vm.DisplayNextImage();
+            }
         }
         #endregion // Main image navigation
 
         #region Preview images navigation
         private void PreviousPreviewButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            var vm = DataContext as BitmapsViewModel;
+            if (vm != null)
+            {
+                vm.DisplayPreviousPreviewImages();
+            }
         }
 
         private void NextPreviewButton_Click(object sender, RoutedEventArgs e)
         {
-               
+            var vm = DataContext as BitmapsViewModel;
+            if (vm != null)
+            {
+                vm.DisplayNextPreviewImages();
+            }
         }
         #endregion // Preview images navigation
         #endregion // Events
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion // INotifyPropertyChanged
     }
 }

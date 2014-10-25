@@ -6,8 +6,7 @@
              xmlns:extensions="clr-namespace:Perlin.GUI.Extensions"
              xmlns:models="clr-namespace:Perlin.GUI.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="400"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             d:DesignHeight="500" d:DesignWidth="400">
     <UserControl.Resources>
         <Style x:Key="ElementBorder" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="Teal"/>
@@ -91,7 +90,7 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <CheckBox VerticalAlignment="Center"
                                   Content="Wykryj automatycznie"
-                                  Command="{Binding AutodetectionRelayCommand}"
+                                  Command="{Binding IsThreadAutodetectCheckedCommand}"
                                   CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
                         </StackPanel>
                     </StackPanel>

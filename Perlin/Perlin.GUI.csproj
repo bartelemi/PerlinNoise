@@ -92,6 +92,12 @@
     <Compile Include="Extensions\EnumerationExtension.cs" />
     <Compile Include="Helpers\FileList.cs" />
     <Compile Include="Helpers\ViewModelBase.cs" />
+    <Compile Include="ViewModel\Partial Base\BitmapsViewModel.Base.cs" />
+    <Compile Include="ViewModel\Partial Base\GifsViewModel.Base.cs" />
+    <Compile Include="ViewModel\Partial Commands\BitmapsViewModel.Commands.cs" />
+    <Compile Include="ViewModel\Partial Commands\ConfigurationViewModel.Commands.cs" />
+    <Compile Include="ViewModel\Partial Base\ConfigurationViewModel.Base.cs" />
+    <Compile Include="ViewModel\Partial Commands\GifsViewModel.Commands.cs" />
     <Compile Include="View\TabControls\TabBitmapsControl.xaml.cs">
       <DependentUpon>TabBitmapsControl.xaml</DependentUpon>
     </Compile>
@@ -101,8 +107,8 @@
     <Compile Include="View\TabControls\TabGIFsControl.xaml.cs">
       <DependentUpon>TabGIFsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\MainWindowViewModel.Commands.cs" />
-    <Compile Include="ViewModel\MainWindowViewModel.Main.cs" />
+    <Compile Include="ViewModel\Partial Commands\MainWindowViewModel.Commands.cs" />
+    <Compile Include="ViewModel\Partial Base\MainWindowViewModel.Base.cs" />
     <Page Include="View\TabControls\TabBitmapsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
