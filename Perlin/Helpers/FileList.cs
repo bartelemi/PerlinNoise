@@ -1,33 +1,44 @@
-﻿using Perlin.GUI.Models;
+﻿using System.IO;
+using Perlin.GUI.Models;
 
 namespace Perlin.GUI.Helpers
 {
     class FileList
     {
-        private readonly string _workingPath = null;
+        #region Fields
         private readonly string[] _filePathList = null;
         private int _currentFileIndex = 0;
+        #endregion // Fields
 
+        #region Properties
         public int Length
         {
             get { return _filePathList.Length; }
         }
+        public string CurrentLocation { get; private set; }
+        #endregion // Properties
 
+        #region Constructor
         public FileList(FileType ft)
         {
+            string workingPath = null;
+            CurrentLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            
             switch (ft)
             {
                 case FileType.Bitmap:
-                    _workingPath = System.IO.Directory.GetCurrentDirectory() + @"\output\bitmaps";
-                    _filePathList = System.IO.Directory.GetFiles(_workingPath, "*.bmp");
+                    workingPath = CurrentLocation + @"\output\bitmaps";
+                    _filePathList = Directory.GetFiles(workingPath, "*.bmp");
                     break;
                 case FileType.Gif:
-                    _workingPath = System.IO.Directory.GetCurrentDirectory() + @"\output\gifs";
-                    _filePathList = System.IO.Directory.GetFiles(_workingPath, "*.gif");
+                    workingPath = CurrentLocation + @"\output\gifs"; //System.IO.Directory.GetCurrentDirectory() 
+                    _filePathList = Directory.GetFiles(workingPath, "*.gif");
                     break;
             }
         }
+        #endregion // Constructor
 
+        #region Image navigation
         internal string Peek()
         {
             if (_filePathList.Length > 0)
@@ -54,6 +65,7 @@ namespace Perlin.GUI.Helpers
                 _currentFileIndex = 0;
             return Peek();
         }
+        #endregion // Image navigation
 
     }
 }

@@ -4,13 +4,14 @@ using System.Windows;
 using System.Windows.Controls;
 using Perlin.GUI.Helpers;
 using Perlin.GUI.Models;
+using Perlin.GUI.Properties;
 
-namespace Perlin.GUI.TabControls
+namespace Perlin.GUI.View.TabControls
 {
     /// <summary>
     /// Interaction logic for TabConfigurationControl.xaml
     /// </summary>
-    public partial class TabConfigurationControl : UserControl, INotifyPropertyChanged
+    public partial class TabConfigurationControl : INotifyPropertyChanged
     {
         #region Properties
 
@@ -25,7 +26,7 @@ namespace Perlin.GUI.TabControls
                 OnPropertyChanged();
             }
         }
-        #endregion
+        #endregion // Number of threads
 
         #region Number of octaves
         private int _numberOfOctaves;
@@ -40,7 +41,7 @@ namespace Perlin.GUI.TabControls
                 OnPropertyChanged(); 
             }
         }
-        #endregion
+        #endregion // Number of octaves
 
         #region Noise effect
         NoiseEffects _noiseEffect;
@@ -53,7 +54,7 @@ namespace Perlin.GUI.TabControls
                 OnPropertyChanged();
             }
         }
-        #endregion
+        #endregion // Noise effect
 
         #region Noise color
         NoiseColor _noiseColor;
@@ -67,9 +68,22 @@ namespace Perlin.GUI.TabControls
             }
         }
 
-        #endregion
+        #endregion // Noise color
 
-        #endregion
+        #region Thread autodetection
+        private bool _isAutodetectionChecked;
+        public bool IsAutodetectionChecked
+        {
+            get { return _isAutodetectionChecked; }
+            set
+            {
+                if (value == _isAutodetectionChecked) return;
+                _isAutodetectionChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // Thread autodetection
+        #endregion // Properties
 
         public RelayCommand<bool> AutodetectionRelayCommand { get; private set; }
 
@@ -86,11 +100,11 @@ namespace Perlin.GUI.TabControls
                 }
             });
         }
-        #endregion
+        #endregion // Constructor
 
         #region Events
 
-        #endregion
+        #endregion // Events
 
         private void GenerujButton_Clicked(object sender, RoutedEventArgs e)
         {
@@ -99,12 +113,13 @@ namespace Perlin.GUI.TabControls
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
+        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
+        #endregion // INotifyPropertyChanged
     }
 }

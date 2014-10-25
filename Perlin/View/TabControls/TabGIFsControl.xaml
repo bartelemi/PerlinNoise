@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Perlin.GUI.TabControls.TabGIFsControl"
+﻿<UserControl x:Class="Perlin.GUI.View.TabControls.TabGIFsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -39,7 +39,7 @@
                     Style="{StaticResource FadeOutButton}"
                     Click="PreviousButton_Click">
                 <StackPanel>
-                    <Image Source="../Resources/Images/Previous.png"
+                    <Image Source="../../Resources/Images/Previous.png"
                            Stretch="Uniform"/>
                 </StackPanel>
             </Button>
@@ -47,7 +47,7 @@
                     Style="{StaticResource FadeOutButton}"
                     Click="NextButton_click">
                 <StackPanel>
-                    <Image Source="../Resources/Images/Next.png"/>
+                    <Image Source="../../Resources/Images/Next.png"/>
                 </StackPanel>
             </Button>
         </Grid>

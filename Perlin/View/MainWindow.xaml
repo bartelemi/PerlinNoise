@@ -1,9 +1,13 @@
 ﻿<Window x:Class="Perlin.GUI.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:tabControls="clr-namespace:Perlin.GUI.TabControls"
         Title="The power of Perlin Noise - Bartłomiej Szostek - Silesian University of Technology" 
-        Height="500" Width="700">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:Perlin.GUI.ViewModel"
+        mc:Ignorable="d"
+        Height="500" Width="700"
+        d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
     <Window.Resources>
         <Style TargetType="{x:Type TabControl}">
             <Setter Property="Template">
@@ -66,34 +70,20 @@
         </Style>
     </Window.Resources>
     <Grid Background="SlateGray">
-        <TabControl>
-            <TabItem>
-                <TabItem.Header>
+        <TabControl ItemsSource="{Binding TabItems}" SelectedIndex="{Binding SelectedIndex}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Image Height="40" Source="../Resources/Images/Tab icons/Config.png"/>
-                        <TextBlock Text="Configuration" FontSize="20" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        <Image Height="40" Source="{Binding HeaderImageSource}"/>
+                        <TextBlock Text="{Binding HeaderText}" FontSize="20" Margin="10,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
-                </TabItem.Header>
-                <tabControls:TabConfigurationControl/>
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Height="40" Source="../Resources/Images/Tab icons/Bitmap.png"/>
-                        <TextBlock Text="Bitmaps" FontSize="20" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </TabItem.Header>
-                <tabControls:TabBitmapsControl />
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Height="40" Source="../Resources/Images/Tab icons/Gif.png"/>
-                        <TextBlock Text="GIFs" FontSize="20" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </TabItem.Header>
-                <tabControls:TabGIFsControl />
-            </TabItem>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <UserControl Content="{Binding UserControl}"/>
+                </DataTemplate> 
+            </TabControl.ContentTemplate>
         </TabControl>
     </Grid>
 </Window>

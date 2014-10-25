@@ -4,7 +4,7 @@ using Perlin.GUI.Properties;
 
 namespace Perlin.GUI.Helpers
 {
-    class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

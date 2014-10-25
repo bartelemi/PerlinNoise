@@ -3,10 +3,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using Perlin.GUI.Helpers;
 using Perlin.GUI.Models;
 
-namespace Perlin.GUI.TabControls
+namespace Perlin.GUI.View.TabControls
 {
     /// <summary>
     /// Interaction logic for TabGIFsControl.xaml
@@ -14,7 +15,7 @@ namespace Perlin.GUI.TabControls
     public partial class TabGIFsControl : UserControl, INotifyPropertyChanged
     {
         #region Properties
-        FileList _gifsList = null;
+        readonly FileList _gifsList = null;
 
         string _gifPath = null;
         public string GifPath
@@ -31,6 +32,7 @@ namespace Perlin.GUI.TabControls
         #region Constructor
         public TabGIFsControl()
         {
+            this.DataContext = RelativeSource.Self;
             _gifsList = new FileList(FileType.Gif);
             InitializeComponent();
         }
@@ -53,12 +55,12 @@ namespace Perlin.GUI.TabControls
 
         private void NextPreviewButton_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
 
         private void PreviousPreviewButton_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
         #endregion
 

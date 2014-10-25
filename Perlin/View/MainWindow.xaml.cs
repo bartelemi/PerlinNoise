@@ -21,7 +21,7 @@ namespace Perlin.GUI.View
         public MainWindow()
         {
             InitializeComponent();
-
+            DataContext = new MainWindowViewModel();
             /*AllocConsole();
             Console.WriteLine("Hello from C#!");
             DisplayHelloFromDLL();
