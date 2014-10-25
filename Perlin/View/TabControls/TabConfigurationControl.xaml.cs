@@ -1,11 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using Perlin.GUI.Helpers;
-using Perlin.GUI.Models;
-using Perlin.GUI.Properties;
-using Perlin.GUI.ViewModel;
+﻿using Perlin.GUI.ViewModel;
 
 namespace Perlin.GUI.View.TabControls
 {
@@ -24,10 +17,6 @@ namespace Perlin.GUI.View.TabControls
 
         #region Events
 
-        private void GenerujButton_Clicked(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         #endregion // Events
     }

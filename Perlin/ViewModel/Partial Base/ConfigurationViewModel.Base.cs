@@ -1,16 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using Perlin.GUI.Helpers;
 using Perlin.GUI.Models;
+using System.Windows;
 
 namespace Perlin.GUI.ViewModel
 {
     public sealed partial class ConfigurationViewModel : ViewModelBase
     {
         #region Properties
+
+        #region Generating library
+
+        private Library _generatingLibrary;
+        public Library GeneratingLibrary
+        {
+            get { return _generatingLibrary; }
+            set
+            {
+                _generatingLibrary = value; 
+                OnPropertyChanged();
+            }
+        }
+        #endregion // Generating library
+
+        #region File type
+
+        private FileType _fileType;
+        public FileType GeneratedFileType
+        {
+            get { return _fileType; }
+            set
+            {
+                _fileType = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // File type
 
         #region Number of threads
         private int _numberOfThreads;
@@ -82,9 +108,24 @@ namespace Perlin.GUI.ViewModel
         #endregion // Thread autodetection
         #endregion // Properties
 
+        // TODO: tutaj należy podać tablicę bajtów z plikiem do zapisania
+        private void SaveFile(string path)
+        {
+            try
+            {
+                File.WriteAllBytes(path, new byte[] {});
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        #region Constructor
         public ConfigurationViewModel()
         {
             InitializeCommands();
         }
+        #endregion // Constructor
     }
 }

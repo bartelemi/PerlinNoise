@@ -76,16 +76,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\NoiseEffectsGIF.cs" />
+    <Compile Include="Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Models\Enumerator types\NoiseEffectsGIF.cs" />
     <Compile Include="Models\RunParameters\BitmapParameters.cs" />
-    <Compile Include="Models\NoiseColor.cs" />
-    <Compile Include="Models\NoiseEffects.cs" />
-    <Compile Include="Models\FileType.cs" />
-    <Compile Include="Models\GeneratingLibrary.cs" />
+    <Compile Include="Models\Enumerator types\NoiseColor.cs" />
+    <Compile Include="Models\Enumerator types\NoiseEffects.cs" />
+    <Compile Include="Models\Enumerator types\FileType.cs" />
+    <Compile Include="Models\Enumerator types\Library.cs" />
     <Compile Include="Models\RunParameters\FileParameters.cs" />
     <Compile Include="Models\RunParameters\GeneratorParameters.cs" />
     <Compile Include="Models\RunParameters\GifParameters.cs" />
     <Compile Include="Models\RunParameters\ThreadParameters.cs" />
+    <Compile Include="Models\Enumerator types\GeneratorState.cs" />
     <Compile Include="Models\TabItem.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
@@ -180,9 +182,7 @@
     <Resource Include="Resources\Images\Tab icons\Work done.png" />
     <Resource Include="libs\WpfAnimatedGif.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>

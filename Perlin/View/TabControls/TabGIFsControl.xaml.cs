@@ -1,11 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using Perlin.GUI.Helpers;
-using Perlin.GUI.Models;
+﻿using System.Windows;
 using Perlin.GUI.ViewModel;
 
 namespace Perlin.GUI.View.TabControls

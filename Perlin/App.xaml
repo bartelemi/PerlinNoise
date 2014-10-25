@@ -1,8 +1,11 @@
 ﻿<Application x:Class="Perlin.GUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:Perlin.GUI.Converters"
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+        
         <Style x:Key="FadeOutButton" TargetType="{x:Type Button}">
             <Style.Triggers>
                 <EventTrigger RoutedEvent="Control.MouseEnter">

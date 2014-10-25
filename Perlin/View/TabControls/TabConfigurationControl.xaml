@@ -43,12 +43,12 @@
                         <Label Style="{StaticResource InfoLabel}"
                                Content="Biblioteka"/>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <RadioButton Content="ASM" 
-                                     IsChecked="True"
+                            <RadioButton Content="Asembler" 
+                                     IsChecked="{Binding GeneratingLibrary, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Asm}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
                             <RadioButton Content="C"
-                                     IsChecked="False"
+                                     IsChecked="{Binding GeneratingLibrary, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=PureC}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
                         </StackPanel>
@@ -62,11 +62,11 @@
                                Content="Rodzaj obiektu"/>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <RadioButton Content="Bitmap" 
-                                     IsChecked="True"
+                                     IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Bitmap}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
                             <RadioButton Content="GIF"
-                                     IsChecked="False"
+                                     IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Gif}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
                         </StackPanel>
@@ -147,9 +147,12 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <Button Grid.Row="1" Grid.ColumnSpan="2"
+            <Button Grid.Row="1" Grid.Column="0"
                     Content="GENERUJ"
-                    Click="GenerujButton_Clicked"/>
+                    Command="{Binding GeneratePelinNoiseCommand}"/>
+            <Button Grid.Row="1" Grid.Column="1"
+                    Content="Zapisz"
+                    Command="{Binding SaveGeneratedFileCommand}"/>
         </Grid>
     </Border>
 </UserControl>

@@ -1,5 +1,4 @@
 ﻿using Perlin.GUI.Helpers;
-using Perlin.GUI.View.TabControls;
 
 namespace Perlin.GUI.ViewModel
 {

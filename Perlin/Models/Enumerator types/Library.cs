@@ -1,6 +1,6 @@
 ﻿namespace Perlin.GUI.Models
 {
-    public enum GeneratingLibrary
+    public enum Library
     {
         Asm,
         PureC

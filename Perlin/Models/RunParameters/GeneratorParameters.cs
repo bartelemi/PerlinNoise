@@ -3,7 +3,7 @@
     class GeneratorParameters
     {
         public int NumberOfThreads { get; set; }
-        public GeneratingLibrary GeneratingLibrary { get; set; }
+        public Library GeneratingLibrary { get; set; }
         public FileType GeneratedFileType { get; set; }
         public BitmapParameters BitmapParameters { get; set; }
         public GifParameters GifParameters { get; set; }
