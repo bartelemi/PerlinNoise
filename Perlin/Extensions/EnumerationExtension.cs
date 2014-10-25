@@ -3,34 +3,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
 
-namespace Perlin.Extensions
+namespace Perlin.GUI.Extensions
 {
-    public enum NoiseEffects
-    {
-        [Description("Zwykły szum")]
-        Noise,
-        [Description("Sin(szum)")]
-        SinOfNoise,
-        [Description("Sqrt(szum)")]
-        SqrtOfNoise,
-        [Description("Inny efekt")]
-        OtherEffect
-    };
-
-    public enum NoiseColor
-    {
-        [Description("Szary")]
-        Gray,
-        [Description("Niebieski")]
-        Blue,
-        [Description("Zielony")]
-        Green,
-        [Description("Pomarańczowy")]
-        Orange,
-        [Description("Inny")]
-        Other
-    };
-
     public class EnumerationExtension : MarkupExtension
     {
         private Type _enumType;

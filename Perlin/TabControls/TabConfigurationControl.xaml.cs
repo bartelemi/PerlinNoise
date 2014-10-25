@@ -2,9 +2,10 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using Perlin.Extensions;
+using Perlin.GUI.Helpers;
+using Perlin.GUI.Models;
 
-namespace Perlin.TabControls
+namespace Perlin.GUI.TabControls
 {
     /// <summary>
     /// Interaction logic for TabConfigurationControl.xaml

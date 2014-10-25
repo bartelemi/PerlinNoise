@@ -1,7 +1,7 @@
-﻿<Application x:Class="Perlin.App"
+﻿<Application x:Class="Perlin.GUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+             StartupUri="View/MainWindow.xaml">
     <Application.Resources>
         <Style x:Key="FadeOutButton" TargetType="{x:Type Button}">
             <Style.Triggers>

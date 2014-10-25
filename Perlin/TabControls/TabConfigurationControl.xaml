@@ -1,11 +1,12 @@
-﻿<UserControl x:Class="Perlin.TabControls.TabConfigurationControl"
+﻿<UserControl x:Class="Perlin.GUI.TabControls.TabConfigurationControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:enum="clr-namespace:Perlin.Extensions"
+             xmlns:extensions="clr-namespace:Perlin.GUI.Extensions"
+             xmlns:models="clr-namespace:Perlin.GUI.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="300"
+             d:DesignHeight="500" d:DesignWidth="400"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <UserControl.Resources>
         <Style x:Key="ElementBorder" TargetType="{x:Type Border}">
@@ -86,20 +87,6 @@
                                 Margin="25,0,0,0"/>
                             <Label Style="{StaticResource InfoLabel}" 
                                Content="{Binding ElementName=SliderNumOfThreads, Path=Value}"/>
-                            <Expander VerticalAlignment="Center"
-                              ExpandDirection="Right">
-                                <Expander.Content>
-                                    <Canvas Margin="10,0,0,0">
-                                        <Border BorderBrush="Blue"
-                                        BorderThickness="2"
-                                        CornerRadius="10"
-                                        Background="LightBlue">
-                                            <Frame Padding="10"
-                                       Content="Wybierz liczbę wątków, na których ma być uruchomiony program."/>
-                                        </Border>
-                                    </Canvas>
-                                </Expander.Content>
-                            </Expander>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <CheckBox VerticalAlignment="Center"
@@ -110,7 +97,8 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <StackPanel Grid.Column="1">
+            
+            <StackPanel Grid.Column="1" Grid.Row="0">
                 <!-- Get number of octaves -->
                 <Border Style="{StaticResource ElementBorder}">
                     <StackPanel>
@@ -124,20 +112,6 @@
                                 Margin="25,0,0,0"/>
                             <Label Style="{StaticResource InfoLabel}" 
                                Content="{Binding NumberOfOctaves}"/>
-                            <Expander VerticalAlignment="Center"
-                                  ExpandDirection="Right">
-                                <Expander.Content>
-                                    <Canvas Margin="10,0,0,0">
-                                        <Border BorderBrush="Blue"
-                                            BorderThickness="2"
-                                            CornerRadius="10"
-                                            Background="LightBlue">
-                                            <Frame Padding="10"
-                                           Content="Znacząco wpływa na czas generacji obiektu."/>
-                                        </Border>
-                                    </Canvas>
-                                </Expander.Content>
-                            </Expander>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -148,30 +122,12 @@
                         <Label Style="{StaticResource InfoLabel}"
                            Content="Efekt"/>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding Source={enum:Enumeration {x:Type enum:NoiseEffects}}}"
+                            <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffects}}}"
                                   DisplayMemberPath="Description"
                                   SelectedValue="{Binding NoiseEffect}"
                                   SelectedValuePath="Value"
                                   Margin="25,0,25,0"
                                   Width="100"/>
-
-                            <Expander ExpandDirection="Right"
-                              VerticalAlignment="Center">
-                                <Expander.Content>
-                                    <Canvas Margin="10,0,0,0">
-                                        <Border BorderBrush="Blue"
-                                        BorderThickness="2"
-                                        CornerRadius="10"
-                                        Background="LightBlue">
-                                            <Frame Padding="10"
-                                       Content="Efekt nakładany na wyjściowy szum."/>
-                                        </Border>
-                                    </Canvas>
-                                </Expander.Content>
-                                <Expander.Tag>
-                                    Info
-                                </Expander.Tag>
-                            </Expander>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -182,29 +138,12 @@
                         <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding Source={enum:Enumeration {x:Type enum:NoiseColor}}}"
+                            <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
                                   DisplayMemberPath="Description"
                                   SelectedValue="{Binding CurrentNoiseColor}"
                                   SelectedValuePath="Value"
                                   Margin="25,0,25,0"
                                   Width="100"/>
-                            <Expander ExpandDirection="Right">
-                                <Expander.Content>
-                                    <Canvas Margin="10,0,0,0">
-
-                                        <Border BorderBrush="Blue"
-                                        BorderThickness="2"
-                                        CornerRadius="10"
-                                        Background="LightBlue">
-                                            <Frame Padding="10"
-                                       Content="Kolorowanie obrazu."/>
-                                        </Border>
-                                    </Canvas>
-                                </Expander.Content>
-                                <Expander.Tag>
-                                    Info
-                                </Expander.Tag>
-                            </Expander>
                         </StackPanel>
                     </StackPanel>
                 </Border>

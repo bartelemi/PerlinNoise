@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Perlin
+namespace Perlin.GUI
 {
     /// <summary>
     /// Interaction logic for App.xaml
