@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using Perlin.GUI.Helpers;
+using Perlin.GUI.Kernel;
 using Perlin.GUI.Models;
 using Microsoft.Win32;
+using Perlin.GUI.Models.RunParameters;
 
 namespace Perlin.GUI.ViewModel
 {
@@ -62,6 +64,29 @@ namespace Perlin.GUI.ViewModel
 
         private void InitializeGeneratePelinNoiseCommand()
         {
+            GeneratePelinNoiseCommand = new RelayCommand(async () =>
+            {
+                _perlinDllManager = new PerlinDllManager(new GeneratorParameters()
+                {
+                    GeneratedFileType = FileType.Bitmap,
+                    GeneratingLibrary = Library.PureC,
+                    NumberOfThreads = NumberOfThreads,
+                    GeneratingBitmapParameters = new BitmapParameters()
+                    {
+                        Width = Width,
+                        Height = Height,
+                        NoiseColorBmp = CurrentNoiseColorBmp,
+                        NoiseEffectsBmp = NoiseEffectBmp
+                    },
+                    GeneratingGifParameters = null
+                });
+
+                ProgramState = GeneratorState.ComputingFile;
+                _stopwatch.Start();
+                GeneratedImageArray = await _perlinDllManager.GeneratePerlinNoiseFileAsync();
+                _stopwatch.Stop();
+                ProgramState = GeneratorState.GeneratedFile;
+            });
 
         }
         #endregion // Initialize commands

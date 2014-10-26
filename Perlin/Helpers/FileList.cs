@@ -66,6 +66,5 @@ namespace Perlin.GUI.Helpers
             return Peek();
         }
         #endregion // Image navigation
-
     }
 }

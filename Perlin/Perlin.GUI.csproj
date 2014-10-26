@@ -77,6 +77,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Kernel\PerlinDLLManager.cs" />
+    <Compile Include="Kernel\Stopwatch.cs" />
     <Compile Include="Models\Enumerator types\NoiseEffectsGIF.cs" />
     <Compile Include="Models\RunParameters\BitmapParameters.cs" />
     <Compile Include="Models\Enumerator types\NoiseColor.cs" />
@@ -174,6 +176,7 @@
     <Content Include="libs\WpfAnimatedGif.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="README.txt" />
     <EmbeddedResource Include="Resources\EmptyBMPFolder.png" />
     <EmbeddedResource Include="Resources\Images\EmptyFolder\EmptyGIFFolder.gif" />
     <Resource Include="Resources\Images\Tab icons\Bitmap.png" />

@@ -8,6 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="400">
     <UserControl.Resources>
+        <Style TargetType="{x:Type Expander}">
+            <Setter Property="ExpandDirection" Value="Left"/>
+            <Setter Property="BorderBrush" Value="Tomato"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
         <Style x:Key="ElementBorder" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="Teal"/>
             <Setter Property="BorderThickness" Value="2"/>
@@ -33,119 +38,211 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0">
-                <!-- Select ASM/C -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                <!-- Ogólne -->
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="Ogólne">
+                            <TextBlock.LayoutTransform >
+                                <RotateTransform Angle="90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Select ASM/C -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                                Content="Biblioteka"/>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <RadioButton Content="Asembler" 
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <RadioButton Content="Asembler" 
                                      IsChecked="{Binding GeneratingLibrary, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Asm}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
-                            <RadioButton Content="C"
+                                    <RadioButton Content="C"
                                      IsChecked="{Binding GeneratingLibrary, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=PureC}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
 
-                <!-- Select bitmap/gif -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                        <!-- Select bitmap/gif -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                                Content="Rodzaj obiektu"/>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <RadioButton Content="Bitmap" 
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <RadioButton Content="Bitmap" 
                                      IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Bitmap}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
-                            <RadioButton Content="GIF"
+                                    <RadioButton Content="GIF"
                                      IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Gif}"
                                      VerticalAlignment="Center"
                                      Margin="25,0,0,0"/>
-                        </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Width and height -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
+                               Content="Rozmiar"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding Width}"/>
+                                    <TextBlock Text="x"/>
+                                    <TextBox Text="{Binding Height}"/>
+                                    <TextBlock Text="px"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </Expander>
+                
+                <!-- Generator -->
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="Generator">
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform Angle="90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Horizontal">
 
-                <!-- Select number of threads -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                        <!-- Select number of threads -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                                Content="Liczba wątków"/>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Slider Minimum="1" Maximum="16" 
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Slider Minimum="1" Maximum="16" 
                                     Width="100" x:Name="NumOfThreadsSlider"
                                     Value="{Binding NumberOfThreads}"
                                     VerticalAlignment="Center"
                                     Margin="25,0,0,0"/>
-                            <Label Style="{StaticResource InfoLabel}" 
+                                    <Label Style="{StaticResource InfoLabel}" 
                                Content="{Binding ElementName=NumOfThreadsSlider, Path=Value}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <CheckBox VerticalAlignment="Center"
-                                  Content="Wykryj automatycznie"
-                                  Command="{Binding IsThreadAutodetectCheckedCommand}"
-                                  CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-            
-            <StackPanel Grid.Column="1" Grid.Row="0">
-                <!-- Get number of octaves -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <CheckBox VerticalAlignment="Center" Content="Wykryj automatycznie"
+                                              Command="{Binding IsThreadAutodetectCheckedCommand}"
+                                              CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Get number of octaves -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                                Content="Liczba oktaw"/>
-                        <StackPanel Orientation="Horizontal">
-                            <Slider Minimum="1" Maximum="50" 
+                                <StackPanel Orientation="Horizontal">
+                                    <Slider Minimum="1" Maximum="50" 
                                 Width="100" x:Name="NumOfOctaveSlider"
                                 Value="{Binding NumberOfOctaves}"
                                 VerticalAlignment="Center"
                                 Margin="25,0,0,0"/>
-                            <Label Style="{StaticResource InfoLabel}" 
+                                    <Label Style="{StaticResource InfoLabel}" 
                                Content="{Binding ElementName=NumOfOctaveSlider, Path=Value}"/>
-                        </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </Expander>
 
-                <!-- Select output effect -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                <!-- Bitmapa -->
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="Bitmapa">
+                            <TextBlock.LayoutTransform >
+                                <RotateTransform Angle="90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+
+                        <!-- Select output effect -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                            Content="Efekt"/>
-                        <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffects}}}"
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffects}}}"
                                   DisplayMemberPath="Description"
-                                  SelectedValue="{Binding NoiseEffect}"
+                                  SelectedValue="{Binding NoiseEffectBmp}"
                                   SelectedValuePath="Value"
                                   Margin="25,0,25,0"
                                   Width="100"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
 
-                <!-- Select output color -->
-                <Border Style="{StaticResource ElementBorder}">
-                    <StackPanel>
-                        <Label Style="{StaticResource InfoLabel}"
+                        <!-- Select output color -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
-                        <StackPanel Orientation="Horizontal">
-                            <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
                                   DisplayMemberPath="Description"
-                                  SelectedValue="{Binding CurrentNoiseColor}"
+                                  SelectedValue="{Binding CurrentNoiseColorBmp}"
                                   SelectedValuePath="Value"
                                   Margin="25,0,25,0"
                                   Width="100"/>
-                        </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </Expander>
+
+                <!-- GIF -->
+                <Expander>
+                    <Expander.Header>
+                        <TextBlock Text="GIF">
+                            <TextBlock.LayoutTransform >
+                                <RotateTransform Angle="90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
+                           Content="Efekt"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffectsGIF}}}"
+                                  DisplayMemberPath="Description"
+                                  SelectedValue="{Binding NoiseEffectGif}"
+                                  SelectedValuePath="Value"
+                                  Margin="25,0,25,0"
+                                  Width="100"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Select output color -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
+                           Content="Kolor"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
+                                  DisplayMemberPath="Description"
+                                  SelectedValue="{Binding CurrentNoiseColorGif}"
+                                  SelectedValuePath="Value"
+                                  Margin="25,0,25,0"
+                                  Width="100"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Expander>
             </StackPanel>
             <Button Grid.Row="1" Grid.Column="0"
                     Content="GENERUJ"

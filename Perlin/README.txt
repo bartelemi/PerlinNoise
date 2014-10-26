@@ -5,17 +5,16 @@
 TODO:																									  |
 																										  |
   ========================================================================================================+
-  Perlin.GUI																							  | 		
-    * zaimplementować podział na wątki																	  |
-	* zaimplementować odpowiednią komunikację pomiędzy GUI a DLL - jest już (chyba) odpowiednia struktura |
+  Perlin.GUI																							  |
+	* dodać validację, żeby do textboxa z rozmiarem można było wpisać tylko cyfry                         | 		
+    * zaimplementować podział na wątki	-- chyba jest													  |
+	* zaimplementować odpowiednią komunikację pomiędzy GUI a DLL                                          |
     * zaimplementować maszynę stanów w programie - wykorzystanie enuma GeneratorState					  |
-	* zaimplementować karty w konfiguracji - mają być osobne karty na ustawienia ogólne                   |
-	  (libka/typ/rozmiary), ustawienia generatora (liczba oktaw, persystancja, etc.),                     |
-	  ustawienia gifa oraz bitmapy (kolor/efekt)                                                          |
+	* poprawić widok karty konfiguracji                                                                   |
 	* na stronie konfiguracji po wygenerowaniu pliku ma on zostać wyświetlony oraz ma sie wtedy pojawić   |
 	  przycisk do zapisu, a przycisk Generuj ma zmienić nazwę na "generuj nowy", jednakże jego naciśnięcie|
 	  powoduje ostrzeżenie o niezapisaniu wcześniej wygenerowanego pliku.								  |
-																										  |
+	* zaimplementować pole z obliczaniem czasu generacji obiektu - stoper już jest                        |
 	* podgląd minatur w przeglądarkach plików															  |
   ========================================================================================================+
   Perlin_C									  														      |

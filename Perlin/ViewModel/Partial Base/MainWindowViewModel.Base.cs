@@ -24,13 +24,13 @@ namespace Perlin.GUI.ViewModel
                 new TabItem()
                 {
                     HeaderText = "Podgląd obrazów",
-                    HeaderImageSource = "../Resources/Images/Tab icons/Bitmaps.png",
+                    HeaderImageSource = "../Resources/Images/Tab icons/Bitmap.png",
                     UserControl = new TabBitmapsControl()
                 },
                 new TabItem()
                 {
                     HeaderText = "Podgląd animacji",
-                    HeaderImageSource = "../Resources/Images/Tab icons/GIFs.png",
+                    HeaderImageSource = "../Resources/Images/Tab icons/GIF.png",
                     UserControl = new TabGIFsControl()
                 }
             };

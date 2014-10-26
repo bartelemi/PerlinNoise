@@ -5,8 +5,8 @@
         public int NumberOfThreads { get; set; }
         public Library GeneratingLibrary { get; set; }
         public FileType GeneratedFileType { get; set; }
-        public BitmapParameters BitmapParameters { get; set; }
-        public GifParameters GifParameters { get; set; }
+        public BitmapParameters GeneratingBitmapParameters { get; set; }
+        public GifParameters GeneratingGifParameters { get; set; }
 
         public override string ToString()
         {

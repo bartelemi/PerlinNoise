@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Perlin.GUI.Helpers;
+using Perlin.GUI.Kernel;
 using Perlin.GUI.Models;
 using System.Windows;
 
@@ -8,8 +9,42 @@ namespace Perlin.GUI.ViewModel
 {
     public sealed partial class ConfigurationViewModel : ViewModelBase
     {
-        #region Properties
+        #region Fields
+        private PerlinDllManager _perlinDllManager { get; set; }
+        private readonly Stopwatch _stopwatch;
+        #endregion // Fields
 
+        #region Properties
+        #region Program state
+        private GeneratorState _programState;
+
+        public GeneratorState ProgramState
+        {
+            get { return _programState; }
+            set 
+            { 
+                if(value == _programState) return;
+                _programState = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // Program state
+
+        #region Generated image array
+        private byte[] _generatedImageArray;
+        public byte[] GeneratedImageArray
+        {
+            get { return _generatedImageArray; }
+            set
+            {
+                if(value == _generatedImageArray) return;
+                _generatedImageArray = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // Generated image array
+
+        #region Main
         #region Generating library
 
         private Library _generatingLibrary;
@@ -51,6 +86,37 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Number of threads
 
+        #region Size
+        private int _height;
+        public int Height
+        {
+            get { return _height; }
+            set
+            {
+                if (value == _height) return;
+                if (value > 10000) value = 10000;
+                if (value < 10) value = 10;
+                _height = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _width;
+        public int Width
+        {
+            get { return _width; }
+            set
+            {
+                if (value == _width) return;
+                if (value > 10000) value = 10000;
+                if (value < 10) value = 10;
+                _width = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // Size
+        #endregion // Main
+
+        #region Generator
         #region Number of octaves
         private int _numberOfOctaves;
         public int NumberOfOctaves
@@ -66,66 +132,104 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Number of octaves
 
-        #region Noise effect
-        NoiseEffects _noiseEffect;
-        public NoiseEffects NoiseEffect
+        // TODO: dodać persystancję
+
+        #endregion // Generator
+
+        #region Bitmap options
+        #region Noise effect bitmap
+        NoiseEffects _noiseEffectBmp;
+        public NoiseEffects NoiseEffectBmp
         {
-            get { return _noiseEffect; }
+            get { return _noiseEffectBmp; }
             set
             {
-                _noiseEffect = value;
+                _noiseEffectBmp = value;
                 OnPropertyChanged();
             }
         }
-        #endregion // Noise effect
+        #endregion // Noise effect bitmap
 
-        #region Noise color
-        NoiseColor _noiseColor;
-        public NoiseColor CurrentNoiseColor
+        #region Noise color bitmap
+        NoiseColor _noiseColorBmp;
+        public NoiseColor CurrentNoiseColorBmp
         {
-            get { return _noiseColor; }
+            get { return _noiseColorBmp; }
             set
             {
-                _noiseColor = value;
+                _noiseColorBmp = value;
                 OnPropertyChanged();
             }
         }
 
-        #endregion // Noise color
+        #endregion // Noise color bitmap
+        #endregion // Bitmap options
 
-        #region Thread autodetection
-        private bool _isAutodetectionChecked;
-        public bool IsAutodetectionChecked
+        #region GIF options
+        #region Noise effect GIF
+        NoiseEffects _noiseEffectGif;
+        public NoiseEffects NoiseEffectGif
         {
-            get { return _isAutodetectionChecked; }
+            get { return _noiseEffectGif; }
             set
             {
-                if (value == _isAutodetectionChecked) return;
-                _isAutodetectionChecked = value;
+                _noiseEffectGif = value;
                 OnPropertyChanged();
             }
         }
-        #endregion // Thread autodetection
+        #endregion // Noise effect GIF
+
+        #region Noise color GIF
+        NoiseColor _noiseColorGif;
+        public NoiseColor CurrentNoiseColorGif
+        {
+            get { return _noiseColorGif; }
+            set
+            {
+                _noiseColorGif = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion // Noise color GIF
+
+        #endregion // GIF options
         #endregion // Properties
 
-        // TODO: tutaj należy podać tablicę bajtów z plikiem do zapisania
+        #region Constructor
+        public ConfigurationViewModel()
+        {
+            InitializeCommands();
+            InitializeProperties();
+        }
+
+        private void InitializeProperties()
+        {
+            GeneratingLibrary = Library.Asm;
+            GeneratedFileType = FileType.Bitmap;
+            Width = Height = 1000;
+
+            NumberOfThreads = 4;
+            NumberOfOctaves = 5;
+
+            NoiseEffectBmp = NoiseEffects.SinOfNoise;
+            CurrentNoiseColorBmp = NoiseColor.Green;
+        }
+
+        #endregion // Constructor
+
+        #region User interface handling
         private void SaveFile(string path)
         {
             try
             {
-                File.WriteAllBytes(path, new byte[] {});
+                File.WriteAllBytes(path, GeneratedImageArray);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
-        #region Constructor
-        public ConfigurationViewModel()
-        {
-            InitializeCommands();
-        }
-        #endregion // Constructor
+        #endregion // User interface handling
     }
 }
