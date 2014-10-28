@@ -82,9 +82,9 @@ namespace Perlin.GUI.ViewModel
                 });
 
                 ProgramState = GeneratorState.ComputingFile;
-                _stopwatch.Start();
+                //_stopwatch.Start();
                 GeneratedImageArray = await _perlinDllManager.GeneratePerlinNoiseFileAsync();
-                _stopwatch.Stop();
+                //_stopwatch.Stop();
                 ProgramState = GeneratorState.GeneratedFile;
             });
 

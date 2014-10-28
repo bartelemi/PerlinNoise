@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "MyMath.h"
 
 double Power(double base, int exponent)
 {

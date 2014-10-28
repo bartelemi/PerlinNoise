@@ -201,11 +201,15 @@ namespace Perlin.GUI.ViewModel
         {
             InitializeCommands();
             InitializeProperties();
+
+
+            _stopwatch = new Stopwatch(TimeSpan.FromMilliseconds(10));
+            //_stopwatch.Updated += updatedTime =>{Stopwatch} 
         }
 
         private void InitializeProperties()
         {
-            GeneratingLibrary = Library.Asm;
+            GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;
             Width = Height = 1000;
 

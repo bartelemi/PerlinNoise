@@ -15,17 +15,11 @@ namespace Perlin.GUI.View
         [DllImport("Kernel32")]
         public static extern void FreeConsole();
 
-        [DllImport("PerlinNoise_C.dll")]
-        public static extern void DisplayHelloFromDLL();
-
         public MainWindow()
         {
+            AllocConsole();
             InitializeComponent();
             DataContext = new MainWindowViewModel();
-            /*AllocConsole();
-            Console.WriteLine("Hello from C#!");
-            DisplayHelloFromDLL();
-            Console.ReadLine();*/
         }
     }
 }

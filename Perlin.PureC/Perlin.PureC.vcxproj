@@ -11,10 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AE679121-31ED-44BF-8F3D-25C193F990CF}</ProjectGuid>
+    <ProjectGuid>{70587E90-EDD4-4B18-A3C9-1FD32CE9081C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PerlinNoise_C</RootNamespace>
-    <ProjectName>Perlin.C</ProjectName>
+    <RootNamespace>PerlinPureC</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -22,7 +21,6 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -52,9 +50,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PERLINNOISE_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PERLINPUREC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <CompileAsManaged>true</CompileAsManaged>
+      <CompileAsManaged>false</CompileAsManaged>
+      <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -68,7 +67,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PERLINNOISE_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PERLINPUREC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -82,32 +81,21 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="MyMath.h" />
+    <ClInclude Include="Perlin.PureC.h" />
     <ClInclude Include="PerlinNoise.h" />
-    <ClInclude Include="PerlinNoise_C.h" />
     <ClInclude Include="PerlinOriginal.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThreadParameters.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bitmap.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Bitmap.c" />
     <ClCompile Include="Globals.c" />
     <ClCompile Include="Main.c" />
-    <ClCompile Include="MyMath.cpp" />
-    <ClCompile Include="Perlin.cpp" />
+    <ClCompile Include="MyMath.c" />
+    <ClCompile Include="Perlin.PureC.c" />
     <ClCompile Include="PerlinNoise.c" />
-    <ClCompile Include="PerlinNoise_C.cpp" />
-    <ClCompile Include="PerlinOriginal.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="PerlinOriginal.c" />
+    <ClCompile Include="stdafx.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>

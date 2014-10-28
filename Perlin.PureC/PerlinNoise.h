@@ -1,8 +1,7 @@
 #ifndef PERLINNOISE_H_
 #define PERLINNOISE_H_
 
-#include "MyMath.h"
-#include "Globals.h"
+#include "stdafx.h"
 
 //Perlin Noise functions
 double Persistence(double x, double y);

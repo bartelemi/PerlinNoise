@@ -1,5 +1,5 @@
 // stdafx.cpp : source file that includes just the standard includes
-// PerlinNoise_ASM.pch will be the pre-compiled header
+// Perlin.Assembly.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 
 #include "stdafx.h"

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Perlin.GUI.Models;
 using Perlin.GUI.Models.RunParameters;
 
@@ -12,10 +13,11 @@ namespace Perlin.GUI.Kernel
     class PerlinDllManager
     {
         #region Import DLLs
-        //[DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.StdCall)]
-        //private static extern void GeneratePerlinNoiseBitmapPureC(ThreadParameters threadParameters);
-        //[DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseGif", CallingConvention = CallingConvention.StdCall)]
-        //private static extern void GeneratePerlinNoiseGifPureC(ThreadParameters threadParameters);
+        [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void GeneratePerlinNoiseBitmapPureC(ThreadParameters threadParameters);
+
+        [DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseGif", CallingConvention = CallingConvention.StdCall)]
+        private static extern void GeneratePerlinNoiseGifPureC(ThreadParameters threadParameters);
 
         //[DllImport("Perlin.Asm.dll", EntryPoint = "GeneratePerlinNoiseBitmap")]
         //private static extern void GeneratePerlinNoiseBitmapAssembly(ThreadParameters threadParameters);
@@ -34,6 +36,8 @@ namespace Perlin.GUI.Kernel
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor
+
+        #region Compute threads params and run
         public async Task<byte[]> GeneratePerlinNoiseFileAsync()
         {
             var tasks = new Task[_generatorParameters.NumberOfThreads];
@@ -69,6 +73,7 @@ namespace Perlin.GUI.Kernel
                 CurrentImageOffset = currentOffset,
                 ImageWidth = _generatorParameters.GeneratingBitmapParameters.Width,
                 ImageHeight = thisThreadFileHeight,
+                Persistence = 1.0,
                 NoiseColor = (int)_generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,
                 NoiseEffect = (int)_generatorParameters.GeneratingBitmapParameters.NoiseEffectsBmp
             };
@@ -97,17 +102,17 @@ namespace Perlin.GUI.Kernel
         {
             fixed (byte* fileArray = GeneratedFileArray)
             {
-                currendThreadParameters.ImageByteArrayPointer = (uint*) (&fileArray);
+                currendThreadParameters.ImageByteArrayPointer = (uint*) (fileArray);
 
                 if (_generatorParameters.GeneratingLibrary == Library.PureC)
                 {
                     if (_generatorParameters.GeneratedFileType == FileType.Bitmap)
                     {
-                        //GeneratePerlinNoiseBitmapPureC(currendThreadParameters);   
+                        GeneratePerlinNoiseBitmapPureC(currendThreadParameters);   
                     }
                     else
                     {
-                        //GeneratePerlinNoiseGifPureC(currendThreadParameters);  
+                        GeneratePerlinNoiseGifPureC(currendThreadParameters);  
                     }
                 }
                 else
@@ -123,5 +128,6 @@ namespace Perlin.GUI.Kernel
                 }
             }
         }
+        #endregion // Compute threads params and run
     }
 }

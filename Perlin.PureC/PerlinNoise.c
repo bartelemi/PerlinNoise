@@ -1,4 +1,4 @@
-#include "PerlinNoise.h"
+#include "stdafx.h"
 #include "PerlinOriginal.h"
 
 double Noise2D(double x, double y, __int32 octave)

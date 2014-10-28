@@ -15,13 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PerlinNoise_ASM.h">
+    <ClInclude Include="Perlin.Assembly.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,18 +32,11 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Perlin.Assembly.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="PerlinNoise_ASM.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LibPerlinNoise_ASM.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@ namespace Perlin.GUI.Models.RunParameters
         public int CurrentImageOffset;
         public int ImageWidth;
         public int ImageHeight;
+        public double Persistence;
         public int NoiseColor;
         public int NoiseEffect;
         public int IdOfThread;

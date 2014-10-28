@@ -2,12 +2,7 @@
 /* (copyright Ken Perlin) */
 
 #include "stdafx.h"
-#include "MyMath.h"
 #include "PerlinOriginal.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 
 #define B 0x1000
 #define BM 0xfff

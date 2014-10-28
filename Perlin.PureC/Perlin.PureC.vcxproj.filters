@@ -15,7 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bitmap.h">
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Perlin.PureC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
@@ -24,26 +30,17 @@
     <ClInclude Include="MyMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PerlinNoise.h">
+    <ClInclude Include="Bitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PerlinNoise_C.h">
+    <ClInclude Include="PerlinNoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PerlinOriginal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Globals.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,22 +50,19 @@
     <ClCompile Include="PerlinNoise.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PerlinNoise_C.cpp">
+    <ClCompile Include="Bitmap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="MyMath.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bitmap.cpp">
+    <ClCompile Include="Perlin.PureC.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyMath.cpp">
+    <ClCompile Include="PerlinOriginal.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Perlin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PerlinOriginal.cpp">
+    <ClCompile Include="stdafx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,4 @@
 #include "stdafx.h"
-#include "Bitmap.h"
-#include "MyMath.h"
 
 //Returns filled BMPFILEHEADER
 HEADER* FillHeader(int sideSize)

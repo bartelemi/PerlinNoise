@@ -1,10 +1,9 @@
 #ifndef BITMAP_H_
 #define BITMAP_H_
 
-#include "Globals.h"
+#include "stdafx.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 /***********************************

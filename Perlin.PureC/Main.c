@@ -1,21 +1,12 @@
 /*
-	TODO:
-	= przerobiæ na DLL
-	= Port do ASM.
-
 	  PRAWDOPODOBNIE WSZYSTKIEMU JEST WINNY GENERATOR LICZB LOSOWYCH
 	  PROPONOWANE ROZWI¥ZANIE: ZAIMPLEMENTOWAÆ MERSENNE TWISTER
 	  WWW: http://en.wikipedia.org/wiki/Mersenne_twister
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
+#include "stdafx.h"
 
-#include "Globals.h"
-#include "PerlinNoise.h"
-#include "Bitmap.h"
-#include "MyMath.h"
+#include <time.h>
 
 /*********************************************
 				MAIN PROGRAM
@@ -25,7 +16,7 @@ int main(char* argv[], __int32 argc)
 	printf("*** Perlin Noise -- 2D textures ***\n");
 	printf("*******  Bartlomiej Szostek *******\n\n");
 
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	printf(" ->\tCalculating values using Perlin Noise");
 	PerlinNoise_2D();

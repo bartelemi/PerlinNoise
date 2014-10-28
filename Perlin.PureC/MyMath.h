@@ -1,10 +1,7 @@
 #ifndef MYMATH_H_
 #define MYMATH_H_
 
-#include "Globals.h"
-
-#include <stdio.h>
-#include <math.h>
+#include "stdafx.h"
 
 /**************************************
 		MATHEMATICAL FUNCTIONS
