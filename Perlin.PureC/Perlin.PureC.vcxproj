@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="Perlin.PureC.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -89,8 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.c" />
-    <ClCompile Include="Globals.c" />
-    <ClCompile Include="Main.c" />
+    <ClCompile Include="Helpers.c" />
     <ClCompile Include="MyMath.c" />
     <ClCompile Include="Perlin.PureC.c" />
     <ClCompile Include="PerlinNoise.c" />

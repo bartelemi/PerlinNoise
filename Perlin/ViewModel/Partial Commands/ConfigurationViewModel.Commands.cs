@@ -71,10 +71,11 @@ namespace Perlin.GUI.ViewModel
                     GeneratedFileType = FileType.Bitmap,
                     GeneratingLibrary = Library.PureC,
                     NumberOfThreads = NumberOfThreads,
+                    NumberOfOctaves = NumberOfOctaves,
+                    Width = Width,
+                    Height = Height,
                     GeneratingBitmapParameters = new BitmapParameters()
                     {
-                        Width = Width,
-                        Height = Height,
                         NoiseColorBmp = CurrentNoiseColorBmp,
                         NoiseEffectsBmp = NoiseEffectBmp
                     },

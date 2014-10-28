@@ -85,7 +85,6 @@
     <Compile Include="Models\Enumerator types\NoiseEffects.cs" />
     <Compile Include="Models\Enumerator types\FileType.cs" />
     <Compile Include="Models\Enumerator types\Library.cs" />
-    <Compile Include="Models\RunParameters\FileParameters.cs" />
     <Compile Include="Models\RunParameters\GeneratorParameters.cs" />
     <Compile Include="Models\RunParameters\GifParameters.cs" />
     <Compile Include="Models\RunParameters\ThreadParameters.cs" />
@@ -170,8 +169,8 @@
     <Resource Include="Resources\Images\Previous.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libs\PerlinNoise_C.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="libs\Perlin.PureC.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="libs\WpfAnimatedGif.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

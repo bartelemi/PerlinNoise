@@ -1,28 +1,28 @@
 #include "stdafx.h"
 
 //Returns filled BMPFILEHEADER
-HEADER* FillHeader(int sideSize)
+HEADER* FillHeader(int width, int height)
 {
 	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
-	(*header).bmpFileType = 0x4D42;
-	(*header).bmpFileSize = sizeof(HEADER)     //File header
-		+ sizeof(INFOHEADER)				   //Bitmap header
-		+ sideSize*sideSize*(sizeof(Pixel)     //Pixels
-		+ (4 - (sideSize * 3) % 4) % 4);	   //Padding for data
-	(*header).bmpFileReserved1 = 0;
-	(*header).bmpFileReserved2 = 0;
-	(*header).bmpFileOffsetBits = 54;
+	(*header).bmpFileType = 0x4D42;						// 'B''M'
+	(*header).bmpFileSize = sizeof(HEADER)				// File header
+						  + sizeof(INFOHEADER)			// Bitmap header
+						  + width*height*(sizeof(Pixel) // Pixels
+		                  + (4 - (width * 3) % 4) % 4); // Padding for data
+	(*header).bmpFileReserved1 = 0;						// Reserved 1
+	(*header).bmpFileReserved2 = 0;						// Reserved 2
+	(*header).bmpFileOffsetBits = 54;					// Offset for data
 	return header;
 }
 
 //Returns filled BPINFOHEADER
-INFOHEADER* FillInfoHeader(int sideSize)
+INFOHEADER* FillInfoHeader(int width, int height)
 {
 	INFOHEADER* infoHeader = (INFOHEADER*)malloc(sizeof(INFOHEADER));
 	(*infoHeader).bmpSize = 40;
-	(*infoHeader).bmpWidth = sideSize;
-	(*infoHeader).bmpHeight = sideSize;
-	(*infoHeader).bmpPlanes = 1;
+	(*infoHeader).bmpWidth = width;
+	(*infoHeader).bmpHeight = height;
+	(*infoHeader).bmpPlanes = 1;+
 	(*infoHeader).bmpBitCount = 24;
 	(*infoHeader).bmpCompression = 0;
 	(*infoHeader).bmpSizeImage = 0;
@@ -44,8 +44,8 @@ void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP)
 		double min, max;
 		unsigned char bmppad[3] = { 0, 0, 0 };
 		Pixel pixel;
-		HEADER* header = FillHeader(SIZE);
-		INFOHEADER* infoHeader = FillInfoHeader(SIZE);
+		HEADER* header = FillHeader(SIZE, SIZE);
+		INFOHEADER* infoHeader = FillInfoHeader(SIZE, SIZE);
 
 		fwrite(header, sizeof(HEADER), 1, output);
 		fwrite(infoHeader, sizeof(INFOHEADER), 1, output);
@@ -65,6 +65,30 @@ void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP)
 			}
 		}
 		fclose(output);
+	}
+}
+
+
+void CreateBMP2(double **array, int width, int height)
+{
+	unsigned i, j;
+	double min, max;
+	unsigned char bmppad[3] = { 0, 0, 0 };
+	Pixel pixel;
+	HEADER* header = FillHeader(width, height);
+	INFOHEADER* infoHeader = FillInfoHeader(width, height);
+
+	//MaxMinFrom2DArray(array, &min, &max);
+	MaxMinFrom2DArray(array, width, height, &min, &max);
+
+	for (i = 0; i < width; i++)
+	{
+		for (j = 0; j < height; j++)
+		{
+			pixel = GetPixelFromDouble(array[i][j], min, max, i, j);
+			fwrite(&pixel, sizeof(Pixel), 1, );
+			fwrite(bmppad, (4 - (width * 3) % 4) % 4, 1, );
+		}
 	}
 }
 
@@ -131,44 +155,4 @@ Pixel GetPixelFromDouble(double value, double min, double max, int x, int y)
 	newPixel._G = chVal / 2;
 	newPixel._B = chVal / 4;
 	return newPixel;
-}
-
-void PrintBMPInfo(const char* bmpName)
-{
-	FILE *f;
-	HEADER header;
-	INFOHEADER infoHeader;
-
-	fopen_s(&f, bmpName, "rb");
-	fread(&header, sizeof(HEADER), 1, f);
-	fread(&infoHeader, sizeof(INFOHEADER), 1, f);
-
-	if (header.bmpFileType != 0x4D42)
-	{
-		printf("Invalid file format.");
-		return;
-	}
-
-	printf(bmpName);
-	 printf("\n File header:\n");
-		printf("\tFile type: %hu\n", header.bmpFileType);
-		printf("\tFile size: %u bytes\n", header.bmpFileSize);
-		printf("\tReserved1: %hu\n", header.bmpFileReserved1);
-		printf("\tReserved2: %hu\n", header.bmpFileReserved2);
-		printf("\tOffset bits: %u\n\n", header.bmpFileOffsetBits);
-
- 	 printf(" Info header:\n");
-		printf("\tSize: %u\n", infoHeader.bmpSize);
-		printf("\tWidth: %d\n", infoHeader.bmpWidth);
-		printf("\tHeight: %d\n", infoHeader.bmpHeight);
-		printf("\tPlanes: %hu\n", infoHeader.bmpPlanes);
-		printf("\tBit count: %hu\n", infoHeader.bmpBitCount);
-		printf("\tCompression: %u\n", infoHeader.bmpCompression);
-		printf("\tSize image: %u\n", infoHeader.bmpSizeImage);
-		printf("\tX DPI: %d\n", infoHeader.bmpXPelsPerMeter);
-		printf("\tY DPI: %d\n", infoHeader.bmpYPelsPerMeter);
-		printf("\tColor used: %u\n", infoHeader.bmpColorUsed);
-		printf("\tColor important: %u\n", infoHeader.bmpColorImportant);
-
-	fclose(f);
 }

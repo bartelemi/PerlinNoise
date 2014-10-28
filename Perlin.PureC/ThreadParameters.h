@@ -2,13 +2,14 @@
 
 typedef struct ThreadParameters
 {
-	unsigned int* ImageByteArrayPointer;
-	int CurrentImageOffset;
-	int ImageWidth;
-	int ImageHeight;
-	double Persistence;
-	int NoiseColor;
-	int NoiseEffect;
-	int IdOfThread;
-	int NumberOfThreads;
+	unsigned int* imagePointer;
+	int offset;
+	int width;
+	int height;
+	int color;
+	int effect;
+	int octaves;
+	double persistence;
+	int threadId;
+	int threadsCount;
 } ThreadParameters;

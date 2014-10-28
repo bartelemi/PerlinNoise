@@ -26,7 +26,6 @@
 **************************************/
 	// Finds min and max value in array2D
 	void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max);
+	void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max);
 	
-	//Saves data from 2D array to file
-	void SaveArrayToFile(double array2D[SIZE][SIZE], const char* fileName);
 #endif

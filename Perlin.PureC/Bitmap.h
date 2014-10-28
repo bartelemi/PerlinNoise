@@ -52,19 +52,20 @@
 		FUNCTION PROTOTYPES
 ***********************************/
 	//Returns filled BMPFILEHEADER
-	HEADER* FillHeader(int sideSize);
+	HEADER* FillHeader(int width, int height);
 
 	//Returns filled BPINFOHEADER
-	INFOHEADER* FillInfoHeader(int sideSize);
+	INFOHEADER* FillInfoHeader(int width, int height);
 
 	//Creates BMP using data from NoiseArray
 	void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP);
+	void CreateBMP2(double **array, int width, int height);
+
 
 	//Map double value to Pixel
 	Pixel GetPixelFromDouble(double value, double min, double max);
 	Pixel GetPixelFromDouble(double value, double min, double max, int x, int y);
 
-	//Print information about BMP file
-	void PrintBMPInfo(const char* bmpName);
+	
 
 #endif

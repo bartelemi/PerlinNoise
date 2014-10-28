@@ -6,18 +6,22 @@
 
 #include "stdafx.h"
 #include "Perlin.PureC.h"
-
+#include "Helpers.h"
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
-	srand((unsigned int)time(NULL) * params.IdOfThread);
-	
-	printf("ThreadId %d ->\tCalculating values using Perlin Noise", params.IdOfThread);
-	//PerlinNoise_2D();
-	printf(" - DONE.\n");
+	int randomnumber;
+	srand((unsigned int)time(NULL) * params.threadId);
+	randomnumber = rand() % 10000;
+	printThreadParamInfo(params);
+	printf("Random number: %d\n\n", randomnumber);
 
-	printf("ThreadId %d ->\tGenerating bitmap", params.IdOfThread);
+	//printf("ThreadId %d ->\tCalculating values using Perlin Noise", params.IdOfThread);
+	//PerlinNoise_2D();
+	//printf(" - DONE.\n");
+
+	//printf("ThreadId %d ->\tGenerating bitmap", params.IdOfThread);
 	//CreateBMP(NoiseArray, outputBitmapFileName);
-	printf(" - DONE.\n");
+	//printf(" - DONE.\n");
 	//PrintBMPInfo(outputBitmapFileName);
 }
 

@@ -33,6 +33,7 @@ namespace Perlin.GUI.Kernel
         #region Constructor
         public PerlinDllManager(GeneratorParameters generatorParameters)
         {
+            GeneratedFileArray = new byte[generatorParameters.Width];
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor
@@ -68,11 +69,12 @@ namespace Perlin.GUI.Kernel
             }
             return new ThreadParameters()
             {
-                IdOfThread = threadId,
+                ThreadId = threadId,
                 NumberOfThreads = _generatorParameters.NumberOfThreads,
                 CurrentImageOffset = currentOffset,
-                ImageWidth = _generatorParameters.GeneratingBitmapParameters.Width,
+                ImageWidth = _generatorParameters.Width,
                 ImageHeight = thisThreadFileHeight,
+                NumberOfOctaves = _generatorParameters.NumberOfOctaves,
                 Persistence = 1.0,
                 NoiseColor = (int)_generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,
                 NoiseEffect = (int)_generatorParameters.GeneratingBitmapParameters.NoiseEffectsBmp
@@ -82,7 +84,7 @@ namespace Perlin.GUI.Kernel
         private int ComputeNumberOfLinesForCurrentThread(int threadId)
         {
             var numberOfThreads = _generatorParameters.NumberOfThreads;
-            var imgHeight = _generatorParameters.GeneratingBitmapParameters.Height;
+            var imgHeight = _generatorParameters.Height;
             var numberOfLines = (imgHeight / numberOfThreads);
 
             if (numberOfThreads > 1)

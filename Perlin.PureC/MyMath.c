@@ -57,23 +57,24 @@ void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max)
 	}
 }
 
-void SaveArrayToFile(double array2D[SIZE][SIZE], const char* fileName)
+void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max)
 {
 	unsigned i, j;
-	FILE *f;
+	*min = array[0][0];
+	*max = array[0][0];
 
-	fopen_s(&f, fileName, "wt");
-
-	if (f == NULL)
-		return;
-
-	for (i = 0; i < SIZE; i++)
+	for (i = 0; i < width; i++)
 	{
-		for ( j = 0; j < SIZE; j++)
+		for ( j = 0; j < height; j++)
 		{
-			fprintf(f, "%+.5f ", array2D[i][j]);
+			if (array[i][j] < *min)
+			{
+				*min = array[i][j];
+			}
+			else if (array[i][j] > *max)
+			{
+				*max = array[i][j];
+			}
 		}
-		fprintf(f, "\n");
 	}
-	fclose(f);
 }
