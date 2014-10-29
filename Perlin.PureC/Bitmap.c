@@ -22,7 +22,7 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	(*infoHeader).bmpSize = 40;
 	(*infoHeader).bmpWidth = width;
 	(*infoHeader).bmpHeight = height;
-	(*infoHeader).bmpPlanes = 1;+
+	(*infoHeader).bmpPlanes = 1;
 	(*infoHeader).bmpBitCount = 24;
 	(*infoHeader).bmpCompression = 0;
 	(*infoHeader).bmpSizeImage = 0;
@@ -33,63 +33,71 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	return infoHeader;
 }
 
-void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP)
+//void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP)
+//{
+//	FILE *output;
+//	fopen_s(&output, outputBMP, "wb");
+//
+//	if (output != NULL)
+//	{
+//		unsigned i, j;
+//		double min, max;
+//		unsigned char bmppad[3] = { 0, 0, 0 };
+//		Pixel pixel;
+//		HEADER* header = FillHeader(SIZE, SIZE);
+//		INFOHEADER* infoHeader = FillInfoHeader(SIZE, SIZE);
+//
+//		fwrite(header, sizeof(HEADER), 1, output);
+//		fwrite(infoHeader, sizeof(INFOHEADER), 1, output);
+//
+//		free(header);
+//		free(infoHeader);
+//
+//		MaxMinFrom2DArray(array2D, &min, &max);
+//
+//		for (i = 0; i < SIZE; i++)
+//		{
+//			for (j = 0; j < SIZE; j++)
+//			{
+//				pixel = GetPixelFromDouble(array2D[i][j], min, max, i, j);
+//				fwrite(&pixel, sizeof(Pixel), 1, output);
+//				fwrite(bmppad, (4 - (SIZE * 3) % 4) % 4, 1, output);
+//			}
+//		}
+//		fclose(output);
+//	}
+//}
+
+
+void CreateBMP2(double **array, int width, int height, int offset)
 {
-	FILE *output;
-	fopen_s(&output, outputBMP, "wb");
-
-	if (output != NULL)
-	{
-		unsigned i, j;
-		double min, max;
-		unsigned char bmppad[3] = { 0, 0, 0 };
-		Pixel pixel;
-		HEADER* header = FillHeader(SIZE, SIZE);
-		INFOHEADER* infoHeader = FillInfoHeader(SIZE, SIZE);
-
-		fwrite(header, sizeof(HEADER), 1, output);
-		fwrite(infoHeader, sizeof(INFOHEADER), 1, output);
-
-		free(header);
-		free(infoHeader);
-
-		MaxMinFrom2DArray(array2D, &min, &max);
-
-		for (i = 0; i < SIZE; i++)
-		{
-			for (j = 0; j < SIZE; j++)
-			{
-				pixel = GetPixelFromDouble(array2D[i][j], min, max, i, j);
-				fwrite(&pixel, sizeof(Pixel), 1, output);
-				fwrite(bmppad, (4 - (SIZE * 3) % 4) % 4, 1, output);
-			}
-		}
-		fclose(output);
-	}
-}
-
-
-void CreateBMP2(double **array, int width, int height)
-{
-	unsigned i, j;
+	unsigned i, j, padSize, pixelSize;
 	double min, max;
 	unsigned char bmppad[3] = { 0, 0, 0 };
 	Pixel pixel;
 	HEADER* header = FillHeader(width, height);
 	INFOHEADER* infoHeader = FillInfoHeader(width, height);
 
+	pixelSize = sizeof(Pixel);
+	padSize = (4 - (width * 3) % 4) % 4;
 	//MaxMinFrom2DArray(array, &min, &max);
 	MaxMinFrom2DArray(array, width, height, &min, &max);
-
-	for (i = 0; i < width; i++)
+	printf("Tworzê bitmapê\n");
+	for (i = offset; i < (offset + height); i++)
 	{
-		for (j = 0; j < height; j++)
+		for (j = 0; j < (width * (pixelSize + padSize)); )
 		{
 			pixel = GetPixelFromDouble(array[i][j], min, max, i, j);
-			fwrite(&pixel, sizeof(Pixel), 1, );
-			fwrite(bmppad, (4 - (width * 3) % 4) % 4, 1, );
+			memcpy(&array[i][j], &pixel, pixelSize);
+			j += pixelSize;
+			memcpy(&array[i], &bmppad, padSize);
+			j += padSize;
+			//memcpy(array[i][j], pixel, sizeof(Pixel));
+			//fwrite((&pixel, sizeof(Pixel), 1, );
+			//fwrite((bmppad, (4 - (width * 3) % 4) % 4, 1, );
 		}
 	}
+	printf("Skoñczy³em.\n");
 }
 
 //Grey noise

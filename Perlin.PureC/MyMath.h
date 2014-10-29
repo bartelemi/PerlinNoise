@@ -25,7 +25,7 @@
 			ARRAY FUNCTIONS
 **************************************/
 	// Finds min and max value in array2D
-	void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max);
+	// void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max);
 	void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max);
 	
 #endif

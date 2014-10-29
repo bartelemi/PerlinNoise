@@ -33,7 +33,7 @@ namespace Perlin.GUI.Kernel
         #region Constructor
         public PerlinDllManager(GeneratorParameters generatorParameters)
         {
-            GeneratedFileArray = new byte[generatorParameters.Width];
+            GeneratedFileArray = new byte[generatorParameters.Height];
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor

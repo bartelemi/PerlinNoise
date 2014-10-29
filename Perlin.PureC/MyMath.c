@@ -35,27 +35,27 @@ long Sqrt(long i)
 	return rNew;
 }
 
-void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max)
-{
-	unsigned i, j;
-	*min = array2D[0][0];
-	*max = array2D[0][0];
-
-	for (i = 0; i < SIZE; i++)
-	{
-		for (j = 0; j < SIZE; j++)
-		{
-			if (array2D[i][j] < *min)
-			{
-				*min = array2D[i][j];
-			}
-			else if (array2D[i][j] > *max)
-			{
-				*max = array2D[i][j];
-			}
-		}
-	}
-}
+//void MaxMinFrom2DArray(double array2D[SIZE][SIZE], double *min, double *max)
+//{
+//	unsigned i, j;
+//	*min = array2D[0][0];
+//	*max = array2D[0][0];
+//
+//	for (i = 0; i < SIZE; i++)
+//	{
+//		for (j = 0; j < SIZE; j++)
+//		{
+//			if (array2D[i][j] < *min)
+//			{
+//				*min = array2D[i][j];
+//			}
+//			else if (array2D[i][j] > *max)
+//			{
+//				*max = array2D[i][j];
+//			}
+//		}
+//	}
+//}
 
 void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max)
 {

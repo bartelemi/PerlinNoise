@@ -16,7 +16,9 @@ TODO:																									  |
 	* podgląd minatur w przeglądarkach plików															  |
   ========================================================================================================+
   Perlin_C																								  |
-  * jak rozwiązać problem, z nagłówkiem pliku? - pierwszy wątek ma go tworzyć?                            | 
+  * jak rozwiązać problem, z nagłówkiem pliku? - pierwszy wątek ma go tworzyć?                            |
+  * bład w pliku Bitmap.c - ma lecieć po kolei 0,1,2,3... po NoiseArrayDynamic, ale do wskaźnika ma       |
+    zapisywać wyrównane dane                                                                              | 
   * przerobić bibliotekę, tak by przyjmowała ThreadParameters		                                      |
 																										  |
   ========================================================================================================+

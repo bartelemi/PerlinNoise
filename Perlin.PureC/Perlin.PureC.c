@@ -9,11 +9,17 @@
 #include "Helpers.h"
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
-	int randomnumber;
+	int i;
+	/*int randomnumber;
 	srand((unsigned int)time(NULL) * params.threadId);
 	randomnumber = rand() % 10000;
 	printThreadParamInfo(params);
-	printf("Random number: %d\n\n", randomnumber);
+	printf("Random number: %d\n\n", randomnumber);*/
+
+	printf("Generowanie.\n");
+	PerlinNoise_2D(params);
+	printf("Tworzenie bitmapy.\n");
+	CreateBMP2(params.imagePointer, params.width, params.height, params.offset);
 
 	//printf("ThreadId %d ->\tCalculating values using Perlin Noise", params.IdOfThread);
 	//PerlinNoise_2D();
@@ -23,6 +29,12 @@ PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 	//CreateBMP(NoiseArray, outputBitmapFileName);
 	//printf(" - DONE.\n");
 	//PrintBMPInfo(outputBitmapFileName);
+
+	for (i = 0; i < params.height; i++)
+	{
+		free(NoiseArrayDynamic[i]);
+	}
+	free(NoiseArrayDynamic);
 }
 
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)

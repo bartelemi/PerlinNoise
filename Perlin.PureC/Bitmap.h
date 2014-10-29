@@ -59,7 +59,7 @@
 
 	//Creates BMP using data from NoiseArray
 	void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP);
-	void CreateBMP2(double **array, int width, int height);
+	void CreateBMP2(double **array, int width, int height, int offset);
 
 
 	//Map double value to Pixel
