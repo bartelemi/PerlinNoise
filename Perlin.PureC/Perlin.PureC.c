@@ -9,32 +9,14 @@
 #include "Helpers.h"
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
-	int i;
-	/*int randomnumber;
-	srand((unsigned int)time(NULL) * params.threadId);
-	randomnumber = rand() % 10000;
-	printThreadParamInfo(params);
-	printf("Random number: %d\n\n", randomnumber);*/
+	NoiseArrayDynamic = alloc2DArray(params.width, params.height);
 
-	printf("Generowanie.\n");
+	printf("Generowanie id: %d.\n", params.threadId);
 	PerlinNoise_2D(params);
 	printf("Tworzenie bitmapy.\n");
 	CreateBMP2(params.imagePointer, params.width, params.height, params.offset);
 
-	//printf("ThreadId %d ->\tCalculating values using Perlin Noise", params.IdOfThread);
-	//PerlinNoise_2D();
-	//printf(" - DONE.\n");
-
-	//printf("ThreadId %d ->\tGenerating bitmap", params.IdOfThread);
-	//CreateBMP(NoiseArray, outputBitmapFileName);
-	//printf(" - DONE.\n");
-	//PrintBMPInfo(outputBitmapFileName);
-
-	for (i = 0; i < params.height; i++)
-	{
-		free(NoiseArrayDynamic[i]);
-	}
-	free(NoiseArrayDynamic);
+	free2DArray(NoiseArrayDynamic, params.width, params.height);
 }
 
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)

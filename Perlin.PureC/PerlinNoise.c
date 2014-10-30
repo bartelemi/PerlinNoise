@@ -80,12 +80,7 @@ void PerlinNoise_2D(ThreadParameters params)
 {
 	unsigned n = params.octaves;
 	unsigned int i, j, k;
-	NoiseArrayDynamic = (double**)malloc(params.height * sizeof(double*));
 
-	for (i = 0; i < params.height; i++)
-	{
-		NoiseArrayDynamic[i] = (double*)malloc(params.width * sizeof(double));
-	}
 	//for (k = n; k > 0; k--)
 	//{
 		//double x, y;

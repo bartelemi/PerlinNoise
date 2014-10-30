@@ -33,45 +33,9 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	return infoHeader;
 }
 
-//void CreateBMP(double array2D[SIZE][SIZE], const char* outputBMP)
-//{
-//	FILE *output;
-//	fopen_s(&output, outputBMP, "wb");
-//
-//	if (output != NULL)
-//	{
-//		unsigned i, j;
-//		double min, max;
-//		unsigned char bmppad[3] = { 0, 0, 0 };
-//		Pixel pixel;
-//		HEADER* header = FillHeader(SIZE, SIZE);
-//		INFOHEADER* infoHeader = FillInfoHeader(SIZE, SIZE);
-//
-//		fwrite(header, sizeof(HEADER), 1, output);
-//		fwrite(infoHeader, sizeof(INFOHEADER), 1, output);
-//
-//		free(header);
-//		free(infoHeader);
-//
-//		MaxMinFrom2DArray(array2D, &min, &max);
-//
-//		for (i = 0; i < SIZE; i++)
-//		{
-//			for (j = 0; j < SIZE; j++)
-//			{
-//				pixel = GetPixelFromDouble(array2D[i][j], min, max, i, j);
-//				fwrite(&pixel, sizeof(Pixel), 1, output);
-//				fwrite(bmppad, (4 - (SIZE * 3) % 4) % 4, 1, output);
-//			}
-//		}
-//		fclose(output);
-//	}
-//}
-
-
-void CreateBMP2(double **array, int width, int height, int offset)
+void CreateBMP2(unsigned int *pointer, int width, int height, int offset)
 {
-	unsigned i, j, padSize, pixelSize;
+	unsigned i, j, k, l, padSize, pixelSize;
 	double min, max;
 	unsigned char bmppad[3] = { 0, 0, 0 };
 	Pixel pixel;
@@ -80,24 +44,23 @@ void CreateBMP2(double **array, int width, int height, int offset)
 
 	pixelSize = sizeof(Pixel);
 	padSize = (4 - (width * 3) % 4) % 4;
-	//MaxMinFrom2DArray(array, &min, &max);
-	MaxMinFrom2DArray(array, width, height, &min, &max);
-	printf("Tworzê bitmapê\n");
-	for (i = offset; i < (offset + height); i++)
+	
+	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
+	printf("Max: %f\tMin:%f\n", max, min);
+
+	for (i = offset, k = 0; i < (offset + height); i++, k++)
 	{
-		for (j = 0; j < (width * (pixelSize + padSize)); )
+		for (j = 0, l = 0; j < (width * (pixelSize + padSize)); l++)
 		{
-			pixel = GetPixelFromDouble(array[i][j], min, max, i, j);
-			memcpy(&array[i][j], &pixel, pixelSize);
+			printf("(%d, %d) ", k, l);
+			pixel = GetPixelFromDouble(NoiseArrayDynamic[k][l], min, max, k, l);
+			memcpy((&pointer[i]+j), &pixel, pixelSize);
 			j += pixelSize;
-			memcpy(&array[i], &bmppad, padSize);
+			memcpy((&pointer[i]+j), &bmppad, padSize);
 			j += padSize;
-			//memcpy(array[i][j], pixel, sizeof(Pixel));
-			//fwrite((&pixel, sizeof(Pixel), 1, );
-			//fwrite((bmppad, (4 - (width * 3) % 4) % 4, 1, );
 		}
 	}
-	printf("Skoñczy³em.\n");
+	printf("Skonczylem.\n");
 }
 
 //Grey noise
@@ -156,7 +119,6 @@ Pixel GetPixelFromDouble(double value, double min, double max, int x, int y)
 	Pixel newPixel;
 	unsigned char chVal;
 	double val = sin(x + max * value);
-	//if (val < 0) val = -val;
 
 	chVal = ((val - sin(min)) * 255) / (sin(max) - sin(min));
 	newPixel._R = chVal;

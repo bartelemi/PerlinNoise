@@ -27,19 +27,19 @@ namespace Perlin.GUI.Kernel
 
         #region Fields
         private readonly GeneratorParameters _generatorParameters; 
-        private byte[] GeneratedFileArray { get; set; }
+        private byte[,] GeneratedFileArray { get; set; }
         #endregion // Fields
 
         #region Constructor
         public PerlinDllManager(GeneratorParameters generatorParameters)
         {
-            GeneratedFileArray = new byte[generatorParameters.Height];
+            GeneratedFileArray = new byte[generatorParameters.Height, generatorParameters.Width * 6];
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor
 
         #region Compute threads params and run
-        public async Task<byte[]> GeneratePerlinNoiseFileAsync()
+        public async Task<byte[,]> GeneratePerlinNoiseFileAsync()
         {
             var tasks = new Task[_generatorParameters.NumberOfThreads];
 
@@ -104,7 +104,7 @@ namespace Perlin.GUI.Kernel
         {
             fixed (byte* fileArray = GeneratedFileArray)
             {
-                currendThreadParameters.ImageByteArrayPointer = (uint*) (fileArray);
+                currendThreadParameters.ImageByteArrayPointer = (uint*)(fileArray);
 
                 if (_generatorParameters.GeneratingLibrary == Library.PureC)
                 {

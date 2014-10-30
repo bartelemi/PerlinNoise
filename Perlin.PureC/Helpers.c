@@ -71,3 +71,26 @@ void SaveArrayToFile(double array2D[SIZE][SIZE], const char* fileName)
 	}
 	fclose(f);
 }
+
+double** alloc2DArray(int width, int height)
+{
+	int i;
+	double **pointer = (double**)malloc(height * sizeof(double*));
+
+	for (i = 0; i < height; i++)
+	{
+		pointer[i] = (double*)malloc(width * sizeof(double));
+	}
+
+	return pointer;
+}
+
+void free2DArray(double** pointer, int width, int height)
+{
+	int i;
+	for (i = 0; i < height; i++)
+	{
+		free(pointer[i]);
+	}
+	free(pointer);
+}

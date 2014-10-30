@@ -31,8 +31,8 @@ namespace Perlin.GUI.ViewModel
         #endregion // Program state
 
         #region Generated image array
-        private byte[] _generatedImageArray;
-        public byte[] GeneratedImageArray
+        private byte[,] _generatedImageArray;
+        public byte[,] GeneratedImageArray
         {
             get { return _generatedImageArray; }
             set
@@ -211,7 +211,7 @@ namespace Perlin.GUI.ViewModel
         {
             GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;
-            Width = Height = 1000;
+            Width = Height = 10;
 
             NumberOfThreads = 4;
             NumberOfOctaves = 5;
@@ -227,7 +227,7 @@ namespace Perlin.GUI.ViewModel
         {
             try
             {
-                File.WriteAllBytes(path, GeneratedImageArray);
+                //File.WriteAllBytes(path, GeneratedImageArray);
             }
             catch (Exception ex)
             {
