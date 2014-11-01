@@ -30,7 +30,7 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Program state
 
-        #region Generated image array
+        #region Generated file array
         private byte[] _generatedFileArray;
         public byte[] GeneratedFileArray
         {
@@ -42,7 +42,7 @@ namespace Perlin.GUI.ViewModel
                 OnPropertyChanged();
             }
         }
-        #endregion // Generated image array
+        #endregion // Generated file array
 
         #region Main
         #region Generating library

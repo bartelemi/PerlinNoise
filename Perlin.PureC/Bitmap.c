@@ -63,11 +63,11 @@ void CreateBMP2(ThreadParameters params)
 	
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
 
-	for (i = offset, k = 0; i < (offset + height); i++, k++)
+	for (i = offset, k = 0; k < height; i++, k++)
 	{
-		for (j = 0, l = 0; j < (width * (pixelSize + padSize)); l++)
+		for (j = 0, l = 0; l < width; l++)
 		{
-			printf("(%d, %d) ", k, l);
+			printf("%d(%d, %d) ", params.threadId, k, l);
 			pixel = GetPixelFromDouble(NoiseArrayDynamic[k][l], min, max, k, l);
 			memcpy((&pointer[i]+j), &pixel, pixelSize);
 			j += pixelSize;
@@ -75,7 +75,7 @@ void CreateBMP2(ThreadParameters params)
 			j += padSize;
 		}
 	}
-	printf("Skonczylem.\n");
+	printf("Skonczylem %d.\n", params.threadId);
 }
 
 //Grey noise

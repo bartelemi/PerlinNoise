@@ -33,7 +33,7 @@ namespace Perlin.GUI.Kernel
         #region Constructor
         public PerlinDllManager(GeneratorParameters generatorParameters)
         {
-            GeneratedFileArray = new byte[generatorParameters.Height * generatorParameters.Width * 6];
+            GeneratedFileArray = new byte[54 + generatorParameters.Height * generatorParameters.Width * 6];
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor
@@ -71,7 +71,7 @@ namespace Perlin.GUI.Kernel
             {
                 ThreadId = threadId,
                 NumberOfThreads = _generatorParameters.NumberOfThreads,
-                CurrentImageOffset = currentOffset,
+                CurrentImageOffset = currentOffset + 54,
                 ImageWidth = _generatorParameters.Width,
                 ImageHeight = thisThreadFileHeight,
                 NumberOfOctaves = _generatorParameters.NumberOfOctaves,

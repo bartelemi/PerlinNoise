@@ -7,13 +7,13 @@
 #include "stdafx.h"
 #include "Perlin.PureC.h"
 #include "Helpers.h"
+
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
 	NoiseArrayDynamic = alloc2DArray(params.width, params.height);
 
-	printf("Generowanie id: %d.\n", params.threadId);
 	PerlinNoise_2D(params);
-	printf("Tworzenie bitmapy.\n");
+	printf("Tworzenie bitmapy. ID: %d.\n", params.threadId);
 	CreateBMP2(params);
 
 	free2DArray(NoiseArrayDynamic, params.width, params.height);

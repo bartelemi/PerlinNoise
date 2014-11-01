@@ -252,7 +252,8 @@
             <!-- Image panel -->
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
                 <Grid>
-                    <Image />
+                    <Image Visibility="{Binding GeneratedFileArray, Converter={StaticResource NullToVisibilityConverter}}"
+                           Source="{Binding GeneratedFileArray, Converter={StaticResource ByteArrayToBitmapImageConverter}, Mode=OneWay}"/>
                     <Canvas Margin="40 20 40 20" ZIndex="0" Background="PaleGreen" Opacity="0.6"
                             Visibility="{Binding GeneratedFileArray, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}"/>
                 </Grid>
