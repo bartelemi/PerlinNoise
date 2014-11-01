@@ -91,8 +91,6 @@ void PerlinNoise_2D(ThreadParameters params)
 		{
 			for (j = 0; j < params.width; j++)
 			{
-				//printf("%d - wywo³anie", i);
-				// NoiseArray[i][j] =
 				NoiseArrayDynamic[i][j] = noise2(
 					(((double)i + ((double)(rand() % 100) / 100.0))),
 					(((double)j + ((double)(rand() % 100) / 100.0)))

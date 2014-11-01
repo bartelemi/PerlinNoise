@@ -5,6 +5,8 @@
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:ByteArrayToBitmapImageConverter x:Key="ByteArrayToBitmapImageConverter"/>
         
         <Style x:Key="FadeOutButton" TargetType="{x:Type Button}">
             <Style.Triggers>

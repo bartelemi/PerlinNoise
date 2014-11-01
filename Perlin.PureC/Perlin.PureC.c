@@ -14,7 +14,7 @@ PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 	printf("Generowanie id: %d.\n", params.threadId);
 	PerlinNoise_2D(params);
 	printf("Tworzenie bitmapy.\n");
-	CreateBMP2(params.imagePointer, params.width, params.height, params.offset);
+	CreateBMP2(params);
 
 	free2DArray(NoiseArrayDynamic, params.width, params.height);
 }

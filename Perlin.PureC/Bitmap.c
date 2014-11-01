@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-//Returns filled BMPFILEHEADER
+// Returns filled BMPFILEHEADER
 HEADER* FillHeader(int width, int height)
 {
 	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
@@ -15,7 +15,7 @@ HEADER* FillHeader(int width, int height)
 	return header;
 }
 
-//Returns filled BPINFOHEADER
+// Returns filled BPINFOHEADER
 INFOHEADER* FillInfoHeader(int width, int height)
 {
 	INFOHEADER* infoHeader = (INFOHEADER*)malloc(sizeof(INFOHEADER));
@@ -33,20 +33,35 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	return infoHeader;
 }
 
-void CreateBMP2(unsigned int *pointer, int width, int height, int offset)
+void WriteFileHeader(unsigned int *pointer, int width, int height)
 {
+	HEADER* header = FillHeader(width, height);
+	INFOHEADER* infoHeader = FillInfoHeader(width, height);
+
+	memcpy(&pointer, &header, sizeof(HEADER));
+	memcpy((&pointer + sizeof(HEADER)), &infoHeader, sizeof(INFOHEADER));
+}
+
+void CreateBMP2(ThreadParameters params)
+{
+	Pixel pixel;
 	unsigned i, j, k, l, padSize, pixelSize;
 	double min, max;
 	unsigned char bmppad[3] = { 0, 0, 0 };
-	Pixel pixel;
-	HEADER* header = FillHeader(width, height);
-	INFOHEADER* infoHeader = FillInfoHeader(width, height);
+	unsigned int *pointer = params.imagePointer;
+	int width = params.width;
+	int height = params.height;
+	int offset = params.offset;
+	
+	if (params.threadId == 0)
+	{
+		WriteFileHeader(pointer, width, height);
+	}
 
 	pixelSize = sizeof(Pixel);
 	padSize = (4 - (width * 3) % 4) % 4;
 	
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
-	printf("Max: %f\tMin:%f\n", max, min);
 
 	for (i = offset, k = 0; i < (offset + height); i++, k++)
 	{
@@ -74,7 +89,7 @@ void CreateBMP2(unsigned int *pointer, int width, int height, int offset)
 	return newPixel;
 }*/
 
-//Blue
+// Blue
 /*Pixel GetPixelFromDouble(double value, double min, double max)
 {
 	Pixel newPixel;
@@ -87,7 +102,7 @@ void CreateBMP2(unsigned int *pointer, int width, int height, int offset)
 	return newPixel;
 }*/
 
-//Orange noise
+// Orange noise
 /*Pixel GetPixelFromDouble(double value, double min, double max)
 {
 	Pixel newPixel;
@@ -100,7 +115,7 @@ void CreateBMP2(unsigned int *pointer, int width, int height, int offset)
 	return newPixel;
 }*/
 
-//Green noise
+// Green noise
 /*Pixel GetPixelFromDouble(double value, double min, double max)
 {
 	Pixel newPixel;

@@ -76,7 +76,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ByteArrayToBitmapImageConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Kernel\PerlinDLLManager.cs" />
     <Compile Include="Kernel\Stopwatch.cs" />
     <Compile Include="Models\Enumerator types\NoiseEffectsGIF.cs" />

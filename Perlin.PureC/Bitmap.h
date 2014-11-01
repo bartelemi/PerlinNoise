@@ -58,7 +58,7 @@
 	INFOHEADER* FillInfoHeader(int width, int height);
 
 	//Creates BMP using data from NoiseArray
-	void CreateBMP2(unsigned int *pointer, int width, int height, int offset);
+	void CreateBMP2(ThreadParameters params);
 
 
 	//Map double value to Pixel

@@ -31,14 +31,14 @@ namespace Perlin.GUI.ViewModel
         #endregion // Program state
 
         #region Generated image array
-        private byte[,] _generatedImageArray;
-        public byte[,] GeneratedImageArray
+        private byte[] _generatedFileArray;
+        public byte[] GeneratedFileArray
         {
-            get { return _generatedImageArray; }
+            get { return _generatedFileArray; }
             set
             {
-                if(value == _generatedImageArray) return;
-                _generatedImageArray = value;
+                if(value == _generatedFileArray) return;
+                _generatedFileArray = value;
                 OnPropertyChanged();
             }
         }
@@ -227,7 +227,7 @@ namespace Perlin.GUI.ViewModel
         {
             try
             {
-                //File.WriteAllBytes(path, GeneratedImageArray);
+                File.WriteAllBytes(path, GeneratedFileArray);
             }
             catch (Exception ex)
             {
