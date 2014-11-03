@@ -10,7 +10,7 @@
 			DATA STRUCTURES
 ***********************************/
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 
 	// File information
 	typedef struct BMPFILEHEADER {
@@ -21,8 +21,8 @@
 		unsigned int bmpFileOffsetBits;
 	} HEADER;
 
-#pragma pack(pop)
-#pragma pack(push, 1)
+//#pragma pack(pop)
+//#pragma pack(push, 1)
 
 	// Bitmap information
 	typedef struct BMPINFOHEADER {
@@ -39,7 +39,7 @@
 		unsigned int bmpColorImportant;
 	} INFOHEADER;
 
-#pragma pack(pop)
+//#pragma pack(pop)
 
 	// Struct containing info about single pixel
 	typedef struct Pixel {

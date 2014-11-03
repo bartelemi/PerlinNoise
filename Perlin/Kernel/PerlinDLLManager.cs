@@ -33,7 +33,15 @@ namespace Perlin.GUI.Kernel
         #region Constructor
         public PerlinDllManager(GeneratorParameters generatorParameters)
         {
-            GeneratedFileArray = new byte[54 + generatorParameters.Height * generatorParameters.Width * 6];
+            int npad = (3 * generatorParameters.Width * sizeof(byte)) & 3;
+            if (npad != 0)
+            {
+                npad = 4 - npad;
+            }
+            
+            int fileSizeInBytes = 54 + generatorParameters.Height * (3 * generatorParameters.Width + npad * sizeof(byte));
+
+            GeneratedFileArray = new byte[fileSizeInBytes];
             _generatorParameters = generatorParameters;
         }
         #endregion // Constructor
@@ -71,9 +79,10 @@ namespace Perlin.GUI.Kernel
             {
                 ThreadId = threadId,
                 NumberOfThreads = _generatorParameters.NumberOfThreads,
-                CurrentImageOffset = currentOffset + 54,
+                CurrentImageOffset = currentOffset,
                 ImageWidth = _generatorParameters.Width,
-                ImageHeight = thisThreadFileHeight,
+                ImageHeight = _generatorParameters.Height,
+                CurrentImageHeight = thisThreadFileHeight,
                 NumberOfOctaves = _generatorParameters.NumberOfOctaves,
                 Persistence = 1.0,
                 NoiseColor = (int)_generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,

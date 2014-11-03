@@ -5,6 +5,7 @@ typedef struct ThreadParameters
 	unsigned int* imagePointer;
 	int offset;
 	int width;
+	int wholeHeight;
 	int height;
 	int color;
 	int effect;

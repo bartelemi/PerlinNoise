@@ -4,14 +4,14 @@
 HEADER* FillHeader(int width, int height)
 {
 	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
-	(*header).bmpFileType = 0x4D42;						// 'B''M'
-	(*header).bmpFileSize = sizeof(HEADER)				// File header
-						  + sizeof(INFOHEADER)			// Bitmap header
-						  + width*height*(sizeof(Pixel) // Pixels
-		                  + (4 - (width * 3) % 4) % 4); // Padding for data
-	(*header).bmpFileReserved1 = 0;						// Reserved 1
-	(*header).bmpFileReserved2 = 0;						// Reserved 2
-	(*header).bmpFileOffsetBits = 54;					// Offset for data
+	(*header).bmpFileType = 0x4D42;						 // 'B''M'
+	(*header).bmpFileSize = sizeof(HEADER)				 // File header
+						  + sizeof(INFOHEADER)			 // Bitmap header
+						  + height*(width*sizeof(Pixel)  // Pixels
+		                  + (4 - ((width * 3) & 3)) & 3);// Padding for data
+	(*header).bmpFileReserved1 = 0;						 // Reserved 1
+	(*header).bmpFileReserved2 = 0;						 // Reserved 2
+	(*header).bmpFileOffsetBits = 54;					 // Offset for data
 	return header;
 }
 
@@ -38,44 +38,49 @@ void WriteFileHeader(unsigned int *pointer, int width, int height)
 	HEADER* header = FillHeader(width, height);
 	INFOHEADER* infoHeader = FillInfoHeader(width, height);
 
-	memcpy(&pointer, &header, sizeof(HEADER));
-	memcpy((&pointer + sizeof(HEADER)), &infoHeader, sizeof(INFOHEADER));
+	memcpy(pointer, header, sizeof(HEADER));
+	memcpy(pointer + sizeof(HEADER), infoHeader, sizeof(INFOHEADER));
+
+	free(header);
+	free(infoHeader);
 }
 
 void CreateBMP2(ThreadParameters params)
 {
 	Pixel pixel;
-	unsigned i, j, k, l, padSize, pixelSize;
+	unsigned i, j, k, l, pixelSize;
 	double min, max;
-	unsigned char bmppad[3] = { 0, 0, 0 };
-	unsigned int *pointer = params.imagePointer;
 	int width = params.width;
 	int height = params.height;
 	int offset = params.offset;
-	
+	unsigned char pad = 0;
+	int npad = (width * sizeof(Pixel)) & 3;
+	unsigned int *pointer = params.imagePointer;
+
+	if (npad)
+		npad = 4 - npad;
+
 	if (params.threadId == 0)
 	{
-		WriteFileHeader(pointer, width, height);
+		WriteFileHeader(pointer, width, params.wholeHeight);
 	}
+	pointer += sizeof(HEADER) + sizeof(INFOHEADER);
 
 	pixelSize = sizeof(Pixel);
-	padSize = (4 - (width * 3) % 4) % 4;
 	
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
 
 	for (i = offset, k = 0; k < height; i++, k++)
 	{
-		for (j = 0, l = 0; l < width; l++)
+		pointer += i*(width + npad*sizeof(pad));
+		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
-			printf("%d(%d, %d) ", params.threadId, k, l);
 			pixel = GetPixelFromDouble(NoiseArrayDynamic[k][l], min, max, k, l);
-			memcpy((&pointer[i]+j), &pixel, pixelSize);
-			j += pixelSize;
-			memcpy((&pointer[i]+j), &bmppad, padSize);
-			j += padSize;
+			memcpy(pointer + j, &pixel, pixelSize);
 		}
+		for (l = 0; l < npad; l++)
+			memcpy(pointer + j + l, &pad, sizeof(pad));
 	}
-	printf("Skonczylem %d.\n", params.threadId);
 }
 
 //Grey noise

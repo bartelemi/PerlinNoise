@@ -51,7 +51,7 @@ void PrintBMPInfo(const char* bmpName)
 	fclose(f);
 }
 
-void SaveArrayToFile(double array2D[SIZE][SIZE], const char* fileName)
+void SaveArrayToFile(double **array2D, int width, int height, const char* fileName)
 {
 	unsigned i, j;
 	FILE *f;
@@ -61,9 +61,9 @@ void SaveArrayToFile(double array2D[SIZE][SIZE], const char* fileName)
 	if (f == NULL)
 		return;
 
-	for (i = 0; i < SIZE; i++)
+	for (i = 0; i < height; i++)
 	{
-		for (j = 0; j < SIZE; j++)
+		for (j = 0; j < width; j++)
 		{
 			fprintf(f, "%+.5f ", array2D[i][j]);
 		}
@@ -85,7 +85,7 @@ double** alloc2DArray(int width, int height)
 	return pointer;
 }
 
-void free2DArray(double** pointer, int width, int height)
+void free2DArray(double** pointer, int height)
 {
 	int i;
 	for (i = 0; i < height; i++)
