@@ -115,7 +115,6 @@ namespace Perlin.GUI.Kernel
             fixed (byte* fileArray = GeneratedFileArray)
             {
                 currendThreadParameters.ImageByteArrayPointer = (uint*)(fileArray);
-                Console.WriteLine("Wskaznik ImageByteArrayPointer c#: {0}", new UIntPtr(currendThreadParameters.ImageByteArrayPointer).ToUInt32());
                 
                 if (_generatorParameters.GeneratingLibrary == Library.PureC)
                 {

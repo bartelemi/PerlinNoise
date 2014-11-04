@@ -1,15 +1,14 @@
 #include "stdafx.h"
 
-// Returns filled BMPFILEHEADER
 HEADER* FillHeader(int width, int height)
 {
 	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
 	
 	(*header).bmpFileType = 0x4D42;						   // 'B''M'
-	(*header).bmpFileSize = (sizeof(HEADER) 
+	(*header).bmpFileSize = sizeof(HEADER) 
 						  + sizeof(INFOHEADER) 
 						  + (height * (width * 3 
-						  + ((4 - ((width * 3) & 3)) & 3)) ));
+						  + ((4 - ((width * 3) & 3)) & 3)));
 	(*header).bmpFileReserved1 = 0;						   // Reserved 1
 	(*header).bmpFileReserved2 = 0;						   // Reserved 2
 	(*header).bmpFileOffsetBits = 54;					   // Offset for data
@@ -33,6 +32,7 @@ INFOHEADER* FillInfoHeader(int width, int height)
 
 	return header;
 }
+
 void WriteFileHeader(unsigned char *pointer, int width, int height)
 {
 	HEADER* header = FillHeader(width, height);
@@ -65,7 +65,8 @@ void WriteFileHeader(unsigned char *pointer, int width, int height)
 void CreateBMP2(ThreadParameters params)
 {
 	Pixel pixel;
-	unsigned i, j, k, l, pixelSize;
+	unsigned i, j, k, l;
+	unsigned pixelSize = sizeof(Pixel);
 	double min, max;
 	int width = params.width;
 	int height = params.height;
@@ -74,8 +75,6 @@ void CreateBMP2(ThreadParameters params)
 	int npad;
 	unsigned char *pointer = (unsigned char*)params.imagePointer;
 	
-	printPointer(pointer);
-
 	npad = (width * 3) & 3;
 	if (npad)
 		npad = 4 - npad;
@@ -85,27 +84,23 @@ void CreateBMP2(ThreadParameters params)
 		WriteFileHeader(pointer, width, params.wholeHeight);
 	}
 
-	pointer += (unsigned char)54;
-
-	printPointer(pointer);
-
-	pixelSize = sizeof(Pixel);
-	
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
+	
+	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
+		    + (unsigned char)(params.offset*(width*pixelSize + npad));
 
-	for (i = offset, k = 0; k < height; i++, k++)
+	for (i = 0; i < height; i++)
 	{
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
-			pixel = GetPixelFromDouble(NoiseArrayDynamic[k][l], min, max, k, l);
-			//printPointer(*pointer >> i*(width + npad*sizeof(pad)) + j);
-			memcpy(pointer + (unsigned char)(i*(width + npad*sizeof(pad)) + j), &pixel, pixelSize);
+			pixel = GetPixelFromDouble(NoiseArrayDynamic[i][l], min, max, i, l);
+			memcpy(pointer + j, &pixel, pixelSize);
 		}
 		for (l = 0; l < npad; l++)
 		{
-			//printPointer(pointer + i*(width + npad*sizeof(pad)) + j + l);
-			memcpy(pointer + (unsigned char)(i*(width + npad*sizeof(pad)) + j + l), &pad, sizeof(pad));
+			memcpy(pointer + j + l, &pad, sizeof(pad));
 		}
+		pointer += (width*pixelSize + npad);
 	}
 }
 
@@ -166,7 +161,8 @@ Pixel GetPixelFromDouble(double value, double min, double max, int x, int y)
 	unsigned char chVal;
 	double val = sin(x + max * value);
 
-	chVal = ((val - sin(min)) * 255) / (sin(max) - sin(min));
+	//chVal = ((val - sin(min)) * 255) / (sin(max) - sin(min));
+	chVal = (val - min / (max - min)) * 255;
 	newPixel._R = chVal;
 	newPixel._G = chVal / 2;
 	newPixel._B = chVal / 4;

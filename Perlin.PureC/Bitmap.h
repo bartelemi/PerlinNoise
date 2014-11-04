@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /***********************************
@@ -11,6 +10,7 @@
 ***********************************/
 
 #pragma pack(push, 1)
+
 	// File information
 	typedef struct BMPFILEHEADER {
 		unsigned short int bmpFileType;		// 2 bytes
@@ -18,10 +18,13 @@
 		unsigned short int bmpFileReserved1;// 2 bytes
 		unsigned short int bmpFileReserved2;// 2 bytes
 		unsigned int bmpFileOffsetBits;		// 4 bytes
-	} HEADER;								
+	} HEADER;			
+
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+
+	// Bitmap information
 	typedef struct BMPINFOHEADER {
 		unsigned int bmpSize;				// 4 bytes
 		int bmpWidth;						// 4 bytes
@@ -35,6 +38,7 @@
 		unsigned int bmpColorUsed;			// 4 bytes
 		unsigned int bmpColorImportant;		// 4 bytes
 	} INFOHEADER;
+
 #pragma pack(pop)
 
 	// Struct containing info about single pixel
@@ -49,6 +53,8 @@
 ***********************************/
 	// Returns filled BMPFILEHEADER
 	HEADER* FillHeader(int width, int height);
+
+	// Returns filled BMPINFOHEADER
 	INFOHEADER* FillInfoHeader(int width, int height);
 	
 	// Creates BMP using data from NoiseArray
