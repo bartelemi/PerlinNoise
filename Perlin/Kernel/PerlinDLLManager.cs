@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Perlin.GUI.Models;
 using Perlin.GUI.Models.RunParameters;
@@ -26,7 +27,7 @@ namespace Perlin.GUI.Kernel
         #endregion // Import DLLs
 
         #region Fields
-        private readonly GeneratorParameters _generatorParameters; 
+        private readonly GeneratorParameters _generatorParameters;
         private byte[] GeneratedFileArray { get; set; }
         #endregion // Fields
 
@@ -38,7 +39,7 @@ namespace Perlin.GUI.Kernel
             {
                 npad = 4 - npad;
             }
-            
+
             int fileSizeInBytes = 54 + generatorParameters.Height * (3 * generatorParameters.Width + npad * sizeof(byte));
 
             GeneratedFileArray = new byte[fileSizeInBytes];
@@ -98,7 +99,7 @@ namespace Perlin.GUI.Kernel
 
             if (numberOfThreads > 1)
             {
-                if((numberOfLines % numberOfThreads) != 0)
+                if ((numberOfLines % numberOfThreads) != 0)
                 {
                     if (threadId == (numberOfThreads - 1))
                     {
@@ -114,16 +115,17 @@ namespace Perlin.GUI.Kernel
             fixed (byte* fileArray = GeneratedFileArray)
             {
                 currendThreadParameters.ImageByteArrayPointer = (uint*)(fileArray);
-
+                Console.WriteLine("Wskaznik ImageByteArrayPointer c#: {0}", new UIntPtr(currendThreadParameters.ImageByteArrayPointer).ToUInt32());
+                
                 if (_generatorParameters.GeneratingLibrary == Library.PureC)
                 {
                     if (_generatorParameters.GeneratedFileType == FileType.Bitmap)
                     {
-                        GeneratePerlinNoiseBitmapPureC(currendThreadParameters);   
+                            GeneratePerlinNoiseBitmapPureC(currendThreadParameters);
                     }
                     else
                     {
-                        GeneratePerlinNoiseGifPureC(currendThreadParameters);  
+                        GeneratePerlinNoiseGifPureC(currendThreadParameters);
                     }
                 }
                 else

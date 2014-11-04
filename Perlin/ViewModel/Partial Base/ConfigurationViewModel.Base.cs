@@ -213,7 +213,7 @@ namespace Perlin.GUI.ViewModel
             GeneratedFileType = FileType.Bitmap;
             Width = Height = 10;
 
-            NumberOfThreads = 4;
+            NumberOfThreads = 1;
             NumberOfOctaves = 5;
 
             NoiseEffectBmp = NoiseEffects.SinOfNoise;

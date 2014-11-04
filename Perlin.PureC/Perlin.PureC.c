@@ -10,21 +10,23 @@
 
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
-	printf("Alokuje pamiec             - %d\n", params.threadId);
+	//printf("Alokuje pamiec             - %d\n", params.threadId);
 	NoiseArrayDynamic = alloc2DArray(params.width, params.height);
-	printf("Skonczylem alokowac pamiec - %d wskaznik: 0x%p\n", params.threadId, NoiseArrayDynamic);
+	//printf("Skonczylem alokowac pamiec - %d wskaznik: 0x%p\n", params.threadId, NoiseArrayDynamic);
 
-	printf("Tworzenie szumu            - %d\n", params.threadId);
+	//printf("Tworzenie szumu            - %d\n", params.threadId);
 	PerlinNoise_2D(params);
-	printf("Skonczylem szum            - %d\n", params.threadId);
+	//printf("Skonczylem szum            - %d\n", params.threadId);
 
-	printf("Tworzenie bitmapy          - %d\n", params.threadId);
+	//printf("Tworzenie bitmapy          - %d\n", params.threadId);
 	CreateBMP2(params);
-	printf("Skonczylem bitmape         - %d\n", params.threadId);
+	//printf("Skonczylem bitmape         - %d\n", params.threadId);
 
-	printf("Zwalniam pamiec            - %d\n", params.threadId);
+	//printf("Zwalniam pamiec            - %d\n", params.threadId);
 	free2DArray(NoiseArrayDynamic, params.height);
-	printf("Skonczylem zwalniac pamiec - %d\n", params.threadId);
+	//printf("Skonczylem zwalniac pamiec - %d\n", params.threadId);
+
+	PrintBMPInfo("C:\\Users\\Bartek\\Desktop\\JA\\Projekt\\Solution\\Perlin\\Perlin\\bin\\Debug\\output\\bitmaps\\PerlinNoise_2014-10-25 23#36#41.bmp");
 }
 
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)

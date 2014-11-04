@@ -15,11 +15,9 @@ void PrintBMPInfo(const char* bmpName)
 {
 	FILE *f;
 	HEADER header;
-	INFOHEADER infoHeader;
 
 	fopen_s(&f, bmpName, "rb");
 	fread(&header, sizeof(HEADER), 1, f);
-	fread(&infoHeader, sizeof(INFOHEADER), 1, f);
 
 	if (header.bmpFileType != 0x4D42)
 	{
@@ -36,17 +34,17 @@ void PrintBMPInfo(const char* bmpName)
 	printf("\tOffset bits: %u\n\n", header.bmpFileOffsetBits);
 
 	printf(" Info header:\n");
-	printf("\tSize: %u\n", infoHeader.bmpSize);
-	printf("\tWidth: %d\n", infoHeader.bmpWidth);
-	printf("\tHeight: %d\n", infoHeader.bmpHeight);
-	printf("\tPlanes: %hu\n", infoHeader.bmpPlanes);
-	printf("\tBit count: %hu\n", infoHeader.bmpBitCount);
-	printf("\tCompression: %u\n", infoHeader.bmpCompression);
-	printf("\tSize image: %u\n", infoHeader.bmpSizeImage);
-	printf("\tX DPI: %d\n", infoHeader.bmpXPelsPerMeter);
-	printf("\tY DPI: %d\n", infoHeader.bmpYPelsPerMeter);
-	printf("\tColor used: %u\n", infoHeader.bmpColorUsed);
-	printf("\tColor important: %u\n", infoHeader.bmpColorImportant);
+	printf("\tSize: %u\n", header.bmpSize);
+	printf("\tWidth: %d\n", header.bmpWidth);
+	printf("\tHeight: %d\n", header.bmpHeight);
+	printf("\tPlanes: %hu\n", header.bmpPlanes);
+	printf("\tBit count: %hu\n", header.bmpBitCount);
+	printf("\tCompression: %u\n", header.bmpCompression);
+	printf("\tSize image: %u\n", header.bmpSizeImage);
+	printf("\tX DPI: %d\n", header.bmpXPelsPerMeter);
+	printf("\tY DPI: %d\n", header.bmpYPelsPerMeter);
+	printf("\tColor used: %u\n", header.bmpColorUsed);
+	printf("\tColor important: %u\n", header.bmpColorImportant);
 
 	fclose(f);
 }
@@ -93,4 +91,9 @@ void free2DArray(double** pointer, int height)
 		free(pointer[i]);
 	}
 	free(pointer);
+}
+
+void printPointer(unsigned int* p)
+{
+	//printf("Wskaznik: %p\n", p);
 }

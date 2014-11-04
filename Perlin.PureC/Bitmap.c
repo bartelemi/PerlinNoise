@@ -4,45 +4,32 @@
 HEADER* FillHeader(int width, int height)
 {
 	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
-	(*header).bmpFileType = 0x4D42;						 // 'B''M'
-	(*header).bmpFileSize = sizeof(HEADER)				 // File header
-						  + sizeof(INFOHEADER)			 // Bitmap header
-						  + height*(width*sizeof(Pixel)  // Pixels
-		                  + (4 - ((width * 3) & 3)) & 3);// Padding for data
-	(*header).bmpFileReserved1 = 0;						 // Reserved 1
-	(*header).bmpFileReserved2 = 0;						 // Reserved 2
-	(*header).bmpFileOffsetBits = 54;					 // Offset for data
-	return header;
-}
+	
+	(*header).bmpFileType = 0x4D42;						   // 'B''M'			- 0-1
+	(*header).bmpFileSize = (sizeof(HEADER) + (height * (width * 3 + (4 - ((width * 3) & 3)) & 3) ));
+	(*header).bmpFileReserved1 = 0;						   // Reserved 1		- 6-7
+	(*header).bmpFileReserved2 = 0;						   // Reserved 2		- 8-9
+	(*header).bmpFileOffsetBits = 54;					   // Offset for data   - 10-13
 
-// Returns filled BPINFOHEADER
-INFOHEADER* FillInfoHeader(int width, int height)
-{
-	INFOHEADER* infoHeader = (INFOHEADER*)malloc(sizeof(INFOHEADER));
-	(*infoHeader).bmpSize = 40;
-	(*infoHeader).bmpWidth = width;
-	(*infoHeader).bmpHeight = height;
-	(*infoHeader).bmpPlanes = 1;
-	(*infoHeader).bmpBitCount = 24;
-	(*infoHeader).bmpCompression = 0;
-	(*infoHeader).bmpSizeImage = 0;
-	(*infoHeader).bmpXPelsPerMeter = 0x0EC4; // DPI
-	(*infoHeader).bmpYPelsPerMeter = 0x0EC4; // (0x03C3 = 96 dpi, 0x0B13 = 72 dpi)
-	(*infoHeader).bmpColorUsed = 0;
-	(*infoHeader).bmpColorImportant = 0;
-	return infoHeader;
+	(*header).bmpSize = 40;
+	(*header).bmpWidth = width;
+	(*header).bmpHeight = height;
+	(*header).bmpPlanes = 1;
+	(*header).bmpBitCount = 24;
+	(*header).bmpCompression = 0;
+	(*header).bmpSizeImage = 0;
+	(*header).bmpXPelsPerMeter = 0x0EC4;				// DPI
+	(*header).bmpYPelsPerMeter = 0x0EC4;				// (0x03C3 = 96 dpi, 0x0B13 = 72 dpi)
+	(*header).bmpColorUsed = 0;
+	(*header).bmpColorImportant = 0;
+	return header;
 }
 
 void WriteFileHeader(unsigned int *pointer, int width, int height)
 {
 	HEADER* header = FillHeader(width, height);
-	INFOHEADER* infoHeader = FillInfoHeader(width, height);
-
 	memcpy(pointer, header, sizeof(HEADER));
-	memcpy(pointer + sizeof(HEADER), infoHeader, sizeof(INFOHEADER));
-
 	free(header);
-	free(infoHeader);
 }
 
 void CreateBMP2(ThreadParameters params)
@@ -54,17 +41,23 @@ void CreateBMP2(ThreadParameters params)
 	int height = params.height;
 	int offset = params.offset;
 	unsigned char pad = 0;
-	int npad = (width * sizeof(Pixel)) & 3;
-	unsigned int *pointer = params.imagePointer;
+	int npad;
+	char *pointer = (char*)params.imagePointer;
+	
+	printPointer(pointer);
 
+	npad = (width * 3) & 3;
 	if (npad)
 		npad = 4 - npad;
 
 	if (params.threadId == 0)
 	{
-		WriteFileHeader(pointer, width, params.wholeHeight);
+		WriteFileHeader(params.imagePointer, width, params.wholeHeight);
 	}
-	pointer += sizeof(HEADER) + sizeof(INFOHEADER);
+
+	pointer += 54;
+
+	printPointer(pointer);
 
 	pixelSize = sizeof(Pixel);
 	
@@ -72,14 +65,17 @@ void CreateBMP2(ThreadParameters params)
 
 	for (i = offset, k = 0; k < height; i++, k++)
 	{
-		pointer += i*(width + npad*sizeof(pad));
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
 			pixel = GetPixelFromDouble(NoiseArrayDynamic[k][l], min, max, k, l);
-			memcpy(pointer + j, &pixel, pixelSize);
+			//printPointer(*pointer >> i*(width + npad*sizeof(pad)) + j);
+			memcpy(pointer + (i*(width + npad*sizeof(pad)) + j), &pixel, pixelSize);
 		}
 		for (l = 0; l < npad; l++)
-			memcpy(pointer + j + l, &pad, sizeof(pad));
+		{
+			//printPointer(pointer + i*(width + npad*sizeof(pad)) + j + l);
+			memcpy(pointer + (i*(width + npad*sizeof(pad)) + j + l), &pad, sizeof(pad));
+		}
 	}
 }
 
