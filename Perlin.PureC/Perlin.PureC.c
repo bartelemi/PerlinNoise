@@ -26,7 +26,9 @@ PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 	free2DArray(NoiseArrayDynamic, params.height);
 	//printf("Skonczylem zwalniac pamiec - %d\n", params.threadId);
 
-	PrintBMPInfo("C:\\Users\\Bartek\\Desktop\\JA\\Projekt\\Solution\\Perlin\\Perlin\\bin\\Debug\\output\\bitmaps\\PerlinNoise_2014-10-25 23#36#41.bmp");
+	PrintBMPInfo("C:\\Users\\Bartek\\Desktop\\br.bmp");
+	printf("\n\n");
+	PrintBMPInfo("C:\\Users\\Bartek\\Desktop\\br2.bmp");
 }
 
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)

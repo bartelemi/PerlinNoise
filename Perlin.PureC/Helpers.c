@@ -15,38 +15,42 @@ void PrintBMPInfo(const char* bmpName)
 {
 	FILE *f;
 	HEADER header;
+	INFOHEADER info;
 
 	fopen_s(&f, bmpName, "rb");
-	fread(&header, sizeof(HEADER), 1, f);
-
-	if (header.bmpFileType != 0x4D42)
+	if (f != NULL)
 	{
-		printf("Invalid file format.");
-		return;
+		fread(&header, sizeof(HEADER), 1, f);
+		fread(&info, sizeof(INFOHEADER), 1, f);
+		if (header.bmpFileType != 0x4D42)
+		{
+			printf("Invalid file format.");
+			return;
+		}
+
+		printf(bmpName);
+		printf("\n File header:\n");
+		printf("\tFile type: %hu\n", header.bmpFileType);
+		printf("\tFile size: %u bytes\n", header.bmpFileSize);
+		printf("\tReserved1: %hu\n", header.bmpFileReserved1);
+		printf("\tReserved2: %hu\n", header.bmpFileReserved2);
+		printf("\tOffset bits: %u\n\n", header.bmpFileOffsetBits);
+
+		printf(" Info header:\n");
+		printf("\tSize: %u\n", info.bmpSize);
+		printf("\tWidth: %d\n", info.bmpWidth);
+		printf("\tHeight: %d\n", info.bmpHeight);
+		printf("\tPlanes: %hu\n", info.bmpPlanes);
+		printf("\tBit count: %hu\n", info.bmpBitCount);
+		printf("\tCompression: %u\n", info.bmpCompression);
+		printf("\tSize image: %u\n", info.bmpSizeImage);
+		printf("\tX DPI: %d\n", info.bmpXPelsPerMeter);
+		printf("\tY DPI: %d\n", info.bmpYPelsPerMeter);
+		printf("\tColor used: %u\n", info.bmpColorUsed);
+		printf("\tColor important: %u\n", info.bmpColorImportant);
+
+		fclose(f);
 	}
-
-	printf(bmpName);
-	printf("\n File header:\n");
-	printf("\tFile type: %hu\n", header.bmpFileType);
-	printf("\tFile size: %u bytes\n", header.bmpFileSize);
-	printf("\tReserved1: %hu\n", header.bmpFileReserved1);
-	printf("\tReserved2: %hu\n", header.bmpFileReserved2);
-	printf("\tOffset bits: %u\n\n", header.bmpFileOffsetBits);
-
-	printf(" Info header:\n");
-	printf("\tSize: %u\n", header.bmpSize);
-	printf("\tWidth: %d\n", header.bmpWidth);
-	printf("\tHeight: %d\n", header.bmpHeight);
-	printf("\tPlanes: %hu\n", header.bmpPlanes);
-	printf("\tBit count: %hu\n", header.bmpBitCount);
-	printf("\tCompression: %u\n", header.bmpCompression);
-	printf("\tSize image: %u\n", header.bmpSizeImage);
-	printf("\tX DPI: %d\n", header.bmpXPelsPerMeter);
-	printf("\tY DPI: %d\n", header.bmpYPelsPerMeter);
-	printf("\tColor used: %u\n", header.bmpColorUsed);
-	printf("\tColor important: %u\n", header.bmpColorImportant);
-
-	fclose(f);
 }
 
 void SaveArrayToFile(double **array2D, int width, int height, const char* fileName)
