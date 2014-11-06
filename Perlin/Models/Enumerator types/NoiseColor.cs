@@ -11,8 +11,6 @@ namespace Perlin.GUI.Models
         [Description("Zielony")]
         Green,
         [Description("Pomarańczowy")]
-        Orange,
-        [Description("Inny")]
-        Other
+        Orange
     };
 }

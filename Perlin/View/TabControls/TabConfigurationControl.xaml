@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extensions="clr-namespace:Perlin.GUI.Extensions"
              xmlns:models="clr-namespace:Perlin.GUI.Models"
+             xmlns:viewModels="clr-namespace:Perlin.GUI.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="700">
+             d:DesignHeight="500" d:DesignWidth="700"
+             d:DataContext="{d:DesignInstance viewModels:ConfigurationViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style TargetType="{x:Type Expander}">
             <Setter Property="ExpandDirection" Value="Left"/>
@@ -147,13 +149,27 @@
                                 <Label Style="{StaticResource InfoLabel}"
                                Content="Liczba oktaw"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <Slider Minimum="1" Maximum="50" 
+                                    <Slider Minimum="2" Maximum="60" 
                                 Width="100" x:Name="NumOfOctaveSlider"
                                 Value="{Binding NumberOfOctaves}"
                                 VerticalAlignment="Center"
                                 Margin="25,0,0,0"/>
                                     <Label Style="{StaticResource InfoLabel}" 
                                Content="{Binding ElementName=NumOfOctaveSlider, Path=Value}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Persistence -->
+                        <Border Style="{StaticResource ElementBorder}">
+                            <StackPanel>
+                                <Label Style="{StaticResource InfoLabel}"
+                                       Content="Persystencja"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Width="100" Text="{Binding Persistence}"
+                                             PreviewTextInput="PreviewPersistenceInput" 
+                                             DataObject.Pasting="PastingPersistenceHandler"
+                                             />
                                 </StackPanel>
                             </StackPanel>
                         </Border>

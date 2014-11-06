@@ -61,10 +61,20 @@
 	void CreateBMP2(ThreadParameters params);
 
 	// Write file header
-	void WriteFileHeader(char *pointer, int width, int height);
+	void WriteFileHeader(unsigned char *pointer, int width, int height);
 
 	// Map double value to Pixel
-	Pixel GetPixelFromDouble(double value, double min, double max);
-	Pixel GetPixelFromDouble(double value, double min, double max, int x, int y);
+	
+	Pixel GetPixel(int x, int y, double *min, double *max, int color, int effect);
+
+	Pixel Grey(double value, double min, double max);
+	Pixel Blue(double value, double min, double max);
+	Pixel Orange(double value, double min, double max);
+	Pixel Green(double value, double min, double max);
+	void SinNoise(double *value, double *min, double *max, int x, int y);
+	void Experimental(double *value, double *min, double *max, int x, int y);
+
+	// Scales double value to unsigned char 0-255
+	unsigned char ScaleToChar(double x, double min, double max);
 
 #endif

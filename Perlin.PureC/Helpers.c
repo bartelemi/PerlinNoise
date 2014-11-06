@@ -77,11 +77,11 @@ void SaveArrayToFile(double **array2D, int width, int height, const char* fileNa
 double** alloc2DArray(int width, int height)
 {
 	int i;
-	double **pointer = (double**)malloc(height * sizeof(double*));
+	double **pointer = (double**)calloc(height, sizeof(double*));
 
 	for (i = 0; i < height; i++)
 	{
-		pointer[i] = (double*)malloc(width * sizeof(double));
+		pointer[i] = (double*)calloc(width, sizeof(double));
 	}
 
 	return pointer;

@@ -78,18 +78,22 @@
 
 void PerlinNoise_2D(ThreadParameters params)
 {
-	unsigned n = params.octaves;
-	unsigned int i, j, k;
-
+	unsigned int i, j, k = 1;
 	init();
-	for (i = 0; i < params.height; i++)
+	for ( k = 0; k < params.octaves - 1; k++)
 	{
-		for (j = 0; j < params.width; j++)
+		double amplitude = Power(2, k);
+		double frequency = Power(params.persistence, k);
+
+		for (i = 0; i < params.height; i++)
 		{
-			NoiseArrayDynamic[i][j] = noise2(
-				(((double)i + ((double)(rand() % 100) / 100.0))),
-				(((double)j + ((double)(rand() % 100) / 100.0)))
-				);
+			for (j = 0; j < params.width; j++)
+			{
+				NoiseArrayDynamic[i][j] += amplitude * noise2(
+					frequency * ((i + ((double)(rand() % 100) / 100.0))),
+					frequency * ((j + ((double)(rand() % 100) / 100.0)))
+					);
+			}
 		}
 	}
 }

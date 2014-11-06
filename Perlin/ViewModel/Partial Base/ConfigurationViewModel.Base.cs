@@ -132,7 +132,22 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Number of octaves
 
-        // TODO: dodać persystancję
+        #region Persistence
+        private double _persistence;
+
+        public double Persistence
+        {
+            get { return _persistence; }
+            set
+            {
+                if (value > 0)
+                {
+                    _persistence = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion // Persistence
 
         #endregion // Generator
 
@@ -215,6 +230,7 @@ namespace Perlin.GUI.ViewModel
 
             NumberOfThreads = 1;
             NumberOfOctaves = 6;
+            Persistence = 1.0;
 
             NoiseEffectBmp = NoiseEffects.SinOfNoise;
             CurrentNoiseColorBmp = NoiseColor.Green;
