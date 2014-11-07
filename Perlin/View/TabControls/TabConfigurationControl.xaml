@@ -6,6 +6,7 @@
              xmlns:extensions="clr-namespace:Perlin.GUI.Extensions"
              xmlns:models="clr-namespace:Perlin.GUI.Models"
              xmlns:viewModels="clr-namespace:Perlin.GUI.ViewModel"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="700"
              d:DataContext="{d:DesignInstance viewModels:ConfigurationViewModel, IsDesignTimeCreatable=True}">
@@ -209,12 +210,7 @@
                                 <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
-                                  DisplayMemberPath="Description"
-                                  SelectedValue="{Binding CurrentNoiseColorBmp}"
-                                  SelectedValuePath="Value"
-                                  Margin="25,0,25,0"
-                                  Width="100"/>
+                                    <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -252,12 +248,12 @@
                                 <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
+                                    <!--ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
                                   DisplayMemberPath="Description"
                                   SelectedValue="{Binding CurrentNoiseColorGif}"
                                   SelectedValuePath="Value"
                                   Margin="25,0,25,0"
-                                  Width="100"/>
+                                  Width="100"/-->
                                 </StackPanel>
                             </StackPanel>
                         </Border>

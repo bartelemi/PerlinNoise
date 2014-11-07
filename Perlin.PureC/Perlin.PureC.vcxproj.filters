@@ -21,9 +21,6 @@
     <ClInclude Include="Perlin.PureC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadParameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,6 +37,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

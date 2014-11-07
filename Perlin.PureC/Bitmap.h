@@ -41,13 +41,6 @@
 
 #pragma pack(pop)
 
-	// Struct containing info about single pixel
-	typedef struct Pixel {
-		unsigned char _R;
-		unsigned char _G;
-		unsigned char _B;
-	} Pixel;
-
 /***********************************
 		FUNCTION PROTOTYPES
 ***********************************/
@@ -63,18 +56,19 @@
 	// Write file header
 	void WriteFileHeader(unsigned char *pointer, int width, int height);
 
-	// Map double value to Pixel
-	
-	Pixel GetPixel(int x, int y, double *min, double *max, int color, int effect);
+	// Returns new pixel 
+	Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params);
 
-	Pixel Grey(double value, double min, double max);
-	Pixel Blue(double value, double min, double max);
-	Pixel Orange(double value, double min, double max);
-	Pixel Green(double value, double min, double max);
+	// Returns colored pixel
+	Pixel GetColor(double value, double min, double max, Pixel color);
+
+	// Returns colored pixel with negative of given color
+	Pixel GetColorReversed(double value, double min, double max, Pixel color);
+
 	void SinNoise(double *value, double *min, double *max, int x, int y);
 	void Experimental(double *value, double *min, double *max, int x, int y);
 
 	// Scales double value to unsigned char 0-255
-	unsigned char ScaleToChar(double x, double min, double max);
+	int ScaleToChar(double x, double min, double max);
 
 #endif

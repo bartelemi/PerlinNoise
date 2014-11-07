@@ -76,7 +76,12 @@ namespace Perlin.GUI.ViewModel
                     Height = Height,
                     GeneratingBitmapParameters = new BitmapParameters()
                     {
-                        NoiseColorBmp = CurrentNoiseColorBmp,
+                        NoiseColorBmp = new RGBColor()
+                        {
+                            R = NoiseColor.R,
+                            G = NoiseColor.G,
+                            B = NoiseColor.B
+                        },
                         NoiseEffectsBmp = NoiseEffectBmp
                     },
                     GeneratingGifParameters = null

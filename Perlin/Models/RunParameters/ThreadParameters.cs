@@ -10,7 +10,7 @@ namespace Perlin.GUI.Models.RunParameters
         public int ImageWidth;
         public int ImageHeight;
         public int CurrentImageHeight;
-        public int NoiseColor;
+        public RGBColor NoiseColor;
         public int NoiseEffect;
         public int NumberOfOctaves;
         public double Persistence;

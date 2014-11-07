@@ -86,7 +86,7 @@ namespace Perlin.GUI.Kernel
                 CurrentImageHeight = thisThreadFileHeight,
                 NumberOfOctaves = _generatorParameters.NumberOfOctaves,
                 Persistence = 1.0,
-                NoiseColor = (int)_generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,
+                NoiseColor = _generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,
                 NoiseEffect = (int)_generatorParameters.GeneratingBitmapParameters.NoiseEffectsBmp
             };
         }

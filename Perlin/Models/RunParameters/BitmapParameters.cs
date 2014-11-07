@@ -2,7 +2,7 @@
 {
     public class BitmapParameters
     {
-        public NoiseColor NoiseColorBmp { get; set; }
+        public RGBColor NoiseColorBmp { get; set; }
         public NoiseEffects NoiseEffectsBmp { get; set; }
     }
 }

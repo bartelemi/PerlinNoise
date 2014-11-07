@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Perlin.GUI.ViewModel;
 
 namespace Perlin.GUI.View.TabControls
@@ -51,6 +52,5 @@ namespace Perlin.GUI.View.TabControls
         }
 
         #endregion // Events
-
     }
 }

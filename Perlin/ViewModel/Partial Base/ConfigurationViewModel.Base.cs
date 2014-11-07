@@ -166,18 +166,22 @@ namespace Perlin.GUI.ViewModel
         #endregion // Noise effect bitmap
 
         #region Noise color bitmap
-        NoiseColor _noiseColorBmp;
-        public NoiseColor CurrentNoiseColorBmp
+
+        private System.Windows.Media.Color _noiseColor;
+        public System.Windows.Media.Color NoiseColor
         {
-            get { return _noiseColorBmp; }
+            get { return _noiseColor; }
             set
             {
-                _noiseColorBmp = value;
+                if (value == _noiseColor) return;
+                _noiseColor = value;
                 OnPropertyChanged();
             }
         }
 
         #endregion // Noise color bitmap
+
+
         #endregion // Bitmap options
 
         #region GIF options
@@ -195,8 +199,8 @@ namespace Perlin.GUI.ViewModel
         #endregion // Noise effect GIF
 
         #region Noise color GIF
-        NoiseColor _noiseColorGif;
-        public NoiseColor CurrentNoiseColorGif
+        NoiseColorGIF _noiseColorGif;
+        public NoiseColorGIF CurrentNoiseColorGif
         {
             get { return _noiseColorGif; }
             set
@@ -233,7 +237,7 @@ namespace Perlin.GUI.ViewModel
             Persistence = 1.0;
 
             NoiseEffectBmp = NoiseEffects.SinOfNoise;
-            CurrentNoiseColorBmp = NoiseColor.Green;
+            
         }
 
         #endregion // Constructor

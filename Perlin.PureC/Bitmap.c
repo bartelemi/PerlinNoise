@@ -78,7 +78,6 @@ void CreateBMP2(ThreadParameters params)
 		WriteFileHeader(pointer, width, params.wholeHeight);
 
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
-	//printf("min = %f\tmax=%f\n", min, max);
 
 	npad = ((4 - ((width * 3) & 3)) & 3);
 	pointer += (sizeof(HEADER) + sizeof(INFOHEADER)
@@ -88,7 +87,7 @@ void CreateBMP2(ThreadParameters params)
 	{
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
-			pixel = GetPixel(i, l, &min, &max, params.color, params.effect);
+			pixel = GetPixel(i, l, &min, &max, &params);
 			memcpy(pointer + j, &pixel, pixelSize);
 		}
 		for (l = 0; l < npad; l++)
@@ -99,14 +98,14 @@ void CreateBMP2(ThreadParameters params)
 	}
 }
 
-Pixel GetPixel(int x, int y, double *min, double *max, int color, int effect)
+Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
 {
 	Pixel pixel;
 	double val = NoiseArrayDynamic[x][y];
 	double minAfterEffect = *min;
 	double maxAfterEffect = *max;
 
-	switch (effect)
+	switch ((*params).effect)
 	{
 	case 1:
 		SinNoise(&val, &minAfterEffect, &maxAfterEffect, x, y);
@@ -122,23 +121,7 @@ Pixel GetPixel(int x, int y, double *min, double *max, int color, int effect)
 		break;
 	}
 
-	switch (color)
-	{
-	case 0:
-		pixel = Grey(val, minAfterEffect, maxAfterEffect);
-		break;
-	case 1:
-		pixel = Blue(val, minAfterEffect, maxAfterEffect);
-		break;
-	case 2:
-		pixel = Green(val, minAfterEffect, maxAfterEffect);
-		break;
-	case 3:
-		pixel = Orange(val, minAfterEffect, maxAfterEffect);
-		break;
-	default:
-		pixel = Grey(val, minAfterEffect, maxAfterEffect);
-	}
+	pixel = GetColor(val, minAfterEffect, maxAfterEffect, (*params).color);
 
 	return pixel;
 }
@@ -158,46 +141,24 @@ void Experimental(double *value, double *min, double *max, int x, int y)
 	*min = -1.0;
 }
 
-
-//Grey noise
-Pixel Grey(double value, double min, double max)
+Pixel GetColor(double value, double min, double max, Pixel color)
 {
 	Pixel newPixel;
-	unsigned char chVal = ScaleToChar(value, min, max);
-	newPixel._R = newPixel._G = newPixel._B = chVal;
+	unsigned int chVal = ScaleToChar(value, min, max);
+	if (chVal == 0) ++chVal;
+	newPixel._R = (unsigned char)((256 * chVal) / (color._R + 1));
+	newPixel._G = (unsigned char)((256 * chVal) / (color._G + 1));
+	newPixel._B = (unsigned char)((256 * chVal) / (color._B + 1));
 	return newPixel;
 }
 
-// Blue
-Pixel Blue(double value, double min, double max)
+Pixel GetColorReversed(double value, double min, double max, Pixel color)
 {
 	Pixel newPixel;
-	unsigned char chVal = ScaleToChar(value, min, max);
-	newPixel._R = (unsigned char)chVal;
-	newPixel._G = (unsigned char)chVal / 2;
-	newPixel._B = (unsigned char)chVal / 4;
-	return newPixel;
-}
-
-// Orange noise
-Pixel Orange(double value, double min, double max)
-{
-	Pixel newPixel;
-	unsigned char chVal = ScaleToChar(value, min, max);
-	newPixel._R = (unsigned char)chVal / 4;
-	newPixel._G = (unsigned char)chVal / 2;
-	newPixel._B = (unsigned char)chVal;
-	return newPixel;
-}
-
-// Green noise
-Pixel Green(double value, double min, double max)
-{
-	Pixel newPixel;
-	unsigned char chVal = ScaleToChar(value, min, max);
-	newPixel._R = (unsigned char)chVal / 6;
-	newPixel._G = (unsigned char)chVal / 2;
-	newPixel._B = (unsigned char)chVal / 8;
+	unsigned int chVal = ScaleToChar(value, min, max);
+	newPixel._R = (unsigned char)((256 * color._R) / chVal);
+	newPixel._G = (unsigned char)((256 * color._G) / chVal);
+	newPixel._B = (unsigned char)((256 * color._B) / chVal);
 	return newPixel;
 }
 
@@ -211,7 +172,7 @@ Pixel Green(double value, double min, double max)
 	f(x) = ----------------  + a
 	          max - min    
 */
-unsigned char ScaleToChar(double x, double min, double max)
+int ScaleToChar(double x, double min, double max)
 {
-	return (unsigned char)(255 * (x - min) / (max - min));
+	return (int)(255 * (x - min) / (max - min));
 }

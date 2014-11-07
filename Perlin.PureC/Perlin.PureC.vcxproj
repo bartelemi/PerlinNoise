@@ -89,7 +89,7 @@
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="PerlinOriginal.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ThreadParameters.h" />
+    <ClInclude Include="DataStructures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.c" />

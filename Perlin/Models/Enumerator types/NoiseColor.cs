@@ -2,7 +2,7 @@
 
 namespace Perlin.GUI.Models
 {
-    public enum NoiseColor
+    public enum NoiseColorGIF
     {
         [Description("Szary")]
         Gray,

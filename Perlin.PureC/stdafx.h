@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Globals.h"
-#include "ThreadParameters.h"
+#include "DataStructures.h"
 #include "Bitmap.h"
 #include "MyMath.h"
 #include "PerlinNoise.h"
