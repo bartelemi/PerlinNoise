@@ -6,9 +6,8 @@ TODO:																									  |
 																										  |
   ========================================================================================================+
   Perlin.GUI																							  |
-	* Poprawić widok karty konfiguracji.             								                      |
-	  Możliwe rozwinięcie tylko jednej zakładki. Po wciśnięciu Generuj ma się to zwinąć.                  |
 	* Podgląd minatur w przeglądarkach plików															  |
+	                                                                                                      |
   ========================================================================================================+
   Perlin_C																								  | 
   * Dodać nowe efekty																					  |
