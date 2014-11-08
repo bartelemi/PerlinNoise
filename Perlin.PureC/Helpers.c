@@ -5,10 +5,11 @@ void printThreadParamInfo(ThreadParameters params)
 {
 	printf("Thread ID: %d", params.threadId);
 	printf(" of %d.\n", params.threadsCount);
-	printf("Image %d x %d px\n", params.width, params.height);
+	printf("Image %d x %d px\n", params.width, params.wholeHeight);
 	printf("Image pointer: %p\n", params.imagePointer);
 	printf("Current image offset: %d\n", params.offset);
-	printf("Color: %d\tEffect: %d\tPersistence: %d\n", params.color, params.effect, params.persistence);
+	printf("Color: R%u G%u B%u\tEffect: %d\tPersistence: %f\n", 
+		   params.color._R, params.color._G, params.color._B, params.effect, params.persistence);
 }
 
 void PrintBMPInfo(const char* bmpName)
@@ -99,5 +100,5 @@ void free2DArray(double** pointer, int height)
 
 void printPointer(unsigned int* p)
 {
-	//printf("Wskaznik: %p\n", p);
+	printf("Wskaznik: %p\n", p);
 }

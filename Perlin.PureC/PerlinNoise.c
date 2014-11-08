@@ -50,32 +50,6 @@
 //	//return CosineInterpolation(i1, i2, fractional_Y);
 //}
 
-//void PerlinNoise_2D()
-//{
-//	unsigned n = basicOctaveCount - 1;
-//	unsigned int i, j, k;
-//	//for (k = n; k > 0; k--)
-//	//{
-//		//double x, y;
-//		//double frequency = Power(2, k);
-//		//double amplitude = Power(persistence, k);
-//		init();
-//		for (i = 0; i < SIZE; i++)
-//		{
-//			for (j = 0; j < SIZE; j++)
-//			{
-//				NoiseArray[i][j] = noise2(
-//					(((double)i + ((double)(rand() % 100) / 100.0))),
-//					(((double)j + ((double)(rand() % 100) / 100.0)))
-//					);
-//				//x = (i + (((int)PointArray[i][j]) / 100.0));
-//				//y = (j + (PointArray[i][j]) - (int)PointArray[i][j]);
-//				//NoiseArray[i][j] += amplitude * noise2(x, y);
-//			}
-//		}
-//	//}
-//}
-
 void PerlinNoise_2D(ThreadParameters params)
 {
 	unsigned int i, j, k = 1;

@@ -67,6 +67,7 @@
 
 	void SinNoise(double *value, double *min, double *max, int x, int y);
 	void Experimental(double *value, double *min, double *max, int x, int y);
+	void Experimental2(double *value, double *min, double *max, int x, int y);
 
 	// Scales double value to unsigned char 0-255
 	int ScaleToChar(double x, double min, double max);

@@ -185,8 +185,6 @@
     </Content>
     <Content Include="libs\Xceed.Wpf.Toolkit.dll" />
     <None Include="README.txt" />
-    <EmbeddedResource Include="Resources\EmptyBMPFolder.png" />
-    <EmbeddedResource Include="Resources\Images\EmptyFolder\EmptyGIFFolder.gif" />
     <Resource Include="Resources\Images\Tab icons\Bitmap.png" />
     <Resource Include="Resources\Images\Tab icons\Config.png" />
     <Resource Include="Resources\Images\Tab icons\Gif.png" />

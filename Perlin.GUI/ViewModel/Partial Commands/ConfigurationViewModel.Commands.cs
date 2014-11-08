@@ -72,6 +72,7 @@ namespace Perlin.GUI.ViewModel
                     GeneratingLibrary = Library.PureC,
                     NumberOfThreads = NumberOfThreads,
                     NumberOfOctaves = NumberOfOctaves,
+                    Persistence = Persistence,
                     Width = Width,
                     Height = Height,
                     GeneratingBitmapParameters = new BitmapParameters()
