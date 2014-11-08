@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Media;
 using Perlin.GUI.Helpers;
 using Perlin.GUI.Kernel;
 using Perlin.GUI.Models;
@@ -12,12 +13,28 @@ namespace Perlin.GUI.ViewModel
         #region Fields
         private PerlinDllManager _perlinDllManager { get; set; }
         private readonly Stopwatch _stopwatch;
+        private readonly int _maxFileSize;
+        private readonly int _minFileSize ;
         #endregion // Fields
 
         #region Properties
+
+        #region GenerationTime
+        private TimeSpan _generationTime;
+        public TimeSpan GenerationTime
+        {
+            get { return _generationTime; }
+            set
+            {
+                if (value.Equals(_generationTime)) return;
+                _generationTime = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion // GenerationTime
+
         #region Program state
         private GeneratorState _programState;
-
         public GeneratorState ProgramState
         {
             get { return _programState; }
@@ -45,14 +62,15 @@ namespace Perlin.GUI.ViewModel
         #endregion // Generated file array
 
         #region Main
-        #region Generating library
 
+        #region Generating library
         private Library _generatingLibrary;
         public Library GeneratingLibrary
         {
             get { return _generatingLibrary; }
             set
             {
+                if (value == _generatingLibrary) return;
                 _generatingLibrary = value; 
                 OnPropertyChanged();
             }
@@ -60,13 +78,13 @@ namespace Perlin.GUI.ViewModel
         #endregion // Generating library
 
         #region File type
-
         private FileType _fileType;
         public FileType GeneratedFileType
         {
             get { return _fileType; }
             set
             {
+                if(value == _fileType) return;
                 _fileType = value;
                 OnPropertyChanged();
             }
@@ -80,6 +98,7 @@ namespace Perlin.GUI.ViewModel
             get { return _numberOfThreads; }
             set
             {
+                if (value == _numberOfThreads) return;
                 _numberOfThreads = value;
                 OnPropertyChanged();
             }
@@ -94,12 +113,13 @@ namespace Perlin.GUI.ViewModel
             set
             {
                 if (value == _height) return;
-                if (value > 10000) value = 10000;
-                if (value < 10) value = 10;
+                if (value > _maxFileSize) value = _maxFileSize;
+                if (value < _minFileSize) value = _minFileSize;
                 _height = value;
                 OnPropertyChanged();
             }
         }
+
         private int _width;
         public int Width
         {
@@ -107,8 +127,8 @@ namespace Perlin.GUI.ViewModel
             set
             {
                 if (value == _width) return;
-                if (value > 10000) value = 10000;
-                if (value < 10) value = 10;
+                if (value > _maxFileSize) value = _maxFileSize;
+                if (value < _minFileSize) value = _minFileSize;
                 _width = value;
                 OnPropertyChanged();
             }
@@ -148,7 +168,6 @@ namespace Perlin.GUI.ViewModel
             }
         }
         #endregion // Persistence
-
         #endregion // Generator
 
         #region Bitmap options
@@ -180,8 +199,6 @@ namespace Perlin.GUI.ViewModel
         }
 
         #endregion // Noise color bitmap
-
-
         #endregion // Bitmap options
 
         #region GIF options
@@ -218,16 +235,20 @@ namespace Perlin.GUI.ViewModel
         #region Constructor
         public ConfigurationViewModel()
         {
+            _minFileSize = 10;
+            _maxFileSize = 20000;
+
             InitializeCommands();
             InitializeProperties();
 
-
             _stopwatch = new Stopwatch(TimeSpan.FromMilliseconds(10));
-            //_stopwatch.Updated += updatedTime =>{Stopwatch} 
+            _stopwatch.Updated += updatedTime => { GenerationTime = updatedTime; };
         }
 
         private void InitializeProperties()
         {
+            ProgramState = GeneratorState.WaitinfForUserAction;
+
             GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;
             Width = Height = 1000;
@@ -237,7 +258,8 @@ namespace Perlin.GUI.ViewModel
             Persistence = 1.0;
 
             NoiseEffectBmp = NoiseEffects.SinOfNoise;
-            
+            NoiseColor = new Color();
+            NoiseColor = Color.FromRgb(50, 100, 200);
         }
 
         #endregion // Constructor
