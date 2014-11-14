@@ -251,11 +251,11 @@ namespace Perlin.GUI.ViewModel
 
             GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;
-            Width = Height = 1000;
+            Width = Height = 10;//1000;
 
-            NumberOfThreads = 1;
+            NumberOfThreads = 2; //1;
             NumberOfOctaves = 6;
-            Persistence = 1.0;
+            Persistence = 0.025;
 
             NoiseEffectBmp = NoiseEffects.SinOfNoise;
             NoiseColor = new Color();

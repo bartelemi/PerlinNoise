@@ -9,15 +9,15 @@ namespace Perlin.GUI.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        [DllImport("Kernel32")]
-        public static extern void AllocConsole();
+        //[DllImport("Kernel32")]
+        //public static extern void AllocConsole();
 
-        [DllImport("Kernel32")]
-        public static extern void FreeConsole();
+        //[DllImport("Kernel32")]
+        //public static extern void FreeConsole();
 
         public MainWindow()
         {
-            AllocConsole();
+            //AllocConsole();
             InitializeComponent();
             DataContext = new MainWindowViewModel();
         }

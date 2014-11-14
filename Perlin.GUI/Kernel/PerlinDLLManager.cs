@@ -62,7 +62,7 @@ namespace Perlin.GUI.Kernel
                 });
             }
             await Task.WhenAll(tasks);
-
+            
             return GeneratedFileArray;
         }
 
@@ -107,6 +107,7 @@ namespace Perlin.GUI.Kernel
                     }
                 }
             }
+            Console.WriteLine("ThreadId: {0} lines: {1}", threadId, numberOfLines);
             return numberOfLines;
         }
 

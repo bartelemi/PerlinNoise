@@ -37,7 +37,7 @@ long Sqrt(long i)
 
 void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max)
 {
-	unsigned i, j;
+	int i, j;
 	*min = array[0][0];
 	*max = array[0][0];
 

@@ -6,12 +6,11 @@
 
 #include "stdafx.h"
 #include "Perlin.PureC.h"
-#include "Helpers.h"
+#include <time.h>
 
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {	
 	srand((unsigned)time(NULL));
-	printThreadParamInfo(params);
 	printf("Alokuje pamiec             - %d\n", params.threadId);
 	NoiseArrayDynamic = alloc2DArray(params.width, params.height);
 	printf("Skonczylem alokowac pamiec - %d\n", params.threadId);

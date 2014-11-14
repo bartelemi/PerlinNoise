@@ -1,6 +1,33 @@
 #include "stdafx.h"
 #include "Helpers.h"
 
+double** alloc2DArray(int width, int height)
+{
+	int i;
+	double **pointer = calloc(height, sizeof(double*));
+	printPointer(pointer);
+	for (i = 0; i < height; i++)
+	{
+		pointer[i] = calloc(width, sizeof(double));
+		printPointer(pointer[i]);
+	}
+
+	return pointer;
+}
+
+void free2DArray(double** pointer, int height)
+{
+	int i;
+	printPointer(pointer);
+	for (i = 0; i < height; i++)
+	{
+		printPointer(pointer[i]);
+		free(pointer[i]);
+	}
+	free(pointer);
+}
+
+
 void printThreadParamInfo(ThreadParameters params)
 {
 	printf("Thread ID: %d", params.threadId);
@@ -56,7 +83,7 @@ void PrintBMPInfo(const char* bmpName)
 
 void SaveArrayToFile(double **array2D, int width, int height, const char* fileName)
 {
-	unsigned i, j;
+	int i, j;
 	FILE *f;
 
 	fopen_s(&f, fileName, "wt");
@@ -75,30 +102,7 @@ void SaveArrayToFile(double **array2D, int width, int height, const char* fileNa
 	fclose(f);
 }
 
-double** alloc2DArray(int width, int height)
-{
-	int i;
-	double **pointer = (double**)calloc(height, sizeof(double*));
-
-	for (i = 0; i < height; i++)
-	{
-		pointer[i] = (double*)calloc(width, sizeof(double));
-	}
-
-	return pointer;
-}
-
-void free2DArray(double** pointer, int height)
-{
-	int i;
-	for (i = 0; i < height; i++)
-	{
-		free(pointer[i]);
-	}
-	free(pointer);
-}
-
-void printPointer(unsigned int* p)
+void printPointer(void* p)
 {
 	printf("Wskaznik: %p\n", p);
 }

@@ -324,11 +324,12 @@
                             IsEnabled="{Binding ProgramState, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=GeneratedFile, Mode=OneWay}"/>
                 </StackPanel>
             </Border>
-            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="30" 
+            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="20" 
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0 0 20 0">
                 <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0:d2}s {1:d3}ms">
+                    <MultiBinding StringFormat="{}{0:d2}min {1:d2}s {2:d3}ms">
+                        <Binding Path="GenerationTime.Minutes"/>
                         <Binding Path="GenerationTime.Seconds"/>
                         <Binding Path="GenerationTime.Milliseconds"/>
                     </MultiBinding>

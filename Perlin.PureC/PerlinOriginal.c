@@ -2,19 +2,17 @@
 #include "PerlinOriginal.h"
 
 #define B 0x1000
-#define BM 0xfff
+#define BMask 0xfff
 
 #define N 0x10000
-#define NP 12   /* 2^N */
-#define NM 0xffff
 
 static int p[B + B + 2];
 static double g2[B + B + 2][2];
 
 #define setup(i,b0,b1,r0,r1)\
 	(t) = i + N;\
-	(b0) = ((int)(t)) & BM;\
-	(b1) = ((b0)+1) & BM;\
+	(b0) = ((int)(t)) & BMask;\
+	(b1) = ((b0)+1) & BMask;\
 	(r0) = (t) - (int)(t);\
 	(r1) = (r0) - 1.0;
 
@@ -52,7 +50,7 @@ double noise2(double x, double y)
 	return LERP(a, b, sy);
 }
 
-static void normalize2(double v[2])
+static void normalize(double v[2])
 {
 	double s = sqrt(v[0] * v[0] + v[1] * v[1]);
 	v[0] /= s;
@@ -70,7 +68,7 @@ void init(void)
 		for (j = 0; j < 2; j++)
 			g2[i][j] = (double)((rand() % (B + B)) - B) / B;
 
-		normalize2(g2[i]);
+		normalize(g2[i]);
 	}
 
 	while (--i) 
