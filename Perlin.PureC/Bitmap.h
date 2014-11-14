@@ -65,9 +65,12 @@
 	// Returns colored pixel with negative of given color
 	Pixel GetColorReversed(double value, double min, double max, Pixel color);
 
+	// Noise effects
 	void SinNoise(double *value, double *min, double *max, int x, int y);
-	void Experimental(double *value, double *min, double *max, int x, int y);
+	void SqrtNoise(double *value, double *min, double *max, int x, int y);
+	void Experimental1(double *value, double *min, double *max, int x, int y);
 	void Experimental2(double *value, double *min, double *max, int x, int y);
+	void Experimental3(double *value, double *min, double *max, int x, int y);
 
 	// Scales double value to unsigned char 0-255
 	int ScaleToChar(double x, double min, double max);

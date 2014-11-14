@@ -2,7 +2,7 @@
 {
     public enum GeneratorState
     {
-        WaitinfForUserAction,
+        WaitingForUserAction,
         ComputingFile,
         GeneratedFile,
         Error

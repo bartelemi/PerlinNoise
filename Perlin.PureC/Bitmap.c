@@ -92,10 +92,16 @@ Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
 		SinNoise(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 2:
-		Experimental(&val, &minAfterEffect, &maxAfterEffect, x, y);
+		SqrtNoise(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 3:
+		Experimental1(&val, &minAfterEffect, &maxAfterEffect, x, y);
+		break;
+	case 4:
 		Experimental2(&val, &minAfterEffect, &maxAfterEffect, x, y);
+		break;
+	case 5:
+		Experimental3(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 0:
 	default:
@@ -107,15 +113,23 @@ Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
 	return pixel;
 }
 
-// Sin noise
 void SinNoise(double *value, double *min, double *max, int x, int y)
 {
 	*value = sin((*value)) * sin(x) * sin(y);
-	*max = *max;
-	*min = (*max > (*min * (-1))) ? (*max * -1) : (*min);
+	*max = (*max);
+	*min = ((*max) > ((*min) * (-1))) ? ((*max) * -1) : (*min);
 }
 
-void Experimental(double *value, double *min, double *max, int x, int y)
+void SqrtNoise(double *value, double *min, double *max, int x, int y)
+{
+	if ((*value) < 0) (*value) *= (-1);
+
+	*value = sqrt((*max) * (*value));
+	*max = sqrt((*max) * (*max));
+	*min = 0.0;
+}
+
+void Experimental1(double *value, double *min, double *max, int x, int y)
 {
 	*value = 10 - sin(y + *max * (*value));
 	*max = +11.0;
@@ -127,6 +141,13 @@ void Experimental2(double *value, double *min, double *max, int x, int y)
 	*value = sin(sqrt(y + *max * (*value)));
 	*max = +1.0;
 	*min = -1.0;
+}
+
+void Experimental3(double *value, double *min, double *max, int x, int y)
+{
+	*value = 2 * sin((*value)) + sqrt(y + *max);
+	*max = +2.0 + sqrt(y + *max);
+	*min = -2.0;
 }
 
 Pixel GetColor(double value, double min, double max, Pixel color)

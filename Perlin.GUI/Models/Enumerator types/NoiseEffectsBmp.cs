@@ -4,11 +4,11 @@ namespace Perlin.GUI.Models
 {
     public enum NoiseEffectsBmp
     {
-        [Description("Zwykły szum")]
+        [Description("Szum")]
         Noise,
         [Description("Sin(szum)")]
         SinOfNoise,
-        [Description("Sqrt(szum)")]
+        [Description("Sqrt(|szum|)")]
         SqrtOfNoise,
         [Description("Eksperymentalny-X01")]
         Experimental_1,

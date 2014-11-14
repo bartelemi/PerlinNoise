@@ -227,7 +227,7 @@ namespace Perlin.GUI.ViewModel
 
         private void InitializeProperties()
         {
-            ProgramState = GeneratorState.WaitinfForUserAction;
+            ProgramState = GeneratorState.WaitingForUserAction;
 
             GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;

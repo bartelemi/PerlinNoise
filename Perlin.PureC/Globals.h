@@ -7,6 +7,4 @@
 	// Result noise array
 	double **NoiseArrayDynamic;
 
-	// Generated bitmap array
-	//unsigned char **fileArray;
 #endif
