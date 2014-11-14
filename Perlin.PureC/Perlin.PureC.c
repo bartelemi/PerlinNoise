@@ -36,3 +36,39 @@ PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)
 {
 	printf("Not implemented.\n");
 }
+
+static void normalize(double v[2])
+{
+	double s = sqrt(v[0] * v[0] + v[1] * v[1]);
+	v[0] /= s;
+	v[1] /= s;
+}
+
+PERLINPUREC_API void Init(void)
+{
+	int i, j, k;
+
+	for (i = 0; i < B; i++)
+	{
+		p[i] = i;
+
+		for (j = 0; j < 2; j++)
+			g2[i][j] = (float)((rand() % (B + B)) - B) / B;
+
+		normalize(g2[i]);
+	}
+
+	while (--i)
+	{
+		k = p[i];
+		p[i] = p[j = rand() % B];
+		p[j] = k;
+	}
+
+	for (i = 0; i < B + 2; i++)
+	{
+		p[B + i] = p[i];
+		for (j = 0; j < 2; j++)
+			g2[B + i][j] = g2[i][j];
+	}
+}

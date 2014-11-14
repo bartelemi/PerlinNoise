@@ -14,10 +14,13 @@ namespace Perlin.GUI.Kernel
     class PerlinDllManager
     {
         #region Import DLLs
+        [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Init", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Init();
+
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GeneratePerlinNoiseBitmapPureC(ThreadParameters threadParameters);
 
-        [DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseGif", CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseGif", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GeneratePerlinNoiseGifPureC(ThreadParameters threadParameters);
 
         //[DllImport("Perlin.Asm.dll", EntryPoint = "GeneratePerlinNoiseBitmap")]
@@ -44,6 +47,7 @@ namespace Perlin.GUI.Kernel
 
             GeneratedFileArray = new byte[fileSizeInBytes];
             _generatorParameters = generatorParameters;
+            Init();
         }
         #endregion // Constructor
 

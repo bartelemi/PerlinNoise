@@ -231,9 +231,9 @@ namespace Perlin.GUI.ViewModel
 
             GeneratingLibrary = Library.PureC;
             GeneratedFileType = FileType.Bitmap;
-            Width = Height = 10;//1000;
+            Width = Height = 1000;
 
-            NumberOfThreads = 2; //1;
+            NumberOfThreads = 2;
             NumberOfOctaves = 6;
             Persistence = 0.025;
 

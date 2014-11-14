@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "PerlinOriginal.h"
 
-#include <float.h>
-
 //double Noise2D(double x, double y, __int32 octave)
 //{
 //	__int32 temp = (x + y) * 101;
@@ -57,7 +55,6 @@ void PerlinNoise_2D(double** noiseArray, ThreadParameters params)
 	int k;
 	size_t i, j;
 
-	init();
 	for (k = 0; k < params.octaves - 1; k++)
 	{
 		double x, y;
@@ -68,7 +65,7 @@ void PerlinNoise_2D(double** noiseArray, ThreadParameters params)
 		{
 			for (j = 0; j < params.width; j++)
 			{
-				x = frequency * (i + ((rand() % 100) / 100.0));
+				x = frequency * (i + params.offset + ((rand() % 100) / 100.0));
 				y = frequency * (j + ((rand() % 100) / 100.0));
 				noiseArray[i][j] += amplitude * noise2(x, y);
 			}
