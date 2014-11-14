@@ -62,7 +62,7 @@ namespace Perlin.GUI.Kernel
                 });
             }
             await Task.WhenAll(tasks);
-
+            
             return GeneratedFileArray;
         }
 
@@ -85,7 +85,7 @@ namespace Perlin.GUI.Kernel
                 ImageHeight = _generatorParameters.Height,
                 CurrentImageHeight = thisThreadFileHeight,
                 NumberOfOctaves = _generatorParameters.NumberOfOctaves,
-                Persistence = 1.0,
+                Persistence = _generatorParameters.Persistence,
                 NoiseColor = _generatorParameters.GeneratingBitmapParameters.NoiseColorBmp,
                 NoiseEffect = (int)_generatorParameters.GeneratingBitmapParameters.NoiseEffectsBmp
             };
@@ -107,6 +107,7 @@ namespace Perlin.GUI.Kernel
                     }
                 }
             }
+            Console.WriteLine("ThreadId: {0} lines: {1}", threadId, numberOfLines);
             return numberOfLines;
         }
 

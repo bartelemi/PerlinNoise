@@ -21,6 +21,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -49,18 +50,23 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>Custom</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PERLINPUREC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAsManaged>false</CompileAsManaged>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsC</CompileAs>
+      <CallingConvention>Cdecl</CallingConvention>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <CLRThreadAttribute>STAThreadingAttribute</CLRThreadAttribute>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(OutDir)Perlin.PureC.dll" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command>
+      <Command>xcopy "$(OutDir)Perlin.PureC.dll" "$(SolutionDir)Perlin.GUI\libs" /Y /I
+xcopy "$(OutDir)Perlin.PureC.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -3,6 +3,7 @@
     class GeneratorParameters
     {
         public int NumberOfThreads { get; set; }
+        public double Persistence { get; set; }
         public Library GeneratingLibrary { get; set; }
         public FileType GeneratedFileType { get; set; }
         public int NumberOfOctaves { get; set; }

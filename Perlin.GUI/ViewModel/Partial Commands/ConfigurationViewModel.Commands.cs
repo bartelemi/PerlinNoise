@@ -72,15 +72,16 @@ namespace Perlin.GUI.ViewModel
                     GeneratingLibrary = Library.PureC,
                     NumberOfThreads = NumberOfThreads,
                     NumberOfOctaves = NumberOfOctaves,
+                    Persistence = Persistence,
                     Width = Width,
                     Height = Height,
                     GeneratingBitmapParameters = new BitmapParameters()
                     {
                         NoiseColorBmp = new RGBColor()
                         {
-                            R = NoiseColor.R,
-                            G = NoiseColor.G,
-                            B = NoiseColor.B
+                            R = NoiseColorBmp.R,
+                            G = NoiseColorBmp.G,
+                            B = NoiseColorBmp.B
                         },
                         NoiseEffectsBmp = NoiseEffectBmp
                     },

@@ -12,7 +12,14 @@
              d:DataContext="{d:DesignInstance viewModels:ConfigurationViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style TargetType="{x:Type Expander}">
-            <Setter Property="IsExpanded" Value="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Mode=OneWay}"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="IsExpanded" Value="False"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="IsExpanded" Value="True"/>
+                </Trigger>
+            </Style.Triggers>
             <Setter Property="ExpandDirection" Value="Left"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="DarkTurquoise"/>
@@ -71,23 +78,23 @@
             <Grid ZIndex="99" 
                   IsEnabled="{Binding ProgramState, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=!ComputingFile}">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
                 <!-- Ogólne -->
                 <Canvas Grid.Row="0">
                     <Expander>
                         <Expander.Header>
-                            <TextBlock Text="Ogólne">
+                            <TextBlock Text="Ogólne" Margin="3 3 3 3">
                                 <TextBlock.LayoutTransform >
                                     <RotateTransform Angle="90"/>
                                 </TextBlock.LayoutTransform>
                             </TextBlock>
                         </Expander.Header>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <WrapPanel>
                                 <!-- Select ASM/C -->
                                 <Border Style="{StaticResource ElementBorder}">
@@ -147,7 +154,7 @@
                 <Canvas Grid.Row="1">
                     <Expander>
                         <Expander.Header>
-                            <TextBlock Text="Generator">
+                            <TextBlock Text="Generator" Margin="3 6 3 3">
                                 <TextBlock.LayoutTransform>
                                     <RotateTransform Angle="90"/>
                                 </TextBlock.LayoutTransform>
@@ -212,9 +219,9 @@
 
                 <!-- Bitmapa -->
                 <Canvas Grid.Row="2">
-                    <Expander>
+                    <Expander IsEnabled="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=!Gif, Mode=OneWay}">
                         <Expander.Header>
-                            <TextBlock Text="Bitmapa">
+                            <TextBlock Text="Bitmapa" Margin="3 0 3 3">
                                 <TextBlock.LayoutTransform >
                                     <RotateTransform Angle="90"/>
                                 </TextBlock.LayoutTransform>
@@ -244,7 +251,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                     Content="Kolor"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
+                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColorBmp}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -254,9 +261,9 @@
 
                 <!-- GIF -->
                 <Canvas Grid.Row="3">
-                    <Expander>
+                    <Expander IsEnabled="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=!Bitmap, Mode=OneWay}">
                         <Expander.Header>
-                            <TextBlock Text="GIF">
+                            <TextBlock Text="GIF" Margin="3 10 3 3">
                                 <TextBlock.LayoutTransform >
                                     <RotateTransform Angle="90"/>
                                 </TextBlock.LayoutTransform>
@@ -284,12 +291,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <!--ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseColor}}}"
-                                  DisplayMemberPath="Description"
-                                  SelectedValue="{Binding CurrentNoiseColorGif}"
-                                  SelectedValuePath="Value"
-                                  Margin="25,0,25,0"
-                                  Width="100"/-->
+                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColorGif}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -324,11 +326,12 @@
                             IsEnabled="{Binding ProgramState, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=GeneratedFile, Mode=OneWay}"/>
                 </StackPanel>
             </Border>
-            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="30" 
+            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="20" 
                        HorizontalAlignment="Right" VerticalAlignment="Center"
                        Margin="0 0 20 0">
                 <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0:d2}s {1:d3}ms">
+                    <MultiBinding StringFormat="{}{0:d2}min {1:d2}s {2:d3}ms">
+                        <Binding Path="GenerationTime.Minutes"/>
                         <Binding Path="GenerationTime.Seconds"/>
                         <Binding Path="GenerationTime.Milliseconds"/>
                     </MultiBinding>

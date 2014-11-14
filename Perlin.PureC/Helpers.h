@@ -16,4 +16,4 @@ double** alloc2DArray(int width, int height);
 void free2DArray(double** pointer, int height);
 
 // Print pointer value
-void printPointer(unsigned int* p);
+void printPointer(void* p);

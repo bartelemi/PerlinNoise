@@ -2,22 +2,22 @@
 
 HEADER* FillHeader(int width, int height)
 {
-	HEADER *header = (HEADER*)malloc(sizeof(HEADER));
-	
-	(*header).bmpFileType = 0x4D42;						   // 'B''M'
+	HEADER *header = malloc(sizeof(HEADER));
+	(*header).bmpFileType = 0x4D42;
 	(*header).bmpFileSize = sizeof(HEADER) 
 						  + sizeof(INFOHEADER) 
 						  + (height * (width * 3 
 						  + ((4 - ((width * 3) & 3)) & 3)));
-	(*header).bmpFileReserved1 = 0;						   // Reserved 1
-	(*header).bmpFileReserved2 = 0;						   // Reserved 2
-	(*header).bmpFileOffsetBits = 54;					   // Offset for data
+	(*header).bmpFileReserved1 = 0;		  
+	(*header).bmpFileReserved2 = 0;
+	(*header).bmpFileOffsetBits = 54;
+
 	return header;
 }
 
 INFOHEADER* FillInfoHeader(int width, int height)
 {
-	INFOHEADER* header = (INFOHEADER*)malloc(sizeof(INFOHEADER));
+	INFOHEADER* header = malloc(sizeof(INFOHEADER));
 	(*header).bmpSize = 40;
 	(*header).bmpWidth = width;
 	(*header).bmpHeight = height;
@@ -38,26 +38,9 @@ void WriteFileHeader(unsigned char *pointer, int width, int height)
 	HEADER* header = FillHeader(width, height);
 	INFOHEADER* info = FillInfoHeader(width, height);
 
-	printf("\tFile type: %hu\n", (*header).bmpFileType);
-	printf("\tFile size: %u bytes\n", (*header).bmpFileSize);
-	printf("\tReserved1: %hu\n", (*header).bmpFileReserved1);
-	printf("\tReserved2: %hu\n", (*header).bmpFileReserved2);
-	printf("\tOffset bits: %u\n\n", (*header).bmpFileOffsetBits);
-
-	printf("\tSize: %u\n", (*info).bmpSize);
-	printf("\tWidth: %d\n", (*info).bmpWidth);
-	printf("\tHeight: %d\n", (*info).bmpHeight);
-	printf("\tPlanes: %hu\n", (*info).bmpPlanes);
-	printf("\tBit count: %hu\n", (*info).bmpBitCount);
-	printf("\tCompression: %u\n", (*info).bmpCompression);
-	printf("\tSize image: %u\n", (*info).bmpSizeImage);
-	printf("\tX DPI: %d\n", (*info).bmpXPelsPerMeter);
-	printf("\tY DPI: %d\n", (*info).bmpYPelsPerMeter);
-	printf("\tColor used: %u\n", (*info).bmpColorUsed);
-	printf("\tColor important: %u\n", (*info).bmpColorImportant);
-
 	memcpy(pointer, header, sizeof(HEADER));
 	memcpy(pointer + sizeof(HEADER), info, sizeof(INFOHEADER));
+
 	free(header);
 	free(info);
 }
@@ -66,12 +49,12 @@ void CreateBMP2(ThreadParameters params)
 {
 	Pixel pixel;
 	double min, max;
-	unsigned i, j, l;
+	int i, j, l;
 	unsigned pixelSize = sizeof(Pixel);
-	int npad;
 	int width = params.width;
 	int height = params.height;
-	unsigned char pad = 0;
+	int npad = ((4 - ((width * pixelSize) & 3)) & 3);
+	unsigned char *pad = calloc(npad, sizeof(unsigned char));
 	unsigned char *pointer = (unsigned char*)params.imagePointer;
 	
 	if (params.threadId == 0)
@@ -79,10 +62,10 @@ void CreateBMP2(ThreadParameters params)
 
 	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
 
-	npad = ((4 - ((width * 3) & 3)) & 3);
-	pointer += (sizeof(HEADER) + sizeof(INFOHEADER)
-			 + (unsigned char)(params.offset*(width*pixelSize + npad)));
-	
+	// Move pointer by current thread offset
+	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
+		     + ((params.offset)*(width*pixelSize + npad));
+
 	for (i = 0; i < height; i++)
 	{
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
@@ -90,10 +73,8 @@ void CreateBMP2(ThreadParameters params)
 			pixel = GetPixel(i, l, &min, &max, &params);
 			memcpy(pointer + j, &pixel, pixelSize);
 		}
-		for (l = 0; l < npad; l++)
-		{
-			memcpy(pointer + j + l, &pad, sizeof(pad));
-		}
+
+		memcpy(pointer + j, pad, npad);
 		pointer += (width*pixelSize + npad);
 	}
 }
@@ -111,10 +92,10 @@ Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
 		SinNoise(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 2:
-		
+		Experimental(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 3:
-		Experimental(&val, &minAfterEffect, &maxAfterEffect, x, y);;
+		Experimental2(&val, &minAfterEffect, &maxAfterEffect, x, y);
 		break;
 	case 0:
 	default:
@@ -129,12 +110,19 @@ Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
 // Sin noise
 void SinNoise(double *value, double *min, double *max, int x, int y)
 {
-	*value = (*value) * sin(x) * sin(y);
+	*value = sin((*value)) * sin(x) * sin(y);
 	*max = *max;
 	*min = (*max > (*min * (-1))) ? (*max * -1) : (*min);
 }
 
 void Experimental(double *value, double *min, double *max, int x, int y)
+{
+	*value = 10 - sin(y + *max * (*value));
+	*max = +11.0;
+	*min = 9.0;
+}
+
+void Experimental2(double *value, double *min, double *max, int x, int y)
 {
 	*value = sin(sqrt(y + *max * (*value)));
 	*max = +1.0;
@@ -146,9 +134,9 @@ Pixel GetColor(double value, double min, double max, Pixel color)
 	Pixel newPixel;
 	unsigned int chVal = ScaleToChar(value, min, max);
 	if (chVal == 0) ++chVal;
-	newPixel._R = (unsigned char)((256 * chVal) / (color._R + 1));
-	newPixel._G = (unsigned char)((256 * chVal) / (color._G + 1));
-	newPixel._B = (unsigned char)((256 * chVal) / (color._B + 1));
+	newPixel._R = ((256 * chVal) / (color._R + 1));
+	newPixel._G = ((256 * chVal) / (color._G + 1));
+	newPixel._B = ((256 * chVal) / (color._B + 1));
 	return newPixel;
 }
 
@@ -156,9 +144,9 @@ Pixel GetColorReversed(double value, double min, double max, Pixel color)
 {
 	Pixel newPixel;
 	unsigned int chVal = ScaleToChar(value, min, max);
-	newPixel._R = (unsigned char)((256 * color._R) / chVal);
-	newPixel._G = (unsigned char)((256 * color._G) / chVal);
-	newPixel._B = (unsigned char)((256 * color._B) / chVal);
+	newPixel._R = ((256 * color._R) / chVal);
+	newPixel._G = ((256 * color._G) / chVal);
+	newPixel._B = ((256 * color._B) / chVal);
 	return newPixel;
 }
 

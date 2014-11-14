@@ -1,14 +1,42 @@
 #include "stdafx.h"
 #include "Helpers.h"
 
+double** alloc2DArray(int width, int height)
+{
+	int i;
+	double **pointer = calloc(height, sizeof(double*));
+	printPointer(pointer);
+	for (i = 0; i < height; i++)
+	{
+		pointer[i] = calloc(width, sizeof(double));
+		printPointer(pointer[i]);
+	}
+
+	return pointer;
+}
+
+void free2DArray(double** pointer, int height)
+{
+	int i;
+	printPointer(pointer);
+	for (i = 0; i < height; i++)
+	{
+		printPointer(pointer[i]);
+		free(pointer[i]);
+	}
+	free(pointer);
+}
+
+
 void printThreadParamInfo(ThreadParameters params)
 {
 	printf("Thread ID: %d", params.threadId);
 	printf(" of %d.\n", params.threadsCount);
-	printf("Image %d x %d px\n", params.width, params.height);
+	printf("Image %d x %d px\n", params.width, params.wholeHeight);
 	printf("Image pointer: %p\n", params.imagePointer);
 	printf("Current image offset: %d\n", params.offset);
-	printf("Color: %d\tEffect: %d\tPersistence: %d\n", params.color, params.effect, params.persistence);
+	printf("Color: R%u G%u B%u\tEffect: %d\tPersistence: %f\n", 
+		   params.color._R, params.color._G, params.color._B, params.effect, params.persistence);
 }
 
 void PrintBMPInfo(const char* bmpName)
@@ -55,7 +83,7 @@ void PrintBMPInfo(const char* bmpName)
 
 void SaveArrayToFile(double **array2D, int width, int height, const char* fileName)
 {
-	unsigned i, j;
+	int i, j;
 	FILE *f;
 
 	fopen_s(&f, fileName, "wt");
@@ -74,30 +102,7 @@ void SaveArrayToFile(double **array2D, int width, int height, const char* fileNa
 	fclose(f);
 }
 
-double** alloc2DArray(int width, int height)
+void printPointer(void* p)
 {
-	int i;
-	double **pointer = (double**)calloc(height, sizeof(double*));
-
-	for (i = 0; i < height; i++)
-	{
-		pointer[i] = (double*)calloc(width, sizeof(double));
-	}
-
-	return pointer;
-}
-
-void free2DArray(double** pointer, int height)
-{
-	int i;
-	for (i = 0; i < height; i++)
-	{
-		free(pointer[i]);
-	}
-	free(pointer);
-}
-
-void printPointer(unsigned int* p)
-{
-	//printf("Wskaznik: %p\n", p);
+	printf("Wskaznik: %p\n", p);
 }
