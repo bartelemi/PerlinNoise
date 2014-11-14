@@ -2,7 +2,7 @@
 
 namespace Perlin.GUI.Models
 {
-    public enum NoiseEffects
+    public enum NoiseEffectsBmp
     {
         [Description("Zwykły szum")]
         Noise,
@@ -10,7 +10,11 @@ namespace Perlin.GUI.Models
         SinOfNoise,
         [Description("Sqrt(szum)")]
         SqrtOfNoise,
-        [Description("Inny efekt")]
-        OtherEffect
+        [Description("Eksperymentalny-X01")]
+        Experimental_1,
+        [Description("Eksperymentalny-X02")]
+        Experimental_2,
+        [Description("Eksperymentalny-X03")]
+        Experimental_3
     };
 }

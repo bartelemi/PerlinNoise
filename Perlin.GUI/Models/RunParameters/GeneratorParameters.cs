@@ -9,8 +9,9 @@
         public int NumberOfOctaves { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public BitmapParameters GeneratingBitmapParameters { get; set; }
-        public GifParameters GeneratingGifParameters { get; set; }
+        public RGBColor Color { get; set; }
+        public NoiseEffectsBmp BitmapEffect { get; set; }
+        public NoiseEffectsGIF GifEffect { get; set; }
 
         public override string ToString()
         {

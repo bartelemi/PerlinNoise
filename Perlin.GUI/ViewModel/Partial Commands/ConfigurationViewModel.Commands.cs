@@ -68,24 +68,21 @@ namespace Perlin.GUI.ViewModel
             {
                 _perlinDllManager = new PerlinDllManager(new GeneratorParameters()
                 {
-                    GeneratedFileType = FileType.Bitmap,
-                    GeneratingLibrary = Library.PureC,
+                    GeneratedFileType = GeneratedFileType,
+                    GeneratingLibrary = GeneratingLibrary,
                     NumberOfThreads = NumberOfThreads,
                     NumberOfOctaves = NumberOfOctaves,
                     Persistence = Persistence,
                     Width = Width,
                     Height = Height,
-                    GeneratingBitmapParameters = new BitmapParameters()
+                    BitmapEffect = NoiseEffectBmp,
+                    GifEffect = NoiseEffectGif,
+                    Color = new RGBColor()
                     {
-                        NoiseColorBmp = new RGBColor()
-                        {
-                            R = NoiseColorBmp.R,
-                            G = NoiseColorBmp.G,
-                            B = NoiseColorBmp.B
-                        },
-                        NoiseEffectsBmp = NoiseEffectBmp
-                    },
-                    GeneratingGifParameters = null
+                        R = NoiseColor.R,
+                        G = NoiseColor.G,
+                        B = NoiseColor.B
+                    }
                 });
 
                 ProgramState = GeneratorState.ComputingFile;

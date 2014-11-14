@@ -170,10 +170,9 @@ namespace Perlin.GUI.ViewModel
         #endregion // Persistence
         #endregion // Generator
 
-        #region Bitmap options
         #region Noise effect bitmap
-        NoiseEffects _noiseEffectBmp;
-        public NoiseEffects NoiseEffectBmp
+        NoiseEffectsBmp _noiseEffectBmp;
+        public NoiseEffectsBmp NoiseEffectBmp
         {
             get { return _noiseEffectBmp; }
             set
@@ -184,24 +183,6 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Noise effect bitmap
 
-        #region Noise color bitmap
-
-        private System.Windows.Media.Color _noiseColorBmp;
-        public System.Windows.Media.Color NoiseColorBmp
-        {
-            get { return _noiseColorBmp; }
-            set
-            {
-                if (value == _noiseColorBmp) return;
-                _noiseColorBmp = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion // Noise color bitmap
-        #endregion // Bitmap options
-
-        #region GIF options
         #region Noise effect GIF
         NoiseEffectsGIF _noiseEffectGif;
         public NoiseEffectsGIF NoiseEffectGif
@@ -215,22 +196,20 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Noise effect GIF
 
-        #region Noise color GIF
-        private System.Windows.Media.Color _noiseColorGif;
-        public System.Windows.Media.Color NoiseColorGif
+        #region Noise color
+        private System.Windows.Media.Color _noiseColor;
+        public System.Windows.Media.Color NoiseColor
         {
-            get { return _noiseColorGif; }
+            get { return _noiseColor; }
             set
             {
-                if (value == _noiseColorGif) return;
-                _noiseColorGif = value;
+                if (value == _noiseColor) return;
+                _noiseColor = value;
                 OnPropertyChanged();
             }
         }
+        #endregion // Noise color
 
-        #endregion // Noise color GIF
-
-        #endregion // GIF options
         #endregion // Properties
 
         #region Constructor
@@ -258,13 +237,11 @@ namespace Perlin.GUI.ViewModel
             NumberOfOctaves = 6;
             Persistence = 0.025;
 
-            NoiseEffectBmp = NoiseEffects.SinOfNoise;
-            NoiseColorBmp = new Color();
-            NoiseColorBmp = Color.FromRgb(50, 100, 200);
-
+            NoiseEffectBmp = NoiseEffectsBmp.SinOfNoise;
             NoiseEffectGif = NoiseEffectsGIF.Clouds;
-            NoiseColorGif = new Color();
-            NoiseColorGif = Color.FromRgb(200, 50, 100);
+
+            NoiseColor = new Color();
+            NoiseColor = Color.FromRgb(200, 50, 100);
         }
 
         #endregion // Constructor

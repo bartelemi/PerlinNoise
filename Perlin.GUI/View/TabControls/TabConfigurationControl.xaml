@@ -235,7 +235,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                     Content="Efekt"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffects}}}"
+                                        <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffectsBmp}}}"
                             DisplayMemberPath="Description"
                             SelectedValue="{Binding NoiseEffectBmp}"
                             SelectedValuePath="Value"
@@ -251,7 +251,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                     Content="Kolor"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColorBmp}"/>
+                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -291,7 +291,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                            Content="Kolor"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColorGif}"/>
+                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>

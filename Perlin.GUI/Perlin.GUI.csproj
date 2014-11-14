@@ -91,13 +91,10 @@
     <Compile Include="Kernel\Stopwatch.cs" />
     <Compile Include="Models\Enumerator types\NoiseEffectsGIF.cs" />
     <Compile Include="Models\RGBColor.cs" />
-    <Compile Include="Models\RunParameters\BitmapParameters.cs" />
-    <Compile Include="Models\Enumerator types\NoiseColor.cs" />
-    <Compile Include="Models\Enumerator types\NoiseEffects.cs" />
+    <Compile Include="Models\Enumerator types\NoiseEffectsBmp.cs" />
     <Compile Include="Models\Enumerator types\FileType.cs" />
     <Compile Include="Models\Enumerator types\Library.cs" />
     <Compile Include="Models\RunParameters\GeneratorParameters.cs" />
-    <Compile Include="Models\RunParameters\GifParameters.cs" />
     <Compile Include="Models\RunParameters\ThreadParameters.cs" />
     <Compile Include="Models\Enumerator types\GeneratorState.cs" />
     <Compile Include="Models\TabItem.cs" />
