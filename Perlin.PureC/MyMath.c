@@ -35,23 +35,22 @@ long Sqrt(long i)
 	return rNew;
 }
 
-void MaxMinFrom2DArray(double **array, int width, int height, double *min, double *max)
+void MaxMinFrom2DArray(double **arr, size_t width, size_t height, double *min, double *max)
 {
-	int i, j;
-	*min = array[0][0];
-	*max = array[0][0];
+	size_t i, j;
+	(*max) = (*min) = arr[0][0];
 
 	for (i = 0; i < height; i++)
 	{
 		for ( j = 0; j < width; j++)
 		{
-			if (array[i][j] < *min)
+			if (arr[i][j] < (*min))
 			{
-				*min = array[i][j];
+				(*min) = arr[i][j];
 			}
-			else if (array[i][j] > *max)
+			else if (arr[i][j] > (*max))
 			{
-				*max = array[i][j];
+				(*max) = arr[i][j];
 			}
 		}
 	}

@@ -45,22 +45,22 @@ void WriteFileHeader(unsigned char *pointer, int width, int height)
 	free(info);
 }
 
-void CreateBMP2(ThreadParameters params)
+void CreateBMP2(double **noiseArray, ThreadParameters params)
 {
 	Pixel pixel;
 	double min, max;
-	int i, j, l;
-	unsigned pixelSize = sizeof(Pixel);
-	int width = params.width;
-	int height = params.height;
-	int npad = ((4 - ((width * pixelSize) & 3)) & 3);
+	size_t i, j, l;
+	size_t pixelSize = sizeof(Pixel);
+	size_t width = params.width;
+	size_t height = params.height;
+	size_t npad = ((4 - ((width * pixelSize) & 3)) & 3);
 	unsigned char *pad = calloc(npad, sizeof(unsigned char));
 	unsigned char *pointer = (unsigned char*)params.imagePointer;
 	
 	if (params.threadId == 0)
 		WriteFileHeader(pointer, width, params.wholeHeight);
 
-	MaxMinFrom2DArray(NoiseArrayDynamic, width, height, &min, &max);
+	MaxMinFrom2DArray(noiseArray, width, height, &min, &max);
 
 	// Move pointer by current thread offset
 	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
@@ -70,7 +70,7 @@ void CreateBMP2(ThreadParameters params)
 	{
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
-			pixel = GetPixel(i, l, &min, &max, &params);
+			pixel = GetPixel(i, l, &min, &max, noiseArray, &params);
 			memcpy(pointer + j, &pixel, pixelSize);
 		}
 
@@ -79,10 +79,10 @@ void CreateBMP2(ThreadParameters params)
 	}
 }
 
-Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params)
+Pixel GetPixel(int x, int y, double *min, double *max, double **noiseArray, ThreadParameters *params)
 {
 	Pixel pixel;
-	double val = NoiseArrayDynamic[x][y];
+	double val = noiseArray[x][y];
 	double minAfterEffect = *min;
 	double maxAfterEffect = *max;
 
@@ -136,6 +136,7 @@ void Experimental1(double *value, double *min, double *max, int x, int y)
 	*min = 9.0;
 }
 
+//It can be
 void Experimental2(double *value, double *min, double *max, int x, int y)
 {
 	*value = sin(sqrt(y + *max * (*value)));
@@ -143,6 +144,7 @@ void Experimental2(double *value, double *min, double *max, int x, int y)
 	*min = -1.0;
 }
 
+//Very cool
 void Experimental3(double *value, double *min, double *max, int x, int y)
 {
 	*value = 2 * sin((*value)) + sqrt(y + *max);

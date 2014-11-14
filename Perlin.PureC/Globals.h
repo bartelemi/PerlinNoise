@@ -5,6 +5,6 @@
 					ARRAYS
 *********************************************/
 	// Result noise array
-	double **NoiseArrayDynamic;
+	
 
 #endif

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Perlin.GUI.Models.RunParameters
 {
@@ -7,9 +8,9 @@ namespace Perlin.GUI.Models.RunParameters
     {
         public unsafe uint* ImageByteArrayPointer;
         public int CurrentImageOffset;
-        public int ImageWidth;
-        public int ImageHeight;
-        public int CurrentImageHeight;
+        public unsafe uint ImageWidth;
+        public unsafe uint ImageHeight;
+        public unsafe uint CurrentImageHeight;
         public RGBColor NoiseColor;
         public int NoiseEffect;
         public int NumberOfOctaves;

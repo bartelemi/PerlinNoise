@@ -1,27 +1,23 @@
 #include "stdafx.h"
 #include "Helpers.h"
 
-double** alloc2DArray(int width, int height)
+double** alloc2DArray(size_t width, size_t height)
 {
-	int i;
-	double **pointer = calloc(height, sizeof(double*));
-	printPointer(pointer);
+	size_t i;
+	double **pointer = (double**)calloc(height, sizeof(double*));
 	for (i = 0; i < height; i++)
 	{
-		pointer[i] = calloc(width, sizeof(double));
-		printPointer(pointer[i]);
+		pointer[i] = (double*)calloc(width, sizeof(double));
 	}
 
 	return pointer;
 }
 
-void free2DArray(double** pointer, int height)
+void free2DArray(double** pointer, size_t height)
 {
-	int i;
-	printPointer(pointer);
+	size_t i;
 	for (i = 0; i < height; i++)
 	{
-		printPointer(pointer[i]);
 		free(pointer[i]);
 	}
 	free(pointer);

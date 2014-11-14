@@ -13,8 +13,6 @@ TODO:																									  |
   Perlin_C																								  | 
   * Dodać nowe efekty																					  |
   * Przerobić oryginalny generator Kena																	  |
-  * Uporządkować kod																					  |
-  * Naprawić błąd, powodujący naruszanie pamięci przy zwalnianiu wskaźnika na NoiseArrayDynamic			  |
   * Zapisywać każdą linię pikseli do jakiegoś bufora (unsigned char*), który potem należy zapisać         |
     w całości do wskaźnika na obraz unsigned int *imagePointer - unikniemy przesuwania po jednym bajcie   |
 	w imagePointer (ten bufor będzie już wyrównany do 4 bajtów)                                           |
@@ -25,7 +23,6 @@ TODO:																									  |
 																										  |
   ========================================================================================================+
   Czyszczenie																							  |
-  * przywrócić defaultowe wartości dla generatora                                                         |
   * usunąć konsolę z Perlin.GUI.View.MainWindow.xaml.cs													  |
   * usunąć z Perlin.PureC z Helpers metodę printPointer oraz jej wszystkie wywołania					  |
   * usunąć również metody: printThreadParamInfo, PrintBMPInfo, SaveArrayToFile							  |

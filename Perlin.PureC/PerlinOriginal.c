@@ -66,7 +66,7 @@ void init(void)
 		p[i] = i;
 
 		for (j = 0; j < 2; j++)
-			g2[i][j] = (double)((rand() % (B + B)) - B) / B;
+			g2[i][j] = (float)((rand() % (B + B)) - B) / B;
 
 		normalize(g2[i]);
 	}

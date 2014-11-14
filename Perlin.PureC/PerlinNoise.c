@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "PerlinOriginal.h"
 
+#include <float.h>
+
 //double Noise2D(double x, double y, __int32 octave)
 //{
 //	__int32 temp = (x + y) * 101;
@@ -50,13 +52,15 @@
 //	//return CosineInterpolation(i1, i2, fractional_Y);
 //}
 
-void PerlinNoise_2D(ThreadParameters params)
+void PerlinNoise_2D(double** noiseArray, ThreadParameters params)
 {
-	int i, j, k;
+	int k;
+	size_t i, j;
 
 	init();
 	for (k = 0; k < params.octaves - 1; k++)
 	{
+		double x, y;
 		double amplitude = Power(2, k);
 		double frequency = Power(params.persistence, k);
 
@@ -64,10 +68,9 @@ void PerlinNoise_2D(ThreadParameters params)
 		{
 			for (j = 0; j < params.width; j++)
 			{
-				NoiseArrayDynamic[i][j] += amplitude * noise2(
-					frequency * ((i + ((rand() % 100) / 100.0))),
-					frequency * ((j + ((rand() % 100) / 100.0)))
-					);
+				x = frequency * (i + ((rand() % 100) / 100.0));
+				y = frequency * (j + ((rand() % 100) / 100.0));
+				noiseArray[i][j] += amplitude * noise2(x, y);
 			}
 		}
 	}

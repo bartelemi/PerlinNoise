@@ -51,13 +51,13 @@
 	INFOHEADER* FillInfoHeader(int width, int height);
 	
 	// Creates BMP using data from NoiseArray
-	void CreateBMP2(ThreadParameters params);
+	void CreateBMP2(double **noiseArray, ThreadParameters params);
 
 	// Write file header
 	void WriteFileHeader(unsigned char *pointer, int width, int height);
 
 	// Returns new pixel 
-	Pixel GetPixel(int x, int y, double *min, double *max, ThreadParameters *params);
+	Pixel GetPixel(int x, int y, double *min, double *max, double **noiseArray, ThreadParameters *params);
 
 	// Returns colored pixel
 	Pixel GetColor(double value, double min, double max, Pixel color);

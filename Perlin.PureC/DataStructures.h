@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdlib.h>
+
 // Struct containing info about single pixel
 typedef struct Pixel {
 	unsigned char _B; 
@@ -12,10 +14,10 @@ typedef struct Pixel {
 typedef struct ThreadParameters
 {
 	unsigned int* imagePointer;
-	int offset;
-	int width;
-	int wholeHeight;
-	int height;
+	size_t offset;
+	size_t width;
+	size_t wholeHeight;
+	size_t height;
 	Pixel color;
 	int effect;
 	int octaves;

@@ -10,10 +10,10 @@ void PrintBMPInfo(const char* bmpName);
 void SaveArrayToFile(double **array2D, int width, int height, const char* fileName);
 
 // Allocs 2-dimensional array
-double** alloc2DArray(int width, int height);
+double** alloc2DArray(size_t width, size_t height);
 
 // Frees 2-dimensional array
-void free2DArray(double** pointer, int height);
+void free2DArray(double** pointer, size_t height);
 
 // Print pointer value
 void printPointer(void* p);

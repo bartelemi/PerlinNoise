@@ -1,4 +1,5 @@
-﻿namespace Perlin.GUI.Models.RunParameters
+﻿using System;
+namespace Perlin.GUI.Models.RunParameters
 {
     class GeneratorParameters
     {
