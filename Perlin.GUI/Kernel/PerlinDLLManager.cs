@@ -15,7 +15,9 @@ namespace Perlin.GUI.Kernel
     {
         #region Import DLLs
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Init", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void Init();
+        private static extern void Init(int width, int height);
+        [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Finalize", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void Finalize(int height);
 
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GeneratePerlinNoiseBitmapPureC(ThreadParameters threadParameters);
@@ -47,7 +49,7 @@ namespace Perlin.GUI.Kernel
 
             GeneratedFileArray = new byte[fileSizeInBytes];
             _generatorParameters = generatorParameters;
-            Init();
+            Init(generatorParameters.Width, generatorParameters.Height);
         }
         #endregion // Constructor
 
@@ -66,7 +68,9 @@ namespace Perlin.GUI.Kernel
                 });
             }
             await Task.WhenAll(tasks);
-            
+
+            Finalize(_generatorParameters.Height);
+
             return GeneratedFileArray;
         }
 
@@ -112,7 +116,6 @@ namespace Perlin.GUI.Kernel
                     }
                 }
             }
-            Console.WriteLine("ThreadId: {0} lines: {1}", threadId, numberOfLines);
             return numberOfLines;
         }
 

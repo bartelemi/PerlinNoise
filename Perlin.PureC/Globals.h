@@ -4,11 +4,15 @@
 /*********************************************
 					ARRAYS
 *********************************************/
-	// Initialization arrays
+	// Array size
 	#define B 0x1000
+
+	// Array size mask
 	#define BMask 0xfff
 
-	int p[B + B + 2];
-	double g2[B + B + 2][2];
+	// Initialization arrays
+	int *p;
+	double **g2;
+	double **NoiseArrayDynamic;
 
 #endif

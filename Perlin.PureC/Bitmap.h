@@ -49,12 +49,13 @@
 
 	// Returns filled BMPINFOHEADER
 	INFOHEADER* FillInfoHeader(int width, int height);
-	
-	// Creates BMP using data from NoiseArray
-	void CreateBMP2(double **noiseArray, ThreadParameters params);
 
 	// Write file header
 	void WriteFileHeader(unsigned char *pointer, int width, int height);
+
+	// Creates BMP using data from NoiseArray
+	void CreateBMP(double **noiseArray, ThreadParameters params);
+
 
 	// Returns new pixel 
 	Pixel GetPixel(int x, int y, double *min, double *max, double **noiseArray, ThreadParameters *params);

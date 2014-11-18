@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 
-PERLINPUREC_API void Init(void);
+PERLINPUREC_API void Init(size_t width, size_t height);
+PERLINPUREC_API void Finalize(size_t height);
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params);
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params);

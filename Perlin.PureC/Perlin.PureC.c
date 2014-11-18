@@ -12,30 +12,15 @@
 
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {
-	double **NoiseArrayDynamic;
-	srand((unsigned)time(NULL));
-
-	printf("Alokuje pamiec             - %d\n", params.threadId);
-	NoiseArrayDynamic = alloc2DArray(params.width, params.height);
-	printf("Skonczylem alokowac pamiec - %d\n", params.threadId);
-
-	printf("Tworzenie szumu            - %d\n", params.threadId);
-	PerlinNoise_2D(NoiseArrayDynamic, params);
-	printf("Skonczylem szum            - %d\n", params.threadId);
-
-	printf("Tworzenie bitmapy          - %d\n", params.threadId);
-	CreateBMP2(NoiseArrayDynamic, params);
-	printf("Skonczylem bitmape         - %d\n", params.threadId);
-
-	printf("Zwalniam pamiec            - %d\n", params.threadId);
-	free2DArray(NoiseArrayDynamic, (size_t)params.height);
-	printf("Skonczylem zwalniac pamiec - %d\n", params.threadId);
+	PerlinNoise2D(NoiseArrayDynamic, params);
+	CreateBMP(NoiseArrayDynamic, params);
 }
 
 PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)
 {
 	printf("Not implemented.\n");
 }
+
 
 static void normalize(double v[2])
 {
@@ -44,9 +29,15 @@ static void normalize(double v[2])
 	v[1] /= s;
 }
 
-PERLINPUREC_API void Init(void)
+PERLINPUREC_API void Init(size_t width, size_t height)
 {
 	int i, j, k;
+
+	srand((unsigned)time(NULL));
+
+	p = (int*)malloc((B + B + 2) * sizeof(int));
+	g2 = alloc2DArray(2, B + B + 2);
+	NoiseArrayDynamic = alloc2DArray(width, height);
 
 	for (i = 0; i < B; i++)
 	{
@@ -71,4 +62,11 @@ PERLINPUREC_API void Init(void)
 		for (j = 0; j < 2; j++)
 			g2[B + i][j] = g2[i][j];
 	}
+}
+
+PERLINPUREC_API void Finalize(size_t height)
+{
+	free(p);
+	free2DArray(g2, B + B + 2);
+	free2DArray(NoiseArrayDynamic, height);
 }

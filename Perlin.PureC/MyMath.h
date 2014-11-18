@@ -18,9 +18,6 @@
 	// Calculates base^exponent
 	double Power(double base, int exponent);
 
-	//Cosine interpolation
-	double CosineInterpolation(double a, double b, double x);
-
 /**************************************
 			ARRAY FUNCTIONS
 **************************************/

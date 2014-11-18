@@ -7,7 +7,6 @@ TODO:																									  |
   ========================================================================================================+
   Perlin.GUI																							  |
 	* Podgląd minatur w przeglądarkach plików															  |
-	* Wyciągnąć inicjalizację wektora do Pelin.GUI żeby był jeden wektor na wszystkie wątki				  |
 	                                                                                                      |
   ========================================================================================================+
   Perlin_C																								  | 
@@ -24,10 +23,6 @@ TODO:																									  |
   ========================================================================================================+
   Czyszczenie																							  |
   * usunąć konsolę z Perlin.GUI.View.MainWindow.xaml.cs													  |
-  * usunąć z Perlin.PureC z Helpers metodę printPointer oraz jej wszystkie wywołania					  |
-  * usunąć również metody: printThreadParamInfo, PrintBMPInfo, SaveArrayToFile							  |
-  * usunąć nieużywaną interpolację (cosinusową lub tą liniową)											  |
-  * usunąć stare zakomentowane metody z PerlinNoise.c													  |
   * usunąć ten plik :)																					  |
 																										  |
 ==========================================================================================================+

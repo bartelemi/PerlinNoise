@@ -45,7 +45,7 @@ void WriteFileHeader(unsigned char *pointer, int width, int height)
 	free(info);
 }
 
-void CreateBMP2(double **noiseArray, ThreadParameters params)
+void CreateBMP(double **noiseArray, ThreadParameters params)
 {
 	Pixel pixel;
 	double min, max;
@@ -66,7 +66,7 @@ void CreateBMP2(double **noiseArray, ThreadParameters params)
 	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
 		     + ((params.offset)*(width*pixelSize + npad));
 
-	for (i = 0; i < height; i++)
+	for (i = params.offset; i < height + params.offset; i++)
 	{
 		for (j = 0, l = 0; l < width; l++, j += pixelSize)
 		{
@@ -136,7 +136,6 @@ void Experimental1(double *value, double *min, double *max, int x, int y)
 	*min = 9.0;
 }
 
-//It can be
 void Experimental2(double *value, double *min, double *max, int x, int y)
 {
 	*value = sin(sqrt(y + *max * (*value)));
@@ -144,7 +143,6 @@ void Experimental2(double *value, double *min, double *max, int x, int y)
 	*min = -1.0;
 }
 
-//Very cool
 void Experimental3(double *value, double *min, double *max, int x, int y)
 {
 	*value = 2 * sin((*value)) + sqrt(y + *max);

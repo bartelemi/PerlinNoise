@@ -11,13 +11,6 @@ double Power(double base, int exponent)
 	return tmp;
 }
 
-double CosineInterpolation(double a, double b, double x)
-{
-	double ft = x * 3.1415927;
-	double f = (1.0 - cos(ft)) / 2;
-	return ( a*(1.0 - f) + b*f);
-}
-
 long Sqrt(long i)
 {
 	long int r = 0;
