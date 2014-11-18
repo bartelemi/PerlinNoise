@@ -21,7 +21,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>false</CLRSupport>
+    <CLRSupport>OldSyntax</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -93,7 +93,6 @@ xcopy "$(OutDir)Perlin.PureC.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="Perlin.PureC.h" />
     <ClInclude Include="PerlinNoise.h" />
-    <ClInclude Include="PerlinOriginal.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="DataStructures.h" />
   </ItemGroup>
@@ -103,7 +102,6 @@ xcopy "$(OutDir)Perlin.PureC.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command
     <ClCompile Include="MyMath.c" />
     <ClCompile Include="Perlin.PureC.c" />
     <ClCompile Include="PerlinNoise.c" />
-    <ClCompile Include="PerlinOriginal.c" />
     <ClCompile Include="stdafx.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -3,7 +3,11 @@
 
 #include "stdafx.h"
 
-//Perlin Noise functions
-void PerlinNoise2D(double** noiseArray, ThreadParameters params);
+// Initializes noise array with noise values, 
+// according to params (octaves, persistence)
+void PerlinNoise2D(double** noise, ThreadParameters params);
+
+// Returns noise value for point (x, y)
+double noise2(double x, double y);
 
 #endif

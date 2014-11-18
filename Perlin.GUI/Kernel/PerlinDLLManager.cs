@@ -14,21 +14,33 @@ namespace Perlin.GUI.Kernel
     class PerlinDllManager
     {
         #region Import DLLs
+        #region PureC
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Init", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void Init(int width, int height);
+        private static extern void InitBmp(int width, int height);
+
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Finalize", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void Finalize(int height);
+        private static extern void FinalizeBmp(int height);
 
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GeneratePerlinNoiseBitmapPureC(ThreadParameters threadParameters);
+        private static extern void GeneratePerlinNoiseBitmapC(ThreadParameters threadParameters);
 
         [DllImport("Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseGif", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GeneratePerlinNoiseGifPureC(ThreadParameters threadParameters);
+        private static extern void GeneratePerlinNoiseGifC(ThreadParameters threadParameters);
+        #endregion // PureC
 
-        //[DllImport("Perlin.Asm.dll", EntryPoint = "GeneratePerlinNoiseBitmap")]
-        //private static extern void GeneratePerlinNoiseBitmapAssembly(ThreadParameters threadParameters);
-        //[DllImport("Perlin.Asm.dll", EntryPoint = "GeneratePerlinNoiseGif")]
-        //private static extern void GeneratePerlinNoiseGifAssembly(ThreadParameters threadParameters);
+        #region Assembly
+        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Init", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void InitAsm(int width, int height);
+
+        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Finalize", CallingConvention = CallingConvention.Cdecl)]
+
+        private static extern void FinalizeAsm(int height);
+        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoiseBmp", CallingConvention = CallingConvention.Cdecl)]
+
+        private static extern void GeneratePerlinNoiseBitmapAssembly(ThreadParameters threadParameters);
+        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoiseGif", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void GeneratePerlinNoiseGifAssembly(ThreadParameters threadParameters);
+        #endregion // Assembly
         #endregion // Import DLLs
 
         #region Fields
@@ -49,7 +61,7 @@ namespace Perlin.GUI.Kernel
 
             GeneratedFileArray = new byte[fileSizeInBytes];
             _generatorParameters = generatorParameters;
-            Init(generatorParameters.Width, generatorParameters.Height);
+            InitBmp(generatorParameters.Width, generatorParameters.Height);
         }
         #endregion // Constructor
 
@@ -69,7 +81,7 @@ namespace Perlin.GUI.Kernel
             }
             await Task.WhenAll(tasks);
 
-            Finalize(_generatorParameters.Height);
+            FinalizeBmp(_generatorParameters.Height);
 
             return GeneratedFileArray;
         }
@@ -129,11 +141,11 @@ namespace Perlin.GUI.Kernel
                 {
                     if (_generatorParameters.GeneratedFileType == FileType.Bitmap)
                     {
-                            GeneratePerlinNoiseBitmapPureC(currendThreadParameters);
+                            GeneratePerlinNoiseBitmapC(currendThreadParameters);
                     }
                     else
                     {
-                        GeneratePerlinNoiseGifPureC(currendThreadParameters);
+                        GeneratePerlinNoiseGifC(currendThreadParameters);
                     }
                 }
                 else
