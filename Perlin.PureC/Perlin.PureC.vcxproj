@@ -90,7 +90,6 @@ xcopy "$(OutDir)Perlin.PureC.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Helpers.h" />
-    <ClInclude Include="MyMath.h" />
     <ClInclude Include="Perlin.PureC.h" />
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="stdafx.h" />
@@ -99,7 +98,6 @@ xcopy "$(OutDir)Perlin.PureC.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command
   <ItemGroup>
     <ClCompile Include="Bitmap.c" />
     <ClCompile Include="Helpers.c" />
-    <ClCompile Include="MyMath.c" />
     <ClCompile Include="Perlin.PureC.c" />
     <ClCompile Include="PerlinNoise.c" />
     <ClCompile Include="stdafx.c">

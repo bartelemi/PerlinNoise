@@ -1,138 +1,53 @@
-﻿.686
+.686
 .387
-.model flat, c
+.model small, c
+option casemap:none
 .xmm
+
+;/////////////////////////
+;// Includes
+;/////////////////////////
+	include DataStructures.asm
+	include Helpers.asm
+	include PerlinNoise.asm
+	include Bitmap.asm
+
 .data
+	B		DWORD 1000h		;// Array size
+	BMask	DWORD 0FFFh		;// Array size mask
+
+	;// Initialization arrays
+	p		           DWORD  ?
+	g2		           DWORD  ?
+	NoiseArrayDynamic  DWORD  ?
+
 .code
 
-FillHeader PROTO NEAR C, width:DWORD, height:DWORD
-FillInfoHeader PROTO NEAR C, width:DWORD, height:DWORD
+	_Init PROC FAR w:DWORD, h:DWORD	
 
+		MOV eax, w
+		ADD eax, h
+		XOR eax, eax
+		RET
+	_Init ENDP
 
-_Init PROC
-XOR eax, eax
-RET
-_Init ENDP
+	_Finalize PROC FAR h:DWORD
 
-_Finalize PROC
-XOR eax, eax
-RET
-_Finalize ENDP
+		MOV eax, h
+		XOR eax, eax
+		RET
+	_Finalize ENDP
 
-_PerlinNoiseBmp PROC
-XOR eax, eax
-RET
-_PerlinNoiseBmp ENDP
+	_PerlinNoiseBmp PROC
 
-_PerlinNoiseGif PROC
+		XOR eax, eax
+		RET
+	_PerlinNoiseBmp ENDP
 
-	XOR eax, eax
-	RET
-_PerlinNoiseGif ENDP
+	_PerlinNoiseGif PROC
 
-;////////////////////////////////////////////////////////
-;//		BITMAP
-;////////////////////////////////////////////////////////
-
-;//
-FillHeader PROC NEAR C, width:DWORD, height:DWORD
-	
-	XOR eax, eax
-	RET
-FillHeader ENDP
-
-;//
-FillInfoHeader PROC NEAR C, width:DWORD, height:DWORD
-
-XOR eax, eax
-RET
-FillInfoHeader ENDP
-
-;//
-WriteFileHeader PROC USES pointer : FDBLPTR, width : DWORD, height : DWORD
-
-XOR eax, eax
-RET
-WriteFileHeader ENDP
-
-;//
-;// CreateBMP PROC USES noiseArray : DOUBLE, params : ThreadParameters
-
-;//	XOR eax, eax
-;//	RET
-;// CreateBMP ENDP
-
-;//
-;//GetPixel PROC USES x:DWORD, y:DWORD, min:FDBLPTR, max:FDBLPTR, noiseArray:FDBLPTR, params:*ThreadParameters 
-
-;//	XOR eax, eax
-;//	RET
-;//GetPixel ENDP
-
-;//
-;//SinNoise PROC USES value:FDBLPTR, min:FDBLPTR, max:FDBLPTR, x:DWORD , y:DWORD
-
-;//	XOR eax, eax
-;//	RET
-;//SinNoise ENDP
-
-;//
-;//SqrtNoise PROC USES value:FDBLPTR, min:FDBLPTR, max:FDBLPTR, x:DWORD , y:DWORD
-
-;//	XOR eax, eax
-;//	RET
-;//SqrtNoise ENDP
-
-;//
-;//Experimental1 PROC USES value:FDBLPTR, min:FDBLPTR, max:FDBLPTR, x:DWORD , y:DWORD
-;//	
-;//	XOR eax, eax
-;//	RET
-;//Experimental1 ENDP
-
-;//
-;//Experimental2 PROC USES value:FDBLPTR, min:FDBLPTR, max:FDBLPTR, x:DWORD , y:DWORD
-;//	
-;//	XOR eax, eax
-;//	RET
-;//Experimental2 ENDP
-
-;//	
-;//Experimental3 PROC USES value:FDBLPTR, min:FDBLPTR, max:FDBLPTR, x:DWORD , y:DWORD
-;//
-;//	XOR eax, eax
-;//	RET
-;//Experimental3 ENDP
-
-;//
-;//GetColor PROC USES value:DOUBLE, min:DOUBLE, max:DOUBLE, color:Pixel
-;//
-;//	XOR eax, eax
-;//	RET
-;//GetColor ENDP
-
-;//
-;// GetColorReversed PROC USES value : DOUBLE, min : DOUBLE, max : DOUBLE, color : Pixel
-
-;// XOR eax, eax
-;//	RET
-;// GetColorReversed ENDP
-
-;//
-;// Scaling x ∈[min; max] ->[a; b]
-;// Where we need to calculate min and max
-;// and a = 0, b = 255 (unsigned char)
-;//
-;//Formula:
-;//(b - a)(x - min)
-;//f(x) = ----------------  + a
-;//max - min
-;//
-ScaleToChar PROC USES x : DOUBLE, min : DOUBLE, max : DOUBLE
-
-XOR eax, eax
-RET
-ScaleToChar ENDP
-
+		XOR eax, eax
+		RET
+	_PerlinNoiseGif ENDP
 
 END

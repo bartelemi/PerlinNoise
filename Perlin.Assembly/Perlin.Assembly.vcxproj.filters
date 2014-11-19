@@ -11,26 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="Perlin.Assembly.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-    <MASM Include="Bitmap.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-    <MASM Include="Helpers.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-    <MASM Include="MyMath.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-    <MASM Include="PerlinNoise.asm">
-      <Filter>Source Files</Filter>
-    </MASM>
-    <MASM Include="Perlin.Assembly.def">
-      <Filter>Header Files</Filter>
-    </MASM>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,5 +19,27 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="Perlin.Assembly.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="Perlin.Assembly.def">
+      <Filter>Header Files</Filter>
+    </MASM>
+    <MASM Include="Helpers.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="PerlinNoise.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DataStructures.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Bitmap.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

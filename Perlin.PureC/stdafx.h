@@ -2,8 +2,8 @@
 
 #include "Globals.h"
 #include "DataStructures.h"
+#include "Helpers.h"
 #include "Bitmap.h"
-#include "MyMath.h"
 #include "PerlinNoise.h"
 
 #include <stdlib.h>

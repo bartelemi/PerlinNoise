@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}</ProjectGuid>
+    <ProjectGuid>{625D8731-9C98-4166-BF41-C3BB15853702}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>PerlinAssembly</RootNamespace>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <CLRSupport>true</CLRSupport>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -49,21 +49,22 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PERLINASSEMBLY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <NoEntryPoint>true</NoEntryPoint>
       <ModuleDefinitionFile>Perlin.Assembly.def</ModuleDefinitionFile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy "$(OutDir)Perlin.Assembly.dll" "$(SolutionDir)Perlin.GUI\libs" /Y /I
-xcopy "$(OutDir)Perlin.Assembly.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -83,30 +84,36 @@ xcopy "$(OutDir)Perlin.Assembly.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Comm
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <MASM Include="Bitmap.asm">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </MASM>
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Cdecl</CallingConvention>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <MASM Include="Helpers.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </MASM>
-    <MASM Include="MyMath.asm">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </MASM>
-    <MASM Include="Perlin.Assembly.asm">
-      <FileType>Document</FileType>
     </MASM>
     <MASM Include="PerlinNoise.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Bitmap.asm">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="DataStructures.asm">
+      <FileType>Document</FileType>
+    </None>
+    <MASM Include="Perlin.Assembly.asm">
+      <EnableMASM51Compatibility Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EnableMASM51Compatibility>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PerformSyntaxCheckOnly>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</UseSafeExceptionHandlers>
+      <CallingConvention Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">1</CallingConvention>
+    </MASM>
     <MASM Include="Perlin.Assembly.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

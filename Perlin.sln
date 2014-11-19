@@ -5,13 +5,13 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perlin.GUI", "Perlin.GUI\Perlin.GUI.csproj", "{F2CE92B0-CFF5-4BCD-AE2B-0992D06022C8}"
 	ProjectSection(ProjectDependencies) = postProject
+		{625D8731-9C98-4166-BF41-C3BB15853702} = {625D8731-9C98-4166-BF41-C3BB15853702}
 		{70587E90-EDD4-4B18-A3C9-1FD32CE9081C} = {70587E90-EDD4-4B18-A3C9-1FD32CE9081C}
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33} = {43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Perlin.PureC", "Perlin.PureC\Perlin.PureC.vcxproj", "{70587E90-EDD4-4B18-A3C9-1FD32CE9081C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Perlin.Assembly", "Perlin.Assembly\Perlin.Assembly.vcxproj", "{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Perlin.Assembly", "Perlin.Assembly\Perlin.Assembly.vcxproj", "{625D8731-9C98-4166-BF41-C3BB15853702}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,16 +43,16 @@ Global
 		{70587E90-EDD4-4B18-A3C9-1FD32CE9081C}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{70587E90-EDD4-4B18-A3C9-1FD32CE9081C}.Release|Win32.ActiveCfg = Release|Win32
 		{70587E90-EDD4-4B18-A3C9-1FD32CE9081C}.Release|Win32.Build.0 = Release|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Debug|Win32.ActiveCfg = Debug|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Debug|Win32.Build.0 = Debug|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Release|Any CPU.ActiveCfg = Release|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Release|Win32.ActiveCfg = Release|Win32
-		{43F67CAE-40E4-47DF-A19A-2DB5EB5C5C33}.Release|Win32.Build.0 = Release|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Debug|Win32.ActiveCfg = Debug|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Debug|Win32.Build.0 = Debug|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Release|Any CPU.ActiveCfg = Release|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Release|Win32.ActiveCfg = Release|Win32
+		{625D8731-9C98-4166-BF41-C3BB15853702}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
