@@ -33,13 +33,13 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	return header;
 }
 
-void WriteFileHeader(unsigned char *pointer, int width, int height)
+void WriteFileHeader(void *pointer, int width, int height)
 {
 	HEADER* header = FillHeader(width, height);
 	INFOHEADER* info = FillInfoHeader(width, height);
 
 	memcpy(pointer, header, sizeof(HEADER));
-	memcpy(pointer + sizeof(HEADER), info, sizeof(INFOHEADER));
+	memcpy((unsigned char*)pointer + sizeof(HEADER), info, sizeof(INFOHEADER));
 
 	free(header);
 	free(info);

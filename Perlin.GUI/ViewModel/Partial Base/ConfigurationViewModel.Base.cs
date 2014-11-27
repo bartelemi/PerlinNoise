@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.IO;
 using System.Windows.Media;
 using Perlin.GUI.Helpers;
@@ -13,8 +14,8 @@ namespace Perlin.GUI.ViewModel
         #region Fields
         private PerlinDllManager _perlinDllManager { get; set; }
         private readonly Stopwatch _stopwatch;
+        private readonly int _minFileSize;
         private readonly int _maxFileSize;
-        private readonly int _minFileSize ;
         #endregion // Fields
 
         #region Properties
@@ -138,14 +139,17 @@ namespace Perlin.GUI.ViewModel
 
         #region Generator
         #region Number of octaves
+        public int MinNumOfOctaves { get; private set; }
+        public int MaxNumOfOctaves { get; private set; }
+
         private int _numberOfOctaves;
         public int NumberOfOctaves
         {
             get { return _numberOfOctaves; }
             set
             {
-                if (value < 1) value = 1;
-                if (value > 50) value = 50;
+                if (value < MinNumOfOctaves) value = MinNumOfOctaves;
+                if (value > MaxNumOfOctaves) value = MaxNumOfOctaves;
                 _numberOfOctaves = value;
                 OnPropertyChanged();
             }
@@ -217,6 +221,8 @@ namespace Perlin.GUI.ViewModel
         {
             _minFileSize = 10;
             _maxFileSize = 20000;
+            MinNumOfOctaves = 2;
+            MaxNumOfOctaves = 60;
 
             InitializeCommands();
             InitializeProperties();

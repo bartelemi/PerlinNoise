@@ -189,7 +189,7 @@
                                     <Label Style="{StaticResource InfoLabel}"
                         Content="Liczba oktaw"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Minimum="2" Maximum="60" 
+                                        <Slider Minimum="{Binding MinNumOfOctaves}" Maximum="{Binding MaxNumOfOctaves}" 
                         Width="100" x:Name="NumOfOctaveSlider"
                         Value="{Binding NumberOfOctaves}"
                         VerticalAlignment="Center"

@@ -1,8 +1,9 @@
 CODE SEGMENT
-;//////////////////////////////
+;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;// MATHEMATICAL FUNCTIONS
-;//////////////////////////////
-	;// Returns value of (3x^2 - 2x^3) for x = t
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Returns value of (3x^2 - 2x^3) for x = t
 	EaseCurve PROC FAR x : REAL8
 		
 		;//t = ((t) * (t) * (3.0 - (2.0 * (t))))
@@ -57,4 +58,27 @@ CODE SEGMENT
 		XOR eax, eax
 		RET
 	MaxMinFrom2DArray ENDP
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Copies len bytes from src to dst
+	memCopy MACRO src, dst, len 
+
+		PUSH esi ; preserve ESI
+		PUSH edi ; preserve EDI
+
+		CLD 
+		MOV esi, src ; source
+		MOV edi, dst ; destination
+		MOV ecx, len ; length 
+
+		SHR ecx, 2 
+		REP MOVSD
+
+		MOV ecx, len ; length 
+		AND ecx, 3 
+		REP MOVSD
+
+		POP edi ; restore EDI
+		POP esi ; restore ESI 
+	ENDM
 CODE ENDS

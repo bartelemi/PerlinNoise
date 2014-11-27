@@ -51,7 +51,7 @@
 	INFOHEADER* FillInfoHeader(int width, int height);
 
 	// Write file header
-	void WriteFileHeader(unsigned char *pointer, int width, int height);
+	void WriteFileHeader(void *pointer, int width, int height);
 
 	// Creates BMP using data from NoiseArray
 	void CreateBMP(double **noiseArray, ThreadParameters params);

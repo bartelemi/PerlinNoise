@@ -65,6 +65,10 @@
       <ModuleDefinitionFile>Perlin.Assembly.def</ModuleDefinitionFile>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(OutDir)Perlin.Assembly.dll" "$(SolutionDir)Perlin.GUI\libs" /Y /I
+xcopy "$(OutDir)Perlin.Assembly.pdb" "$(SolutionDir)Perlin.GUI\libs" /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

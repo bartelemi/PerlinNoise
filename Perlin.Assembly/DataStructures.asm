@@ -26,17 +26,12 @@ CODE SEGMENT
 	ALIGN 2
 
 	;// File information
-	FILEHEADER STRUCT
+	BMPFILEHEADER STRUCT
 		_fileType		WORD   ?
 		_fileSize		DWORD  ?
 		_reserved1		WORD   ?
 		_reserved2		WORD   ?
 		_offset			DWORD  ?
-	FILEHEADER ENDS
-
-
-	;// Bitmap information
-	FILEINFOHEADER STRUCT
 		_bmpSize			DWORD  ?
 		_bmpWidth			DWORD  ?
 		_bmpHeight			DWORD  ?
@@ -48,7 +43,7 @@ CODE SEGMENT
 		_bmpYPelsPerMeter	DWORD  ?			
 		_bmpColorUsed		DWORD  ?					
 		_bmpColorImportant	DWORD  ?
-	FILEINFOHEADER ENDS
+	BMPFILEHEADER ENDS
 
 	;// Reset alignment
 	ALIGN 4

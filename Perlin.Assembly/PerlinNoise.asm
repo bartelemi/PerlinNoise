@@ -2,7 +2,7 @@ CODE SEGMENT
 
 	;// Initializes noise array with noise values, 
 	;// according to params (octaves, persistence)
-	PerlinNoise2D PROC noise : FAR PTR REAL8, params : THREADPARAMS
+	PerlinNoise2D PROC noise : REAL8, params : THREADPARAMS
 
 		XOR eax, eax
 		RET
