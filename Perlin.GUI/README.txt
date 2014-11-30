@@ -30,7 +30,6 @@ TODO:																									  |
 		Bitmap/Experimental3																			  |
 		Bitmap/ScaleToChar																			      |
 		Helpers/Alloc2DArray																			  |
-		Helpers/Free2DArray																				  |
 		Helpers/MaxMinFrom2DArray																		  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
@@ -39,12 +38,13 @@ TODO:																									  |
 		PerlinNoise/Noise																				  | 
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
+		Helpers/Free2DArray																				  |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
 		Helpers/Power																					  | 
 		Perlin.Assembly/_PerlinNoiseBmp																	  |
 																										  |
-	  Gotowe (testowane):																				  | 																				      |
+	  Gotowe (testowane):																				  |
 		Helpers/memCopy																					  |
 		Bitmap/FillHeader																				  |
 		Bitmap/WriteFileHdr																				  |

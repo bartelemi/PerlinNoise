@@ -81,10 +81,21 @@ CODE SEGMENT
 	;; Returns allocated memory pointer in eax
 	Alloc2DArray PROC FAR w : DWORD, h : DWORD
 
-		MOV ecx, w		; ecx <- width
-		MOV edx, h		; edx <- height
+		;MOV ecx, w		 ecx <- width
+		;MOV edx, h		 edx <- height
 
-		INVOKE crt_calloc, edx, 8
+		INVOKE crt_calloc, edx, 4
+		MOV ebx, eax
+
+		xor ecx, ecx
+
+		IterAlloc:
+			INVOKE crt_calloc, ecx, 8
+			MOV [ebx + 4*edx], eax
+
+			INC ecx
+			CMP ecx, h
+			JNE IterAlloc
 		
 		RET
 	Alloc2DArray ENDP
