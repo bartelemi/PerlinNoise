@@ -12,24 +12,6 @@ double Power(double base, int exponent)
 	return tmp;
 }
 
-long Sqrt(long i)
-{
-	long int r = 0;
-	long int rNew = 1;
-	long int rOld;
-
-	do
-	{
-		rOld = r;
-		r = rNew;
-		rNew = (r + (i / r));
-		rNew >>= 1;
-	} while (rOld != rNew);
-
-	return rNew;
-}
-
-
 double** alloc2DArray(size_t width, size_t height)
 {
 	size_t i;

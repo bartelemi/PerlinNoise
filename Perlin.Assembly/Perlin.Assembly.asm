@@ -10,7 +10,6 @@ option casemap:none
 ;;;; Libs
 ;;;;;;;;;;;
 	include \masm32\include\Windows.inc
-
 	include \masm32\include\Kernel32.inc
 	include \masm32\include\MSVCRT.inc
 	include \masm32\include\Masm32.inc
@@ -18,8 +17,6 @@ option casemap:none
 	includelib \masm32\lib\Kernel32.lib
 	includelib \masm32\lib\MSVCRT.lib
 	includelib \masm32\lib\Masm32.lib
-
-	include \masm32\macros\macros.asm
 
 ;;;;;;;;;;;
 ;;;; Own
@@ -30,20 +27,25 @@ option casemap:none
 	include Bitmap.asm
 
 .data
-	B		DWORD 1000h		;// Array size
-	BMask	DWORD 0FFFh		;// Array size mask
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Initialization arrays
+		p		        DWORD  0
+		g2		        DWORD  0.0
+		NoiseArray		DWORD  0.0
+	
+	;;;;;;;;;;;;;
+	;; IMMEDIATES
 
-	;// Initialization arrays
-	p		           DWORD  0
-	g2		           REAL8  0.0
-	NoiseArray		   REAL8  0.0
+		B				DWORD  1000h	; Array size
+		BMask			DWORD  0FFFh	; Array size mask
 
 .code
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
+		MOV eax, vector
 		XOR eax, eax
 		RET
 	Normalize ENDP
@@ -62,8 +64,8 @@ option casemap:none
 	;; Generate noisy bitmap with applied effect
 	_PerlinNoiseBmp PROC params : THREADPARAMS
 		
-		INVOKE PerlinNoise2D, NoiseArray, params
-		INVOKE CreateBMP, NoiseArray, params
+		INVOKE PerlinNoise2D, NoiseArray, params	; Generate noise array with parameters
+		INVOKE CreateBMP, NoiseArray, params		; Create bitmap from noise array
 		XOR eax, eax
 		RET
 	_PerlinNoiseBmp ENDP

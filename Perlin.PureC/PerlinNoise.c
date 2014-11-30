@@ -37,7 +37,7 @@ double noise2(double x, double y)
 	int bx0, bx1, by0, by1, b00, b10, b01, b11;
 	double rx0, rx1, ry0, ry1, *q, sx, sy, a, t, b, u, v;
 	register int i, j;
-
+	double two = 2.0, three = 3.0;
 	setup(x, bx0, bx1, rx0, rx1);
 	setup(y, by0, by1, ry0, ry1);
 
@@ -51,6 +51,7 @@ double noise2(double x, double y)
 
 	sx = EASE_CURVE(rx0);
 	sy = EASE_CURVE(ry0);
+	
 
 #define at2(rx,ry) ( rx * q[0] + ry * q[1] )
 

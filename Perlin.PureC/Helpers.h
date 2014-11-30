@@ -9,9 +9,6 @@
 	// Precise linear interpolation
 	#define LERP(v0, v1, t) ((v0) + (t) * ((v1) - (v0)))
 
-	//Calculates square root of number
-	long Sqrt(long i);
-
 	// Calculates base^exponent
 	double Power(double base, int exponent);
 

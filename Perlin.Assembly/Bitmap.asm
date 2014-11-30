@@ -6,19 +6,22 @@ CODE SEGMENT
 		
 		LOCAL fSize : DWORD
 
-		MOV edx, w	 ; Compute file size in bytes
-		IMUL edx, 3	     ; 
-		MOV eax, edx     ; sizeof(BMPFILEHEADER)
-		AND eax, 3       ; +(height * (width * 3
-		MOV ebx, 4       ; +((4 - ((width * 3) & 3)) & 3)))
-		SUB ebx, eax;	 ;
-		AND ebx, 3;		 ;
-		ADD edx, ebx;	 ;
-		IMUL edx, h ; 
-		ADD edx, 54		 ;
-		MOV fSize, edx   ; And store result in var
+		MOV edx, w	    ; Compute file size in bytes
+		IMUL edx, 3	    ; 
+		MOV eax, edx    ; sizeof(BMPFILEHEADER)
+		AND eax, 3      ; +(height * (width * 3
+		MOV ebx, 4      ; +((4 - ((width * 3) & 3)) & 3)))
+		SUB ebx, eax;	;
+		AND ebx, 3;		;
+		ADD edx, ebx;	;
+		IMUL edx, h     ; 
+		ADD edx, 54		;
+		MOV fSize, edx  ; And store result in var
+
+		INVOKE crt_malloc, 54	; Allocate memory for header
 
 		; Fill bitmap file structure
+		XOR ebx, ebx
 		MOV WORD PTR[eax + ebx], 4D42h    ; Load signature 'B''M'
 		ADD ebx, 2
 		MOV edx, fSize
@@ -30,10 +33,10 @@ CODE SEGMENT
 		ADD ebx, 4
 		MOV DWORD PTR[eax + ebx], 40      ; BMP size
 		ADD ebx, 4
-		mov edx, w
+		MOV edx, w
 		MOV DWORD PTR[eax + ebx], edx     ; BMP width
 		ADD ebx, 4
-		mov edx, h
+		MOV edx, h
 		MOV DWORD PTR[eax + ebx], edx     ; BMP height
 		ADD ebx, 4
 		MOV DWORD PTR[eax + ebx], 180001h ; BMP planes and bit count
@@ -67,7 +70,7 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Creates BMP using data from NoiseArray
-	CreateBMP PROC noiseArray : FAR PTR REAL8, params : THREADPARAMS 
+	CreateBMP PROC noiseArray : DWORD, params : THREADPARAMS 
 
 		XOR eax, eax
 		RET
