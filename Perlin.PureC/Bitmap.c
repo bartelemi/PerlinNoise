@@ -161,16 +161,6 @@ Pixel GetColor(double value, double min, double max, Pixel color)
 	return newPixel;
 }
 
-Pixel GetColorReversed(double value, double min, double max, Pixel color)
-{
-	Pixel newPixel;
-	unsigned int chVal = ScaleToChar(value, min, max);
-	newPixel._R = ((256 * color._R) / chVal);
-	newPixel._G = ((256 * color._G) / chVal);
-	newPixel._B = ((256 * color._B) / chVal);
-	return newPixel;
-}
-
 /*
 	Scaling x ∈ [min; max] -> [a; b]
 	Where we need to calculate min and max

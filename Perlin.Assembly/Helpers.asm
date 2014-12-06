@@ -112,9 +112,58 @@ CODE SEGMENT
 	;; Finds min and max value in array2D
 	MaxMinFrom2DArray PROC FAR arr : DWORD, w : DWORD, h : DWORD, min : DWORD, max : DWORD
 
+		LOCAL minimum  : REAL8
+		LOCAL maximum : REAL8
+
+		MOV ebx, arr		; ebx <- array base
+		MOV ecx, w			; ecx <- array width
+		MOV edx, h			; edx <- array height
+		DEC ecx
+		DEC edx
+
+		MOV minimum, REAL8 PTR [ebx+8*ecx+edx] ; minimum  <- array[height-1][width-1]
+		MOV maximum, REAL8 PTR [ebx+8*ecx+edx] ; maximum  <- array[height-1][width-1]
+
+		MOVSD xmm0, REAL8 PTR [ebx+8*ecx+edx]
+		MOVSD xmm1, REAL8 PTR [ebx+8*ecx+edx]
+
+
 		XOR eax, eax
 		RET
 	MaxMinFrom2DArray ENDP
+	
+	OPTION PROLOGUE:NONE 
+	OPTION EPILOGUE:NONE 
+	MyMinMax    PROC    p:dword, n:dword
+
+			MOV     ecx, [esp+8]    ;n
+			MOV     edx, [esp+4]    ;p
+			FLD     real8 PTR [edx]             ; set st(1) to MAX value        
+			FLD     st(0)                       ; set st(0) to MIN value
+			SUB     ecx, 1                      ; points to the last value
+	  L0:
+			FLD     real8 ptr [edx+ecx*4]
+			FCOMI   st, st(1)                   ; compare st(1)=MIN with st(0)
+			JAE     L1
+			FXCH    st(1)
+
+			FSTP    st
+			SUB     ecx, 1
+			JNZ     L0                          ; if ecx>0 loop to L0        
+			RET     8
+                
+	  L1:   FCOMI   st, st(2)                   ; compare st(2)=MAX with st(0)
+			JBE     L2
+			FXCH    st(2)
+
+	  L2:   FSTP    st
+			SUB     ecx, 1
+			JNZ     L0                          ; if ecx>0 loop to L0        
+			RET     8
+	MyMinMax    ENDP
+	OPTION PROLOGUE:PrologueDef 
+	OPTION EPILOGUE:EpilogueDef
+
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Copies len bytes from src to dst

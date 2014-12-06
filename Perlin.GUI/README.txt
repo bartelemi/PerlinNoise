@@ -22,14 +22,13 @@ TODO:																									  |
 		Bitmap/CreateBMP																				  |
 		Bitmap/GetPixelValues																			  |
 		Bitmap/GetColor																					  |
-		Bitmap/GetColorReversed																		      |
 		Bitmap/SinNoise																		     		  |
 		Bitmap/SqrtNoise																				  |
 		Bitmap/Experimental1																			  |
 		Bitmap/Experimental2																			  |
 		Bitmap/Experimental3																			  |
 		Bitmap/ScaleToChar																			      |
-		Helpers/Alloc2DArray																			  |
+		Helpers/Free2DArray																				  |
 		Helpers/MaxMinFrom2DArray																		  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
@@ -38,7 +37,7 @@ TODO:																									  |
 		PerlinNoise/Noise																				  | 
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
-		Helpers/Free2DArray																				  |
+		Helpers/Alloc2DArray																		      |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
 		Helpers/Power																					  | 
