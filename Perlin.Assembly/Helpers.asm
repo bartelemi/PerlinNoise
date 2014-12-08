@@ -5,53 +5,54 @@ CODE SEGMENT
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Calculates ease curve value for x = t
 	;; t = (3t^2 - 2t^3)
+	;;
 	;; Only for REAL8! (doubles)
-	EaseCurve MACRO t
+	EaseCurve MACRO res, x
 		
-		PUSH esi			  ; preserve ESI
-		PUSH edi			  ; preserve EDI
+		PUSH esi			  ; Preserve ESI
+		PUSH edi			  ; Preserve EDI
 
-		MOVDDUP xmm0, [t]     ; xmm0[0-63]   <- t, xmm0[64-127] <- t
-		MOVAPS  xmm1, xmm0    ; xmm1[0-63]   <- t, xmm1[64-127] <- t
-		MULPD   xmm0, xmm1    ; xmm0[0-63]   <- t*t, xmm0[64-127] <- t*t  
-		MOV     eax, 0x02h	  ; eax			 <- 2
-		MOVSS   xmm2, eax	  ; xmm2[0-63]   <- 2
-		CVTSS2SD xmm2, xmm2	  ; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
-		MULSD   xmm1, xmm2	  ; xmm1[0-63]   <- 2.0 * t
-		MOV     eax, 0x03h	  ; eax			 <- 3
-		MOVSS   xmm2, eax	  ; xmm2[0-63]   <- 3
-		CVTSS2SD xmm2, xmm2	  ; xmm2[0-63]   <- 3.0  (conversion) [OLD: MOVHPD  xmm2, [three]]
-		MOVLHPS xmm1, xmm2	  ; xmm1[63-127] <- 3.0  
-		MULPD   xmm0, xmm1    ; xmm0[0-63]   <- t*t*t*2.0 , xmm0[64-127] <- t*t*3.0
-		MOVHLPS xmm1, xmm0    ; xmm1[0-63]   <- t*t*t*2.0
-		PSRLDQ  xmm0, 8		  ; xmm0[0-63]   <- t*t*3.0
-		SUBSD   xmm0, xmm1	  ; xmm0[0-63]   <- t*t*(3.0-(t*2.0))
+		MOVDDUP  xmm0, REAL8 PTR [x]     ; xmm0[0-63]   <- x, xmm0[64-127]   <- x
+		MOVAPD   xmm1, xmm0    ; xmm1[0-63]   <- x, xmm1[64-127]   <- x
+		MULPD    xmm0, xmm1    ; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
+		MOV      eax, 2	   ; eax		  <- 2
+		PINSRD   xmm2, eax, 0  ; xmm2[0-31]   <- 2
+		CVTSS2SD xmm2, xmm2	   ; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
+		MULSD    xmm1, xmm2	   ; xmm1[0-63]   <- 2.0 * x
+		MOV      eax, 3	   ; eax		  <- 3
+		PINSRD   xmm2, eax, 0  ; xmm2[0-31]   <- 3
+		CVTSS2SD xmm2, xmm2	   ; xmm2[0-63]   <- 3.0  (conversion) [OLD: MOVHPD  xmm2, [three]]
+		MOVLHPS  xmm1, xmm2	   ; xmm1[63-127] <- 3.0  
+		MULPD    xmm0, xmm1    ; xmm0[0-63]   <- x*x*x*2.0 , xmm0[64-127] <- x*X*3.0
+		MOVHLPS  xmm1, xmm0    ; xmm1[0-63]   <- x*x*x*2.0
+		PSRLDQ   xmm0, 8	   ; xmm0[0-63]   <- x*x*3.0
+		SUBSD    xmm0, xmm1	   ; xmm0[0-63]   <- x*x*(3.0-(x*2.0))
 								 
-		MOVSD [t], xmm0		  ; store the result back to the variable 
-		POP edi				  ; restore edi
-		POP esi				  ; restore esi
-
+		MOVSD REAL8 PTR [res], xmm0	   ; store the result back to the variable 
+		POP edi				  ; Restore edi
+		POP esi				  ; Restore esi
 	ENDM
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Precise linear interpolation
 	;; res = ((v0) + (t) * ((v1) - (v0)))
+	;;
 	;; Only for REAL8! (doubles)
-	LineraInterpolation MACRO res, v0, v1, t
+	LineraInterpolation MACRO res, v0, v1, tmp
 		
-		PUSH esi			  ; preserve ESI
-		PUSH edi			  ; preserve EDI
+		PUSH esi					; Preserve ESI
+		PUSH edi					; Preserve EDI
 
-		MOVSD xmm0, [v1]	  ; xmm0[0-63] <- v1
-		MOVSD xmm1, [v0]	  ; xmm1[0-63] <- v0
-		MOVSD xmm2, [t]		  ; xmm2[0-63] <- t
-		SUBSD xmm0, xmm1	  ; xmm0[0-63] <- v1 - v0
-		MULSD xmm0, xmm2	  ; xmm0[0-63] <- t*(v1 - v0)
-		ADDSD xmm0, xmm1	  ; xmm0[0-63] <- v0 + t*(v1 - v0)		
+		MOVSD xmm0, REAL8 PTR [v1]	; xmm0[0-63] <- v1
+		MOVSD xmm1, REAL8 PTR [v0]	; xmm1[0-63] <- v0
+		MOVSD xmm2, REAL8 PTR [tmp]	; xmm2[0-63] <- t
+		SUBSD xmm0, xmm1			; xmm0[0-63] <- v1 - v0
+		MULSD xmm0, xmm2			; xmm0[0-63] <- t*(v1 - v0)
+		ADDSD xmm0, xmm1			; xmm0[0-63] <- v0 + t*(v1 - v0)		
+		MOVSD REAL8 PTR [res], xmm0	; Store the result back to the variable 
 
-		MOVSD [res], xmm0	  ; store the result back to the variable 
-		POP edi				  ; restore edi
-		POP esi				  ; restore esi
+		POP edi						; Restore edi
+		POP esi						; Restore esi
 	ENDM
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,68 +82,62 @@ CODE SEGMENT
 	;; Returns allocated memory pointer in eax
 	Alloc2DArray PROC FAR w : DWORD, h : DWORD
 
-		;MOV ecx, w		 ecx <- width
-		;MOV edx, h		 edx <- height
+		MOV eax, w		; eax <- width
+		IMUL eax, h		; eax <- width * height
 
-		INVOKE crt_calloc, edx, 4
-		MOV ebx, eax
-
-		xor ecx, ecx
-
-		IterAlloc:
-			INVOKE crt_calloc, ecx, 8
-			MOV [ebx + 4*edx], eax
-
-			INC ecx
-			CMP ecx, h
-			JNE IterAlloc
+		INVOKE crt_calloc, eax, 8
 		
 		RET
 	Alloc2DArray ENDP
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Frees 2-dimensional array
-	Free2DArray PROC FAR pointer : DWORD, h : DWORD
-	
-		XOR eax, eax
-		RET
-	Free2DArray ENDP
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Finds min and max value in array2D
-	MaxMinFrom2DArray PROC FAR arr : DWORD, w : DWORD, h : DWORD, min : DWORD, max : DWORD
+	MaxMinFrom2DArray PROC FAR arr : DWORD, n : DWORD, min : DWORD, max : DWORD
+	
+		MOV ebx, arr					; ebx <- array base
+		MOV ecx, n						; ecx <- array size
+		
+		DEC ecx							; ecx points now last element of the array
+		MOVQ xmm0, REAL8 PTR [ebx+8*ecx]; xmm0[0-63] <- array[n-1]
+		MOVQ REAL8 PTR [min], xmm0		; minimum <- array[n-1]
+		MOVQ REAL8 PTR [max], xmm0		; maximum <- array[n-1]
+		CMP ecx, 0						; test for array of size = 1
+		JE MaxMinEnd					; jump if array of one element
 
-		LOCAL minimum  : REAL8
-		LOCAL maximum : REAL8
+		TEST ecx, 1						; if n is odd than: ZF <- 1
+		JNZ MaxMinLoop					; if n is odd than ok
 
-		MOV ebx, arr		; ebx <- array base
-		MOV ecx, w			; ecx <- array width
-		MOV edx, h			; edx <- array height
-		DEC ecx
-		DEC edx
-
-		MOV minimum, REAL8 PTR [ebx+8*ecx+edx] ; minimum  <- array[height-1][width-1]
-		MOV maximum, REAL8 PTR [ebx+8*ecx+edx] ; maximum  <- array[height-1][width-1]
-
-		MOVSD xmm0, REAL8 PTR [ebx+8*ecx+edx]
-		MOVSD xmm1, REAL8 PTR [ebx+8*ecx+edx]
+		MOVQ xmm1, REAL8 PTR [ebx + 8*ecx]		; xmm1[0-63] <- array[n-2]
+		MOVQ xmm2, xmm1
+		CMPSD xmm2, xmm0, 001b
 
 
-		XOR eax, eax
-		RET
+
+		MaxMinLoop:
+			MOVDQA xmm0, [ebx + ecx]
+								
+			
+
+			DEC ecx
+			DEC ecx
+			JNZ MaxMinLoop
+
+		MaxMinEnd:		
+			XOR eax, eax
+			RET
 	MaxMinFrom2DArray ENDP
 	
 	OPTION PROLOGUE:NONE 
 	OPTION EPILOGUE:NONE 
-	MyMinMax    PROC    p:dword, n:dword
+	MyMinMax    PROC    arr:dword, n:dword
 
 			MOV     ecx, [esp+8]    ;n
 			MOV     edx, [esp+4]    ;p
-			FLD     real8 PTR [edx]             ; set st(1) to MAX value        
+			FLD     real4 PTR [edx]             ; set st(1) to MAX value        
 			FLD     st(0)                       ; set st(0) to MIN value
 			SUB     ecx, 1                      ; points to the last value
 	  L0:
-			FLD     real8 ptr [edx+ecx*4]
+			FLD     real4 ptr [edx+ecx*4]
 			FCOMI   st, st(1)                   ; compare st(1)=MIN with st(0)
 			JAE     L1
 			FXCH    st(1)

@@ -4,6 +4,21 @@
 option casemap:none
 .xmm
 
+.data
+	ALIGN 16
+
+	;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Initialization arrays
+		p		        DWORD  0
+		g2		        DWORD  0.0
+		NoiseArray		DWORD  0.0
+	
+	;;;;;;;;;;;;;
+	;; IMMEDIATES
+
+		B				DWORD  1000h	; Array size
+		BMask			DWORD  0FFFh	; Array size mask
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Includes
 ;;;;;;;;;;;
@@ -26,25 +41,12 @@ option casemap:none
 	include PerlinNoise.asm
 	include Bitmap.asm
 
-.data
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Initialization arrays
-		p		        DWORD  0
-		g2		        DWORD  0.0
-		NoiseArray		DWORD  0.0
-	
-	;;;;;;;;;;;;;
-	;; IMMEDIATES
-
-		B				DWORD  1000h	; Array size
-		BMask			DWORD  0FFFh	; Array size mask
-
 .code
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
+		XOR ebx, ebx
 		MOV eax, vector
 		XOR eax, eax
 		RET

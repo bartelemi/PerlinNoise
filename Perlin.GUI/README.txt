@@ -9,14 +9,12 @@ TODO:																									  |
 	                                                                                                      |
   ========================================================================================================+
   Perlin.PureC																							  |
-  * Przerobić oryginalny generator Kena																	  |
   * Zapisywać każdą linię pikseli do jakiegoś bufora (unsigned char*), który potem należy zapisać         |
     w całości do wskaźnika na obraz unsigned int *imagePointer - unikniemy przesuwania po jednym bajcie   |
 	w imagePointer (ten bufor będzie już wyrównany do 4 bajtów)                                           |
 	 																									  |
   ========================================================================================================+
   Perlin.Assembly																						  |
-  * przepisać bibliotekę z C do asm															              |
   * funkcje 																							  | 
       TBD:																								  |
 		Bitmap/CreateBMP																				  |
@@ -28,13 +26,11 @@ TODO:																									  |
 		Bitmap/Experimental2																			  |
 		Bitmap/Experimental3																			  |
 		Bitmap/ScaleToChar																			      |
-		Helpers/Free2DArray																				  |
 		Helpers/MaxMinFrom2DArray																		  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
 		Perlin.Assembly/_Finalize																		  |
 		PerlinNoise/PerlinNoise2D																	      |
-		PerlinNoise/Noise																				  | 
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
 		Helpers/Alloc2DArray																		      |
@@ -42,6 +38,9 @@ TODO:																									  |
 		Helpers/LineraInterpolation																		  |
 		Helpers/Power																					  | 
 		Perlin.Assembly/_PerlinNoiseBmp																	  |
+		PerlinNoise/Noise																				  | 
+		PerlinNoise/Setup																				  |
+		PerlinNoise/at2																					  |
 																										  |
 	  Gotowe (testowane):																				  |
 		Helpers/memCopy																					  |
