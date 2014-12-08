@@ -46,7 +46,7 @@ option casemap:none
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
-		XOR ebx, ebx
+		;XOR ebx, ebx
 		MOV eax, vector
 		XOR eax, eax
 		RET

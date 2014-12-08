@@ -17,20 +17,20 @@ TODO:																									  |
   Perlin.Assembly																						  |
   * funkcje 																							  | 
       TBD:																								  |
-		Bitmap/CreateBMP																				  |
-		Bitmap/GetPixelValues																			  |
-		Bitmap/GetColor																					  |
-		Bitmap/SinNoise																		     		  |
-		Bitmap/SqrtNoise																				  |
-		Bitmap/Experimental1																			  |
-		Bitmap/Experimental2																			  |
-		Bitmap/Experimental3																			  |
-		Bitmap/ScaleToChar																			      |
-		Helpers/MaxMinFrom2DArray																		  |
-		Perlin.Assembly/_Init																			  |
-		Perlin.Assembly/Normalize																		  |
-		Perlin.Assembly/_Finalize																		  |
-		PerlinNoise/PerlinNoise2D																	      |
+		01. Bitmap/CreateBMP																				  |
+		02. Bitmap/GetPixelValues																			  |
+		03. Bitmap/GetColor																					  |
+		04. Bitmap/SinNoise																		     		  |
+		05. Bitmap/SqrtNoise																				  |
+		06. Bitmap/Experimental1																			  |
+		07. Bitmap/Experimental2																			  |
+		08. Bitmap/Experimental3																			  |
+		09. Bitmap/ScaleToChar																			      |
+		10. Helpers/MaxMinFrom2DArray																		  |
+		11. Perlin.Assembly/_Init																			  |
+		12. Perlin.Assembly/Normalize																		  |
+		13. Perlin.Assembly/_Finalize																		  |
+		14. PerlinNoise/PerlinNoise2D																	      |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
 		Helpers/Alloc2DArray																		      |

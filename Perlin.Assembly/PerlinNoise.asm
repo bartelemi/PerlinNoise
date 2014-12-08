@@ -151,13 +151,23 @@ CODE SEGMENT
 	;; Initializes noise array with noise values, 
 	;; according to params (octaves, persistence)
 	PerlinNoise2D PROC noise : DWORD, params : THREADPARAMS
-		LOCAL k     :  DWORD
-		LOCAL i	    :  DWORD
-		LOCAL j     :  DWORD
-		LOCAL x     :  REAL8
-		LOCAL y     :  REAL8
-		LOCAL amp   :  REAL8
-		LOCAL freq  :  REAL8
+		LOCAL i, j, k    :  DWORD
+		LOCAL x, y       :  REAL8
+		LOCAL amp, freq  :  REAL8
+
+		XOR eax, eax		
+		MOV k, eax				 ; Init k
+		MOV ecx, params._octaves ; ecx stores k-loop max value
+		DEC ecx				     
+
+		NoiseLoopK:
+			MOV eax, 2			; Base to eax
+			PINSRD xmm1, eax, 0 ; Copy base to xmm1
+			Power xmm1, k		; Calculate 2^k
+			MOVSD REAL8 PTR [amp], xmm0 ; Store result in amp
+
+			MOVSD xmm1, REAL8 PTR [params._persistence]
+			Power xmm1, k		; Calculate persistence^k
 
 		XOR eax, eax
 		RET

@@ -9,8 +9,8 @@ CODE SEGMENT
 	;; Only for REAL8! (doubles)
 	EaseCurve MACRO res, x
 		
-		PUSH esi			  ; Preserve ESI
-		PUSH edi			  ; Preserve EDI
+		PUSH esi			   ; Preserve ESI
+		PUSH edi			   ; Preserve EDI
 
 		MOVDDUP  xmm0, REAL8 PTR [x]     ; xmm0[0-63]   <- x, xmm0[64-127]   <- x
 		MOVAPD   xmm1, xmm0    ; xmm1[0-63]   <- x, xmm1[64-127]   <- x
@@ -57,22 +57,48 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Calculates base^exponent and returns in result
-	Power PROC FAR base : REAL8, exponent : DWORD, result : REAL8
+	;; 
+	;; Params:
+	;;	base	 - xmm register with base number value
+	;;	exponent - DWORD value of exponent number
+	;;	result	 - REAL8 PTR to result variable
+	;Power PROC base : REAL8, exponent : DWORD, result : DWORD
 
-		MOV ecx, exponent	  ; ecx		   <- exponent
-		MOVSD xmm0, [base]	  ; xmm0[0-63] <- base
-		MOVSD xmm1, [base]	  ; xmm1[0-63] <- base
+		
+	;	MOVSD xmm0, base	  ; xmm0[0-63] <- base
+	;	MOVSD xmm1, base	  ; xmm1[0-63] <- base
 
-		IterPower:
-			MULSD xmm0, xmm1  ; xmm0[0-63] <- xmm0[0-63] * base
+	;	IterPower:
+	;		MULSD xmm0, xmm1  ; xmm0[0-63] <- xmm0[0-63] * base
+	;		DEC ecx
+	;		TEST ecx, ecx
+	;		JNZ IterPower
+
+	;	MOVSD REAL8 PTR [result], xmm0  ; store the result back to the variable 
+	;	XOR eax, eax		 
+	;	RET
+	;Power ENDP
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Calculates base^exp and returns in res
+	;;
+	;; Params:
+	;;	base - xmm register (not xmm0)
+	;;  exp  - general purpose register or immediate
+	;;
+	;; Result in xmm0
+	Power MACRO base, exp
+		
+		MOV ecx, exp	  ; ecx  <- exponent
+		MOVSD xmm1, base
+
+		@@:
+			MULSD xmm0, xmm1
 			DEC ecx
 			TEST ecx, ecx
-			JNZ IterPower
+			JNZ @B
+	ENDM
 
-		MOVSD [result], xmm0  ; store the result back to the variable 
-		XOR eax, eax		 
-		RET
-	Power ENDP
 
 ;;;;;;;;;;;;;;;;;;
 ;; ARRAY FUNCTIONS
