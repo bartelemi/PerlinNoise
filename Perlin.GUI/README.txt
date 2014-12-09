@@ -17,20 +17,19 @@ TODO:																									  |
   Perlin.Assembly																						  |
   * funkcje 																							  | 
       TBD:																								  |
-		01. Bitmap/CreateBMP																				  |
-		02. Bitmap/GetPixelValues																			  |
-		03. Bitmap/GetColor																					  |
-		04. Bitmap/SinNoise																		     		  |
-		05. Bitmap/SqrtNoise																				  |
-		06. Bitmap/Experimental1																			  |
-		07. Bitmap/Experimental2																			  |
-		08. Bitmap/Experimental3																			  |
-		09. Bitmap/ScaleToChar																			      |
-		10. Helpers/MaxMinFrom2DArray																		  |
-		11. Perlin.Assembly/_Init																			  |
-		12. Perlin.Assembly/Normalize																		  |
-		13. Perlin.Assembly/_Finalize																		  |
-		14. PerlinNoise/PerlinNoise2D																	      |
+		01. Bitmap/CreateBMP																			  |
+		02. Bitmap/GetPixelValues																		  |
+		03. Bitmap/GetColor																				  |
+		04. Bitmap/SinNoise																	     		  |
+		05. Bitmap/SqrtNoise																			  |
+		06. Bitmap/Experimental1																		  |
+		07. Bitmap/Experimental2																		  |
+		08. Bitmap/Experimental3																		  |
+		09. Bitmap/ScaleToChar																		      |
+		10. Helpers/MaxMinFrom2DArray																	  |
+		11. Perlin.Assembly/_Init																		  |
+		12. Perlin.Assembly/Normalize																	  |
+		13. Perlin.Assembly/_Finalize																	  |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
 		Helpers/Alloc2DArray																		      |
@@ -39,6 +38,7 @@ TODO:																									  |
 		Helpers/Power																					  | 
 		Perlin.Assembly/_PerlinNoiseBmp																	  |
 		PerlinNoise/Noise																				  | 
+		PerlinNoise/PerlinNoise2D																	      |
 		PerlinNoise/Setup																				  |
 		PerlinNoise/at2																					  |
 																										  |
@@ -59,3 +59,8 @@ For a two-dimension column major array:																	  |
 Element_Address = Base_Address + (rowindex * col_size + colindex) * Element_Size						  |
 																										  |
 ==========================================================================================================+
+
+Optymalizacja ASM:
+
+	PerlinNoise: sprawdzić co w jakich pętlach się zmienia i przenieść jakieś
+				 najczęściej używane wartości do rejestrów xmm na stałe (np. wartość 100)

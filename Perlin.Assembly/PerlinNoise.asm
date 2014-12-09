@@ -99,8 +99,8 @@ CODE SEGMENT
 		 ADD eax, by0
 		 MOV ebx, [p + 4*eax]
 		 LEA ecx, [g2 + 8*ebx]
-		 MOVUPS xmm0, [ecx]
-		 MOVUPS q, xmm0
+		 MOVAPS xmm0, [ecx]
+		 MOVAPS q, xmm0
 		 at2 rx0, ry0, q, u
 
 		; Calculate second vector on x-axis
@@ -108,13 +108,12 @@ CODE SEGMENT
 		 ADD eax, by0
 		 MOV ebx, [p + 4*eax]
 		 LEA ecx, [g2 + 8*ebx]
-		 MOVUPS xmm0, [ecx]
-		 MOVUPS q, xmm0
+		 MOVAPS xmm0, [ecx]
+		 MOVAPS q, xmm0
 		 at2 rx1, ry0, q, v
 
 		; Interpolate vectors on x-axis and store result in a
 		 LineraInterpolation a, u, v, t
-
 
 		; Calculate first vector on y-axis
 		 MOV eax, i
@@ -130,8 +129,8 @@ CODE SEGMENT
 		 ADD eax, by1
 		 MOV ebx, [p + 4*eax]
 		 LEA ecx, [g2 + 8*ebx]
-		 MOVUPS xmm0, [ecx]
-		 MOVUPS q, xmm0
+		 MOVAPS xmm0, [ecx]
+		 MOVAPS q, xmm0
 		 at2 rx1, ry1, q, v
 
 		; Interpolate vectors on y-axis and store result in b
@@ -157,57 +156,68 @@ CODE SEGMENT
 		
 		; Initialize k-loop variables
 		 MOV eax, params._octaves 
-		 MOV k, eax				 ; k stores k-loop max value
-		 XOR ebx, ebx			 ; ebx stores k-loop current value
+		 MOV k, eax				 									; k stores k-loop max value
+		 XOR ebx, ebx			 									; ebx stores k-loop current value
 
 		NoiseLoopK:
-			MOV eax, 2			; Base to eax
-			PINSRD xmm4, eax, 0 ; Copy base to xmm1
-			Power xmm4, k		; Calculate 2^k
-			MOVSD REAL8 PTR [amp], xmm4 ; Store result in amp xmm4
+			MOV eax, 2												; Base to eax
+			PINSRD xmm4, eax, 0 									; Copy base to xmm1
+			Power xmm4, k											; Calculate 2^k
+			MOVSD REAL8 PTR [amp], xmm4 							; Store result in amp xmm4
 
 			MOVSD xmm5, REAL8 PTR [params._persistence]
-			Power xmm5, k		; Calculate persistence^k
-			MOVSD REAL8 PTR [freq], xmm5 ; Store result in freq xmm5
+			Power xmm5, k											; Calculate persistence^k
+			MOVSD REAL8 PTR [freq], xmm5 							; Store result in freq xmm5
+			MOVLHPS xmm5, xmm5			 							; Duplicate freq in upper quadword of xmm5
 
 			; Initialize i-loop variables
 			 MOV eax, params._offset
 			 ADD eax, params._height	
-			 MOV i, eax				 ; i stores max value of i-loop
-			 MOV ecx, params._offset ; ecx stores i-loop current value
+			 MOV i, eax				 								; i stores max value of i-loop
+			 MOV ecx, params._offset 								; ecx stores i-loop current value
 
 			NoiseLoopI:
 				; Initialize j-loop variables
 				 MOV eax, params._width
-				 MOV j, eax				; j stores max value of j-loop
-				 XOR edx, edx			; edx storec j-loop current value
+				 MOV j, eax											; j stores max value of j-loop
+				 XOR edx, edx										; edx storec j-loop current value
 
 				NoiseLoopJ:
 					MOV eax, 100		
-					PINSRD xmm1, eax, 0					; Insert 100 to xmm1[0-31]
-					PINSRD xmm1, eax, 2					; Insert 100 to xmm1[64-95]
-					CVTDQ2PD xmm1, xmm1					; Convert integer to doubles
-
-					PINSRD xmm2, DWORD PTR [i], 0		; Insert i to xmm2[0-31]
-					PINSRD xmm2, DWORD PTR [j], 2		; Insert j to xmm2[64-95]
-					CVTDQ2PD xmm2, xmm2					; Convert integer to doubles
-
-					INVOKE RandomNumber, NSeed	
-					PINSRD xmm0, eax, 0					; Insert first random to xmm0[0-31]
-					
-					INVOKE RandomNumber, NSeed
-					PINSRD xmm0, eax, 2					; Insert second random to xmm0[64-95]
-
-					ANDPD xmm0, xmm1					; Modulo 100
-					DIVPD xmm0, xmm1					; Divide by 100 to make it dot product
-					ADDPD xmm0, xmm2					; 
-
-					LEA eax, [t]
-					INVOKE Noise, x, y, eax
-
-					; x = frequency * (i + ((rand() % 100) / 100.0)) 
-					; y = frequency * (j + ((rand() % 100) / 100.0))
-					; noiseArray[i][j] += amplitude * noise2(x, y) <- mamy w eax wskaŸnik na wynik Noise(x, y)
+					PINSRD   xmm1, eax, 0							; Insert 100 to xmm1[0-31]
+					PINSRD   xmm1, eax, 2							; Insert 100 to xmm1[64-95]
+					CVTDQ2PD xmm1, xmm1								; Convert xmm1 values from integers to doubles
+																	;
+					PINSRD   xmm2, DWORD PTR [i], 0					; Insert i to xmm2[0-31]
+					PINSRD   xmm2, DWORD PTR [j], 2					; Insert j to xmm2[64-95]
+					CVTDQ2PD xmm2, xmm2								; Convert i and j from integers to doubles
+																	;
+					INVOKE RandomNumber, NSeed						; Generate random dot product for x
+					PINSRD xmm0, eax, 0								; Insert first random to xmm0[0-31]
+																	;					
+					INVOKE RandomNumber, NSeed						; Generate random dot product for y
+					PINSRD xmm0, eax, 2								; Insert second random to xmm0[64-95]
+																	;
+					CVTDQ2PD xmm0, xmm0								; Convert x and y randoms to doubles
+																	;
+					ANDPD xmm0, xmm1								; Modulo 100
+					DIVPD xmm0, xmm1								; Divide by 100 to make it dot product
+					ADDPD xmm0, xmm2								; xmm0[0-63] += i; xmm0[64-127] += j
+					MULPD xmm0, xmm5								; Multiply upper and lower doubles by freq
+																	;
+					MOVLPS REAL8 PTR [x], xmm0						; Store calculated x in local var
+					MOVHPS REAL8 PTR [y], xmm0						; Store calculated y in local var
+					LEA eax, [t]									; Store pointer to return value in eax
+																	;
+					INVOKE Noise, REAL8 PTR [x], REAL8 PTR [y], eax	; Calculate Noise value for given (x,y)
+					MOVQ  xmm0, REAL8 PTR [t]						; Store value of noise into xmm0
+					MULSD xmm0, REAL8 PTR [amp]						; Noise * amplitude				
+																	;
+					LEA   eax, [NoiseArray + 4*ecx]					; Calculate effective address of row in NoiseArray
+					LEA   esi, [eax + 8*edx]						; Calculate effective address of specified element in array
+					MOVQ  xmm1, REAL8 PTR [eax]						; Move current element to xmm1
+					ADDSD xmm0, REAL8 PTR [eax]						; Add calculated value to current element
+					MOVQ  xmm0, REAL8 PTR [eax]						; Store calculated value into array
 
 					INC edx
 					CMP edx, j
@@ -218,10 +228,6 @@ CODE SEGMENT
 			INC ebx
 			CMP ebx, k
 			JNE NoiseLoopK
-
-
-
-			
 
 		XOR eax, eax
 		RET
