@@ -9,10 +9,17 @@ option casemap:none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initialization arrays
+		
 		p		        DWORD  0
-		g2		        DWORD  0.0
-		NoiseArray		DWORD  0.0
+		g2		        DWORD  0
+		NoiseArray		DWORD  0
 	
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Random number generator
+		
+		NSeed			DWORD 0			; Seed for random number generator
+
 	;;;;;;;;;;;;;
 	;; IMMEDIATES
 
@@ -55,6 +62,9 @@ option casemap:none
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initializes program arrays
 	_Init PROC FAR w:DWORD, h:DWORD	
+
+		INVOKE GetTickCount		; Get tick count
+		MOV NSeed, eax			; Initialize seed
 
 		mov eax, w
 		mov eax, h

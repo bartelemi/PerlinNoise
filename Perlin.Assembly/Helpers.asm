@@ -99,6 +99,20 @@ CODE SEGMENT
 			JNZ @B
 	ENDM
 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Generates random number between <min, max>
+	;; 
+	;; Params:
+	;;  seed - DWORD value for seeding generator
+	;;
+	;; Result in eax
+	RandomNumber PROC seed : DWORD 
+
+
+
+
+	RandomNumber ENDP 
+
 
 ;;;;;;;;;;;;;;;;;;
 ;; ARRAY FUNCTIONS

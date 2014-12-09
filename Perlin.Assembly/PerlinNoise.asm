@@ -68,7 +68,7 @@ CODE SEGMENT
 	;; Returns noise value for point (x, y)
 	;;
 	;; Result returned by val pointer
-	Noise PROC FAR x : REAL8, y : REAL8, val : DWORD
+	Noise PROC x : REAL8, y : REAL8, val : DWORD
 		LOCAL q					  :  DWORD
 		LOCAL bxy				  :  DWORD
 		LOCAL i, j				  :  DWORD
@@ -151,23 +151,77 @@ CODE SEGMENT
 	;; Initializes noise array with noise values, 
 	;; according to params (octaves, persistence)
 	PerlinNoise2D PROC noise : DWORD, params : THREADPARAMS
-		LOCAL i, j, k    :  DWORD
+		LOCAL i, j, k, t :  DWORD
 		LOCAL x, y       :  REAL8
 		LOCAL amp, freq  :  REAL8
-
-		XOR eax, eax		
-		MOV k, eax				 ; Init k
-		MOV ecx, params._octaves ; ecx stores k-loop max value
-		DEC ecx				     
+		
+		; Initialize k-loop variables
+		 MOV eax, params._octaves 
+		 MOV k, eax				 ; k stores k-loop max value
+		 XOR ebx, ebx			 ; ebx stores k-loop current value
 
 		NoiseLoopK:
 			MOV eax, 2			; Base to eax
-			PINSRD xmm1, eax, 0 ; Copy base to xmm1
-			Power xmm1, k		; Calculate 2^k
-			MOVSD REAL8 PTR [amp], xmm0 ; Store result in amp
+			PINSRD xmm4, eax, 0 ; Copy base to xmm1
+			Power xmm4, k		; Calculate 2^k
+			MOVSD REAL8 PTR [amp], xmm4 ; Store result in amp xmm4
 
-			MOVSD xmm1, REAL8 PTR [params._persistence]
-			Power xmm1, k		; Calculate persistence^k
+			MOVSD xmm5, REAL8 PTR [params._persistence]
+			Power xmm5, k		; Calculate persistence^k
+			MOVSD REAL8 PTR [freq], xmm5 ; Store result in freq xmm5
+
+			; Initialize i-loop variables
+			 MOV eax, params._offset
+			 ADD eax, params._height	
+			 MOV i, eax				 ; i stores max value of i-loop
+			 MOV ecx, params._offset ; ecx stores i-loop current value
+
+			NoiseLoopI:
+				; Initialize j-loop variables
+				 MOV eax, params._width
+				 MOV j, eax				; j stores max value of j-loop
+				 XOR edx, edx			; edx storec j-loop current value
+
+				NoiseLoopJ:
+					MOV eax, 100		
+					PINSRD xmm1, eax, 0					; Insert 100 to xmm1[0-31]
+					PINSRD xmm1, eax, 2					; Insert 100 to xmm1[64-95]
+					CVTDQ2PD xmm1, xmm1					; Convert integer to doubles
+
+					PINSRD xmm2, DWORD PTR [i], 0		; Insert i to xmm2[0-31]
+					PINSRD xmm2, DWORD PTR [j], 2		; Insert j to xmm2[64-95]
+					CVTDQ2PD xmm2, xmm2					; Convert integer to doubles
+
+					INVOKE RandomNumber, NSeed	
+					PINSRD xmm0, eax, 0					; Insert first random to xmm0[0-31]
+					
+					INVOKE RandomNumber, NSeed
+					PINSRD xmm0, eax, 2					; Insert second random to xmm0[64-95]
+
+					ANDPD xmm0, xmm1					; Modulo 100
+					DIVPD xmm0, xmm1					; Divide by 100 to make it dot product
+					ADDPD xmm0, xmm2					; 
+
+					LEA eax, [t]
+					INVOKE Noise, x, y, eax
+
+					; x = frequency * (i + ((rand() % 100) / 100.0)) 
+					; y = frequency * (j + ((rand() % 100) / 100.0))
+					; noiseArray[i][j] += amplitude * noise2(x, y) <- mamy w eax wskaŸnik na wynik Noise(x, y)
+
+					INC edx
+					CMP edx, j
+					JNE NoiseLoopJ
+				INC ecx
+				CMP ecx, i
+				JNE NoiseLoopI
+			INC ebx
+			CMP ebx, k
+			JNE NoiseLoopK
+
+
+
+			
 
 		XOR eax, eax
 		RET
