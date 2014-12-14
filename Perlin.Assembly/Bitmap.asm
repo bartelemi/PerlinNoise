@@ -78,8 +78,43 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Returns new pixel 
-	GetPixelValues PROC x : DWORD, y : DWORD, min : FAR PTR REAL8, max : FAR PTR REAL8, noiseArray : FAR PTR REAL8, params : THREADPARAMS 
+	;;
+	;;
+	;; Returns pointer to new PIXEL in eax
+	GetPixelValues PROC x : DWORD, y : DWORD, min : PTR DWORD, max : PTR DWORD, noiseArray : PTR DWORD, params : THREADPARAMS 
 
+		LOACL pixel           :  DWORD
+		LOCAL value           :  REAL8
+		LOCAL minAfterEffect  :  REAL8
+		LOCAL maxAfterEffect  :  REAL8
+
+		INVOKE crt_malloc, 24	; Alloc memory for new pixel
+		MOV pixel, eax  		; Init pixel
+		; Init value
+		; Init minAfterEffect
+		; Init maxAfterEffect
+
+		LEA eax, [value]			; Load pointer to value
+		LEA ebx, [minAfterEffect]	; Load pointer to minAfterEffect
+		LEA ecx, [maxAfterEffect]	; Load pointer to minAfterEffect
+		
+		Switch params._effect
+			Case 1
+				INVOKE SinNoise, eax, ebx, ecx, x, y
+			Case 2
+				INVOKE SqrtNoise, eax, ebx, ecx, x, y
+			Case 3
+				INVOKE Experimental1, eax, ebx, ecx, x, y
+			Case 4
+				INVOKE Experimental2, eax, ebx, ecx, x, y
+			Case 5
+				INVOKE Experimental3, eax, ebx, ecx, x, y
+			Default
+		Endsw
+
+		; pixel = GetColor(val, minAfterEffect, maxAfterEffect, (*params).color);
+
+		MOV eax, pixel			; Move pointer to pixel to eax for return
 		RET
 	GetPixelValues ENDP
 
@@ -90,16 +125,9 @@ CODE SEGMENT
 		RET
 	GetColor ENDP
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Returns reverse colored pixel
-	GetColorReversed PROC value:REAL8, min:REAL8, max:REAL8, color:PIXEL
-	
-		RET
-	GetColorReversed ENDP
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
-	SinNoise PROC value : FAR PTR REAL8, min : FAR PTR REAL8, max : FAR PTR REAL8, x : DWORD, y : DWORD
+	SinNoise PROC value : PTR DWORD, min : PTR DWORD, max : PTR DWORD, x : DWORD, y : DWORD
 
 		XOR eax, eax
 		RET
@@ -107,7 +135,7 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
-	SqrtNoise PROC value : FAR PTR REAL8, min : FAR PTR REAL8, max : FAR PTR REAL8, x : DWORD, y : DWORD
+	SqrtNoise PROC value : PTR DWORD, min : PTR DWORD, max : PTR DWORD, x : DWORD, y : DWORD
 
 
 		XOR eax, eax
@@ -116,7 +144,7 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
-	Experimental1 PROC value : FAR PTR REAL8, min : FAR PTR REAL8, max : FAR PTR REAL8, x : DWORD, y : DWORD
+	Experimental1 PROC value : PTR DWORD, min : PTR DWORD, max : PTR DWORD, x : DWORD, y : DWORD
 		
 		XOR eax, eax
 		RET
@@ -124,7 +152,7 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
-	Experimental2 PROC value : FAR PTR REAL8, min : FAR PTR REAL8, max : FAR PTR REAL8, x : DWORD, y : DWORD
+	Experimental2 PROC value : PTR DWORD, min : PTR DWORD, max : PTR DWORD, x : DWORD, y : DWORD
 	
 		XOR eax, eax
 		RET
@@ -132,7 +160,7 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
-	Experimental3 PROC value : FAR PTR REAL8, min : FAR PTR REAL8, max : FAR PTR REAL8, x : DWORD , y : DWORD
+	Experimental3 PROC value : PTR DWORD, min : PTR DWORD, max : PTR DWORD, x : DWORD , y : DWORD
 	
 		MOV eax, x
 		ADD eax, y
