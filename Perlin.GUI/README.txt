@@ -19,19 +19,19 @@ TODO:																									  |
       TBD:																								  |
 		01. Bitmap/CreateBMP																			  |
 		02. Bitmap/GetPixelValues																		  |
-		03. Bitmap/GetColor																				  |
-		04. Bitmap/SinNoise																	     		  |
-		05. Bitmap/SqrtNoise																			  |
-		06. Bitmap/Experimental1																		  |
-		07. Bitmap/Experimental2																		  |
-		08. Bitmap/Experimental3																		  |
-		09. Bitmap/ScaleToChar																		      |
-		10. Helpers/MaxMinFrom2DArray																	  |
-		11. Perlin.Assembly/_Init																		  |
-		12. Perlin.Assembly/Normalize																	  |
-		13. Perlin.Assembly/_Finalize																	  |
+		03. Bitmap/SinNoise																	     		  |
+		04. Bitmap/SqrtNoise																			  |
+		05. Bitmap/Experimental1																		  |
+		06. Bitmap/Experimental2																		  |
+		07. Bitmap/Experimental3																		  |
+		08. Helpers/MaxMinFrom2DArray																	  |
+		09. Perlin.Assembly/_Init																		  |
+		10. Perlin.Assembly/Normalize																	  |
+		11. Perlin.Assembly/_Finalize																	  |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
+	    Bitmap/ScaleToChar																			      |
+		Bitmap/GetColor																					  |
 		Helpers/Alloc2DArray																		      |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |

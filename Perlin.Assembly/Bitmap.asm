@@ -6,6 +6,7 @@ CODE SEGMENT
 		
 		LOCAL fSize : DWORD
 
+
 		MOV edx, w	    ; Compute file size in bytes
 		IMUL edx, 3	    ; 
 		MOV eax, edx    ; sizeof(BMPFILEHEADER)
@@ -72,6 +73,16 @@ CODE SEGMENT
 	;; Creates BMP using data from NoiseArray
 	CreateBMP PROC noiseArray : DWORD, params : THREADPARAMS 
 
+		LOCAL pixel     :  PIXEL
+		LOCAL min, max  :  REAL8
+		LOCAL i, j, k   :  DWORD
+		LOCAL pixSize   :  DWORD
+		LOCAL nPad		:  DWORD
+		LOCAL pad		:  DWORD
+		LOCAL pointer   :  DWORD
+
+
+
 		XOR eax, eax
 		RET
 	CreateBMP ENDP
@@ -82,20 +93,6 @@ CODE SEGMENT
 
 		RET
 	GetPixelValues ENDP
-
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Returns colored pixel
-	GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : PIXEL
-	
-		RET
-	GetColor ENDP
-
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Returns reverse colored pixel
-	GetColorReversed PROC value:REAL8, min:REAL8, max:REAL8, color:PIXEL
-	
-		RET
-	GetColorReversed ENDP
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Noise effects
@@ -139,19 +136,64 @@ CODE SEGMENT
 		XOR eax, eax
 		RET
 	Experimental3 ENDP
-
+		
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Scaling x in [min; max] -> [a; b]
 	;; Where we need to calculate min and max
 	;; and a = 0, b = 255 (unsigned char)
 	;;
 	;; Formula:
-	;; (b - a)(x - min)
+	;;        (b - a)(x - min)
 	;; f(x) = ----------------  + a
-	;; max - min
+	;;           max - min
+	;;
+	;; Result in eax.
 	ScaleToChar PROC x:REAL8, min:REAL8, max:REAL8
 
-		
+		MOVLPD  xmm0, REAL8 PTR [x]		; Store x to lower quadword of xmm0
+		MOVHPD  xmm0, REAL8 PTR [max]	; Store max to upper quadword of xmm0
+		MOVDDUP xmm1, REAL8 PTR [min]	; Store min to lower and upper quadword of xmm1
+		SUBPD   xmm0, xmm1				; xmm0[63-0] <- (x-min);  xmm0[127-64] <- (max-min) 
+		MOVHLPS xmm1, xmm0				; xmm1[63-0] <- (max-min)
+		DIVSD	xmm0, xmm1				; xmm0[63-0] <- (x-min) / (max-min)
+		MOV eax, 255					; eax		 <- 255
+		CVTSI2SD xmm1, eax				; xmm1[63-0] <- 255.0
+		MULSD xmm0, xmm1				; xmm0[63-0] <- 255.0 * (x-min) / (max-min)
+		CVTSD2SI eax, xmm0				; eax		 <- (int)(255.0 * (x-min) / (max-min))
 		RET
 	ScaleToChar ENDP
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Returns colored pixel
+	GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : DWORD
+	
+		INVOKE ScaleToChar, value, min, max
+		TEST eax, eax
+		JNE CalcColor
+			INC eax
+
+		CalcColor:
+			SHL eax, 8
+			MOV ebx, eax
+			LEA esi, [color]
+
+			MOV ecx, [esi + 16]
+			INC ecx
+			DIV ecx
+			MOV [esi+16], eax
+
+			MOV eax, ebx
+			MOV ecx, [esi+8]	
+			INC ecx
+			DIV ecx
+			MOV [esi+8], eax
+
+			MOV eax, ebx
+			MOV ecx, [esi]
+			INC ecx
+			DIV ecx
+			MOV [esi], eax
+
+		RET
+	GetColor ENDP
 CODE ENDS
