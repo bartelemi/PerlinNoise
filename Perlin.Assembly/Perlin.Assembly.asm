@@ -82,14 +82,6 @@ option casemap:none
 		RET
 	_PerlinNoiseBmp ENDP
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Generate noisy GIF - not implemented
-	_PerlinNoiseGif PROC
-
-		XOR eax, eax
-		RET
-	_PerlinNoiseGif ENDP
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Clean up memory
 	_Finalize PROC FAR h:DWORD

@@ -16,12 +16,6 @@ PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 	CreateBMP(NoiseArrayDynamic, params);
 }
 
-PERLINPUREC_API void GeneratePerlinNoiseGif(ThreadParameters params)
-{
-	printf("Not implemented.\n");
-}
-
-
 static void normalize(double v[2])
 {
 	double s = sqrt(v[0] * v[0] + v[1] * v[1]);
