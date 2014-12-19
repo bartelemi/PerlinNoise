@@ -86,18 +86,69 @@ CODE SEGMENT
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Creates BMP using data from NoiseArray
-	CreateBMP PROC noiseArray : DWORD, params : THREADPARAMS 
+	CreateBMP PROC USES ebx ecx edx noiseArray : DWORD, params : THREADPARAMS 
 
-		LOCAL pixel     :  PIXEL
 		LOCAL min, max  :  REAL8
 		LOCAL i, j, k   :  DWORD
 		LOCAL pixSize   :  DWORD
 		LOCAL nPad		:  DWORD
 		LOCAL pad		:  DWORD
 		LOCAL pointer   :  DWORD
+		LOCAL offsetEnd :  DWORD
 
+		; Initialize local variables
+			 MOV pixSize, SIZEOF PIXEL		; Store sizeof(PIXEL)
+			 MOV eax, params._width			; Calculate pad size
+			 MUL pixSize					;
+			 AND eax, 3						;
+			 MOV ebx, 4						;
+			 SUB ebx, eax					;
+			 AND ebx, 3						;
+			 MOV nPad, ebx					; Store pad size to local var
 
+			 INVOKE crt_calloc, nPad, SIZEOF(BYTE)	; Allocate memory for row pad
+			 MOV pad, eax							; Store allocated memory pointer
 
+			 LEA eax, [params._imgPtr]				; Load address of pointer to bitmap
+			 MOV pointer, eax						; Copy pointer to picture array
+
+			 MOV eax, params._offset				; Calculate end of image offset
+			 ADD eax, params._height				;
+			 MOV offsetEnd, eax						; Store value in local variable
+
+		; Check if current thread has Id==0 and if so create file header
+			 MOV eax, params._threadId		
+			 TEST eax, eax
+			 JNZ Skip
+			 INVOKE WriteFileHdr, pointer, params._width, params._height
+
+		Skip:
+		; Get min and max from generated noise array
+			; INVOKE MaxMinFrom2DArray (params)
+
+		; Calculate offset to image for current thread
+			MOV eax, params._width
+			MUL pixSize
+			ADD eax, nPad
+			MOV ebx, params._offset
+			MUL ebx
+			ADD eax, SIZEOF(BMPFILEHEADER)
+			ADD pointer, eax							
+			
+			ColumnLoop:
+				XOR ecx, ecx	; ecx holds current position in noise array
+				XOR edx, edx	; edx holds current position in image array
+				RowLoop:
+					ADD pointer, edx
+					INVOKE GetPixelValues, ebx, ecx, DWORD PTR [min], DWORD PTR [max], noiseArray, params
+					memCopy pointer, eax, SIZEOF PIXEL
+				INC ecx
+				ADD edx, pixSize
+				CMP ecx, params._width
+				JNE RowLoop
+			INC ebx
+			CMP ebx, offsetEnd
+			
 		XOR eax, eax
 		RET
 	CreateBMP ENDP
@@ -107,22 +158,38 @@ CODE SEGMENT
 	;;
 	;;
 	;; Returns pointer to new PIXEL in eax
-	GetPixelValues PROC x : DWORD, y : DWORD, min : DWORD, max : DWORD, noiseArray : DWORD, params : THREADPARAMS 
+	GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DWORD, noiseArray : DWORD, params : THREADPARAMS 
 
+		LOCAL _x			  :  DWORD
+		LOCAL _y			  :  DWORD
 		LOCAL pix			  :  DWORD
 		LOCAL value           :  REAL8
 		LOCAL minAfterEffect  :  REAL8
 		LOCAL maxAfterEffect  :  REAL8
 
-		INVOKE crt_malloc, 24	; Alloc memory for new pixel
-		MOV pix, eax  			; Init pixel
-		; Init value
-		; Init minAfterEffect
-		; Init maxAfterEffect
 
-		LEA eax, [value]			; Load pointer to value
-		LEA ebx, [minAfterEffect]	; Load pointer to minAfterEffect
-		LEA ecx, [maxAfterEffect]	; Load pointer to minAfterEffect
+		MOV ebx, x						; Copy value of x
+		MOV ecx, y						; Copy value of y
+		MOV _x, ebx						; Store value of x in local variable
+		MOV _y, ecx						; Store value of x in local variable
+
+		LEA eax, [NoiseArray + 4*ebx]	; Get address of column in NoiseArray
+		LEA esi, [eax + 8*ecx]			; Get address of element in row in Noise Array
+		MOVSD xmm0, REAL8 PTR [esi]		; Init value
+		MOVSD value, xmm0				; Store value in local variable
+
+		MOVSD xmm0, REAL8 PTR [min]		; Init minAfterEffect
+		MOVSD minAfterEffect, xmm0		; Store value in local variable
+
+		MOVSD xmm0, REAL8 PTR [max]		; Init maxAfterEffect
+		MOVSD maxAfterEffect, xmm0		; Store value in local variable
+		
+		INVOKE crt_malloc, 24			; Alloc memory for new pixel
+		MOV pix, eax  					; Init pixel
+
+		LEA eax, [value]				; Load pointer to value
+		LEA ebx, [minAfterEffect]		; Load pointer to minAfterEffect
+		LEA ecx, [maxAfterEffect]		; Load pointer to minAfterEffect
 		
 		MOV edx, params._effect
 		DEC edx

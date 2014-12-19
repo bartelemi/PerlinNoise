@@ -3,4 +3,3 @@ EXPORTS
 _Init
 _Finalize
 _PerlinNoiseBmp
-_PerlinNoiseGif

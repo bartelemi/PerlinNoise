@@ -215,9 +215,9 @@ CODE SEGMENT
 																	;
 					LEA   eax, [NoiseArray + 4*ecx]					; Calculate effective address of row in NoiseArray
 					LEA   esi, [eax + 8*edx]						; Calculate effective address of specified element in array
-					MOVQ  xmm1, REAL8 PTR [eax]						; Move current element to xmm1
-					ADDSD xmm0, REAL8 PTR [eax]						; Add calculated value to current element
-					MOVQ  xmm0, REAL8 PTR [eax]						; Store calculated value into array
+					MOVQ  xmm1, REAL8 PTR [esi]						; Move current element to xmm1
+					ADDSD xmm0, REAL8 PTR [esi]						; Add calculated value to current element
+					MOVQ  xmm0, REAL8 PTR [esi]						; Store calculated value into array
 
 					INC edx
 					CMP edx, j

@@ -53,9 +53,17 @@ option casemap:none
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
-		XOR ebx, ebx
+		MOVAPS xmm0, [vector]	; Move two values of vector to xmm0
+		MOVAPS xmm2, xmm0		; Store vector for later use
+		MULPD  xmm0, xmm0		; Calculate square of each value
+		MOVAPS xmm1, xmm0		; Store vector for calculations
+		ADDPD  xmm0, xmm1		; Add squares of vector components
+		SQRTPD xmm0, xmm0		; Calculate square root of added components
+
+		DIVPD xmm2, xmm0		; Calculate v[0]/len(v) v[1]/len(v)
+		MOVAPS [vector], xmm2
+
 		MOV eax, vector
-		XOR eax, eax
 		RET
 	Normalize ENDP
 	

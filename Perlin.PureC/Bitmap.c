@@ -68,7 +68,7 @@ void CreateBMP(double **noiseArray, ThreadParameters params)
 
 	for (i = params.offset; i < height + params.offset; i++)
 	{
-		for (j = 0, l = 0; l < width; l++, j += pixelSize)
+		for (l = 0, j = 0; l < width; l++, j += pixelSize)
 		{
 			pixel = GetPixel(i, l, &min, &max, noiseArray, &params);
 			memcpy(pointer + j, &pixel, pixelSize);

@@ -1,9 +1,3 @@
-/*
-	PRAWDOPODOBNIE WSZYSTKIEMU JEST WINNY GENERATOR LICZB LOSOWYCH
-	PROPONOWANE ROZWI¥ZANIE: ZAIMPLEMENTOWAÆ MERSENNE TWISTER
-	WWW: http://en.wikipedia.org/wiki/Mersenne_twister
-*/
-
 #include "stdafx.h"
 #include "Helpers.h"
 #include "Perlin.PureC.h"
