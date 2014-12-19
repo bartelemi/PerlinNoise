@@ -10,11 +10,10 @@ option casemap:none
 	;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initialization arrays
 		
-		p		        DWORD  0
-		g2		        DWORD  0
-		NoiseArray		DWORD  0
+		p		        DWORD  0		; Helper array
+		g2		        DWORD  0		; Noise generator initialization array
+		NoiseArray		DWORD  0		; Array for generated noise values
 	
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Random number generator
 		
@@ -71,6 +70,13 @@ option casemap:none
 	;; Initializes program arrays
 	_Init PROC FAR w:DWORD, h:DWORD	
 
+		LOCAL i, j, k  :  DWORD
+
+		XOR eax, eax
+		MOV i, eax
+		MOV j, eax
+		MOV k, eax
+
 		INVOKE GetTickCount		; Get tick count
 		MOV NSeed, eax			; Initialize seed
 
@@ -91,11 +97,13 @@ option casemap:none
 	_PerlinNoiseBmp ENDP
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Clean up memory
-	_Finalize PROC FAR h:DWORD
+	;; Cleans up memory
+	_Finalize PROC FAR
 
-	
-		mov eax, h
+		INVOKE crt_free, p
+		INVOKE crt_free, g2
+		INVOKE crt_free, NoiseArray
+
 		XOR eax, eax
 		RET
 	_Finalize ENDP
