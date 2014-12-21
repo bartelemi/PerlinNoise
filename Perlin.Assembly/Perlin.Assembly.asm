@@ -13,11 +13,6 @@ option casemap:none
 		p		        DWORD  0		; Helper array
 		g2		        DWORD  0		; Noise generator initialization array
 		NoiseArray		DWORD  0		; Array for generated noise values
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Random number generator
-		
-		NSeed			DWORD 0			; Seed for random number generator
 
 	;;;;;;;;;;;;;
 	;; IMMEDIATES
@@ -34,10 +29,12 @@ option casemap:none
 	include \masm32\include\Kernel32.inc
 	include \masm32\include\MSVCRT.inc
 	include \masm32\include\Masm32.inc
+	include \masm32\MasmBasic\MasmBasic.inc
 
 	includelib \masm32\lib\Kernel32.lib
 	includelib \masm32\lib\MSVCRT.lib
 	includelib \masm32\lib\Masm32.lib
+	includelib \masm32\MasmBasic\MasmBasic.lib
 
 ;;;;;;;;;;;
 ;;;; Own
@@ -70,18 +67,52 @@ option casemap:none
 	;; Initializes program arrays
 	_Init PROC FAR w:DWORD, h:DWORD	
 
-		LOCAL i, j, k  :  DWORD
+		LOCAL s, j, k  :  DWORD
 
+		
 		XOR eax, eax
-		MOV i, eax
+		MOV s, eax
 		MOV j, eax
 		MOV k, eax
+		
+		Rand()				; Initialize random number generator
 
-		INVOKE GetTickCount		; Get tick count
-		MOV NSeed, eax			; Initialize seed
+		; Allocate memory for arrays
+			MOV eax, B
+			INC eax
+			SHL eax, 3		; eax  <- eax * 2 * sizeof(DWORD)
+			MOV s, eax
+			INVOKE crt_malloc, s
+			MOV p, eax
+			
+			SHL s, 2
+			INVOKE crt_malloc, s
+			MOV g2, eax
 
-		mov eax, w
-		mov eax, h
+			MOV eax, w
+			MUL h
+			SHL eax, 5
+			INVOKE crt_malloc, eax
+			MOV NoiseArray, eax
+
+		; Initialize arrays for generating Perlin Noise
+			MOV edi, OFFSET p
+			MOV ecx, s
+			SHR ecx, 2
+			InitP_First:
+				void Rand(0, 10000h)		; Generate random number
+				STOSD
+				DEC ecx
+
+				; g2[i][0] = (double)((rand() % (B + B)) - B) / B;
+				; g2[i][0] = (double)((rand() % (B + B)) - B) / B;
+
+				;INVOKE Normalize, g2[i]
+			JNZ InitP_First
+
+
+
+
 		XOR eax, eax
 		RET
 	_Init ENDP

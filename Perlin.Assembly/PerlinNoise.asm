@@ -1,6 +1,7 @@
 CODE SEGMENT
 
-	;#define at2(rx,ry) ( (rx) * q[0] + (ry) * q[1] )
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; at2(rx,ry) ((rx) * q[0] + (ry) * q[1])
 	at2 MACRO rx, ry, q, res
 		
 		PUSH esi
@@ -139,8 +140,8 @@ CODE SEGMENT
 		; Calculate easing function value for dot product of y
 		 EaseCurve t, ry0
 
-		MOVQ xmm0, t
-		MOVQ REAL8 PTR [val], xmm0
+		MOVSD xmm0, t
+		MOVSD REAL8 PTR [val], xmm0
 
 		XOR eax, eax
 		RET
@@ -210,14 +211,14 @@ CODE SEGMENT
 					LEA eax, [t]									; Store pointer to return value in eax
 																	;
 					INVOKE Noise, REAL8 PTR [x], REAL8 PTR [y], eax	; Calculate Noise value for given (x,y)
-					MOVQ  xmm0, REAL8 PTR [t]						; Store value of noise into xmm0
+					MOVSD xmm0, REAL8 PTR [t]						; Store value of noise into xmm0
 					MULSD xmm0, REAL8 PTR [amp]						; Noise * amplitude				
 																	;
 					LEA   eax, [NoiseArray + 4*ecx]					; Calculate effective address of row in NoiseArray
 					LEA   esi, [eax + 8*edx]						; Calculate effective address of specified element in array
-					MOVQ  xmm1, REAL8 PTR [esi]						; Move current element to xmm1
+					MOVSD xmm1, REAL8 PTR [esi]						; Move current element to xmm1
 					ADDSD xmm0, REAL8 PTR [esi]						; Add calculated value to current element
-					MOVQ  xmm0, REAL8 PTR [esi]						; Store calculated value into array
+					MOVSD REAL8 PTR [esi], xmm0						; Store calculated value into array
 
 					INC edx
 					CMP edx, j

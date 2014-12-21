@@ -99,21 +99,6 @@ CODE SEGMENT
 			JNZ @B
 	ENDM
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Generates random number between <min, max>
-	;; 
-	;; Params:
-	;;  seed - DWORD value for seeding generator
-	;;
-	;; Result in eax
-	RandomNumber PROC seed : DWORD 
-
-
-
-
-	RandomNumber ENDP 
-
-
 ;;;;;;;;;;;;;;;;;;
 ;; ARRAY FUNCTIONS
 
@@ -138,17 +123,17 @@ CODE SEGMENT
 		MOV ecx, n						; ecx <- array size
 		
 		DEC ecx							; ecx points now last element of the array
-		MOVQ xmm0, REAL8 PTR [ebx+8*ecx]; xmm0[0-63] <- array[n-1]
-		MOVQ REAL8 PTR [min], xmm0		; minimum <- array[n-1]
-		MOVQ REAL8 PTR [max], xmm0		; maximum <- array[n-1]
-		CMP ecx, 0						; test for array of size = 1
+		MOVSD xmm0, REAL8 PTR [ebx+8*ecx]; xmm0[0-63] <- array[n-1]
+		MOVSD REAL8 PTR [min], xmm0		; minimum <- array[n-1]
+		MOVSD REAL8 PTR [max], xmm0		; maximum <- array[n-1]
+		CMP   ecx, 0						; test for array of size = 1
 		JE MaxMinEnd					; jump if array of one element
 
 		TEST ecx, 1						; if n is odd than: ZF <- 1
 		JNZ MaxMinLoop					; if n is odd than ok
 
-		MOVQ xmm1, REAL8 PTR [ebx + 8*ecx]		; xmm1[0-63] <- array[n-2]
-		MOVQ xmm2, xmm1
+		MOVSD xmm1, REAL8 PTR [ebx + 8*ecx]		; xmm1[0-63] <- array[n-2]
+		MOVSD xmm2, xmm1
 		CMPSD xmm2, xmm0, 001b
 
 
