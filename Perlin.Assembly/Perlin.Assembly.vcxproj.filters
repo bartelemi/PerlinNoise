@@ -33,6 +33,9 @@
     <MASM Include="PerlinNoise.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="MersenneTwister.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="DataStructures.asm">

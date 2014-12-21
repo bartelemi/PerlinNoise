@@ -23,7 +23,6 @@ TODO:																									  |
 		4. Bitmap/Experimental2																			  |
 		5. Bitmap/Experimental3																			  |
 		6. Helpers/MaxMinFrom2DArray																	  |
-		7. Perlin.Assembly/_Init																		  |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
 		Bitmap/CreateBMP																				  |
@@ -34,12 +33,13 @@ TODO:																									  |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
 		Helpers/Power																					  | 
-		Perlin.Assembly/_PerlinNoiseBmp																	  |
 		PerlinNoise/Noise																				  | 
 		PerlinNoise/PerlinNoise2D																	      |
 		PerlinNoise/Setup																				  |
 		PerlinNoise/at2																					  |
+		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
+		Perlin.Assembly/_PerlinNoiseBmp																	  |
 		Perlin.Assembly/_Finalize																		  |
 																										  |
 	  Gotowe (testowane):																				  |
@@ -64,8 +64,3 @@ Optymalizacja ASM:
 
 	PerlinNoise: sprawdzić co w jakich pętlach się zmienia i przenieść jakieś
 				 najczęściej używane wartości do rejestrów xmm na stałe (np. wartość 100)
-
-
-Random number generator:
-	_Init : zainicjować generator
-	PerlinNoise2D : wywołanie linie 195-199

@@ -4,6 +4,22 @@
 option casemap:none
 .xmm
 
+.const
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Perlin Noise arrays consts
+
+		B			equ		1000h		; Array size
+		BMask		equ		0FFFh		; Array size mask
+										
+	;;;;;;;;;;;;;;;;;;;;;;;;;;				
+	;; Mersenne twister consts					
+										
+		N           equ		624			; degree of recurrence: number of 32-bit integers in the  internal state array.
+		M           equ		397			; middle word, or the number of parallel sequences, 1 <= m <= n.
+		MATRIX_A    equ		09908b0dfH	; constant vector a: coefficients of the rational normal form twist matrix.
+		UMASK       equ		080000000H	; most significant w-r bits
+		LMASK       equ		07fffffffH	; least significant r bits
+
 .data
 	ALIGN 16
 
@@ -14,37 +30,37 @@ option casemap:none
 		g2		        DWORD  0		; Noise generator initialization array
 		NoiseArray		DWORD  0		; Array for generated noise values
 
-	;;;;;;;;;;;;;
-	;; IMMEDIATES
+.data?
+	;;;;;;;;;;;;;;;;;;;;;;;;				
+	;; Mersenne twister data
 
-		B				DWORD  1000h	; Array size
-		BMask			DWORD  0FFFh	; Array size mask
+	    _state    DD    N     DUP (?) ; internal: random generator state.
+		_initf    DD    ?             ; set if the internal state has been initalized.
+		_left     DD    ?             ; number of generation left before a new internal state is required.
+		_next     DD    ?             ; holds pointer to the next internal state.
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Includes
-;;;;;;;;;;;
-;;;; Libs
-;;;;;;;;;;;
 	include \masm32\include\Windows.inc
 	include \masm32\include\Kernel32.inc
 	include \masm32\include\MSVCRT.inc
 	include \masm32\include\Masm32.inc
-	include \masm32\MasmBasic\MasmBasic.inc
 
 	includelib \masm32\lib\Kernel32.lib
 	includelib \masm32\lib\MSVCRT.lib
 	includelib \masm32\lib\Masm32.lib
-	includelib \masm32\MasmBasic\MasmBasic.lib
-
-;;;;;;;;;;;
-;;;; Own
-;;;;;;;;;;;
-	include DataStructures.asm
-	include Helpers.asm
-	include PerlinNoise.asm
-	include Bitmap.asm
 
 .code
+	;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;; Include other modules
+		include DataStructures.asm
+		include Helpers.asm
+		include MersenneTwister.asm
+		include PerlinNoise.asm
+		include Bitmap.asm
+		
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
@@ -67,15 +83,22 @@ option casemap:none
 	;; Initializes program arrays
 	_Init PROC FAR w:DWORD, h:DWORD	
 
-		LOCAL s, j, k  :  DWORD
+		LOCAL s     :  DWORD
+		
+		; Initialize xmm registers
+			MOV eax, B
+			PINSRD   xmm1, eax, 0
+			PINSRD   xmm1, eax, 2
+			CVTDQ2PD xmm1, xmm1
+			SHL eax, 1
+			PINSRD   xmm2, eax, 0
+			PINSRD   xmm2, eax, 2
+			CVTDQ2PD xmm2, xmm2
 
-		
-		XOR eax, eax
-		MOV s, eax
-		MOV j, eax
-		MOV k, eax
-		
-		Rand()				; Initialize random number generator
+		; Initialize random number generator with processor tick count
+			INVOKE GetTickCount
+			MOV s, eax
+			INVOKE init_genenerator, s
 
 		; Allocate memory for arrays
 			MOV eax, B
@@ -100,18 +123,26 @@ option casemap:none
 			MOV ecx, s
 			SHR ecx, 2
 			InitP_First:
-				void Rand(0, 10000h)		; Generate random number
+				MOV eax, ecx
 				STOSD
 				DEC ecx
 
-				; g2[i][0] = (double)((rand() % (B + B)) - B) / B;
-				; g2[i][0] = (double)((rand() % (B + B)) - B) / B;
+				INVOKE   RandInt32		; Generate random number for g2[ecx][0]
+				PINSRD   xmm0, eax, 0	; Store result in xmm0[0-31]
+				INVOKE   RandInt32		; Generate random number for g2[ecx][1]
+				PINSRD   xmm0, eax, 2	; Store result in xmm0[64-95]			
+				CVTDQ2PD xmm0, xmm0		; Convert both results to doubles
+				ANDPD    xmm0, xmm2		; Both modulo (B+B)
+				SUBPD	 xmm0, xmm1		; Both minus B
+				DIVPD	 xmm0, xmm1		; Both divide by B
+				
+				MOV		 eax, ecx		; Copy current index
+				SHL		 eax, 4			; Calculate offset for g2[ecx][0] element
+				LEA edx, [g2 + eax]		; Get addres of g2[ecx][0] element
+				MOVUPS	 [edx], xmm0	; Copy xmm0 to g2[ecx]
 
-				;INVOKE Normalize, g2[i]
+				INVOKE Normalize, edx 
 			JNZ InitP_First
-
-
-
 
 		XOR eax, eax
 		RET
@@ -121,8 +152,8 @@ option casemap:none
 	;; Generate noisy bitmap with applied effect
 	_PerlinNoiseBmp PROC params : THREADPARAMS
 		
-		INVOKE PerlinNoise2D, NoiseArray, params	; Generate noise array with parameters
-		INVOKE CreateBMP, NoiseArray, params		; Create bitmap from noise array
+		INVOKE PerlinNoise2D, params	; Generate noise array with parameters
+		INVOKE CreateBMP, params		; Create bitmap from noise array
 		XOR eax, eax
 		RET
 	_PerlinNoiseBmp ENDP

@@ -1,4 +1,3 @@
-CODE SEGMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MATHEMATICAL FUNCTIONS
 
@@ -207,4 +206,3 @@ CODE SEGMENT
 		POP edi ; restore EDI
 		POP esi ; restore ESI 
 	ENDM
-CODE ENDS
