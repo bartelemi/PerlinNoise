@@ -114,22 +114,71 @@
 		RET
 	Alloc2DArray ENDP
 
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Finds min and max value in arr and stores them into given
+	;; max and min pointers.
+	;;
+	;;
+	MaxMin PROC arr : DWORD, n : DWORD, min : DWORD, max : DWORD
+
+		LEA ebx, arr						; ebx <- array base
+		MOV edi, n							; edi <- array size
+		DEC edi								; edi <- last array index
+
+		MOVSD xmm0, REAL8 PTR [ebx + 8*edi] ; xmm0 <- array[N-1]
+		MOVSD xmm1, REAL8 PTR [ebx + 8*edi]	; xmm1 <- array[N-1]
+		
+		TEST edi, edi						; Test for array size of 1
+		JZ MaxMinFinalize					; Go to end if array size = 1
+
+		MaxMinLoop:
+			DEC edi
+			CMPSD xmm0, REAL8 PTR [ebx + 8*edi], 001B	; Test for "less than xmm0"
+			PEXTRW eax, xmm0, 0
+			NEG eax
+			JZ NewMin
+			
+			CMPSD xmm1, REAL8 PTR [ebx + 8*edi], 101B 	; Test for "more than xmm1"
+			PEXTRW eax, xmm1, 0
+			NEG eax
+			JZ NewMax
+
+			NewMin:
+				MOVSD xmm0, REAL8 PTR [ebx + 8*edi]		; Load new minimum value
+				JMP NextStep
+
+			NewMax:
+				MOVSD xmm1, REAL8 PTR [ebx + 8*edi]		; Load new maximum value
+
+			NextStep:
+				TEST edi, edi
+				JNZ MaxMinLoop
+
+		MaxMinFinalize:
+			MOVSD REAL8 PTR [min], xmm0			; *min <- found min value
+			MOVSD REAL8 PTR [max], xmm1			; *max <- found max value
+
+		XOR eax, eax
+		RET
+	MaxMin ENDP
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Finds min and max value in array2D
-	MaxMinFrom2DArray PROC FAR arr : DWORD, n : DWORD, min : DWORD, max : DWORD
+	MaxMin2 PROC FAR arr : DWORD, n : DWORD, min : DWORD, max : DWORD
 	
-		MOV ebx, arr					; ebx <- array base
-		MOV ecx, n						; ecx <- array size
+		LEA ebx, arr						; ebx <- array base
+		MOV ecx, n							; ecx <- array size
 		
-		DEC ecx							; ecx points now last element of the array
-		MOVSD xmm0, REAL8 PTR [ebx+8*ecx]; xmm0[0-63] <- array[n-1]
-		MOVSD REAL8 PTR [min], xmm0		; minimum <- array[n-1]
-		MOVSD REAL8 PTR [max], xmm0		; maximum <- array[n-1]
+		DEC ecx								; ecx points now last element of the array
+		MOVSD xmm0, REAL8 PTR [ebx+8*ecx]	; xmm0[0-63] <- array[n-1]
+		MOVSD REAL8 PTR [min], xmm0			; minimum <- array[n-1]
+		MOVSD REAL8 PTR [max], xmm0			; maximum <- array[n-1]
 		CMP   ecx, 0						; test for array of size = 1
-		JE MaxMinEnd					; jump if array of one element
+		JE MaxMinEnd						; jump if array of one element
 
-		TEST ecx, 1						; if n is odd than: ZF <- 1
-		JNZ MaxMinLoop					; if n is odd than ok
+		TEST ecx, 1							; if n is odd than: ZF <- 1
+		JNZ MaxMinLoop						; if n is odd than ok
 
 		MOVSD xmm1, REAL8 PTR [ebx + 8*ecx]		; xmm1[0-63] <- array[n-2]
 		MOVSD xmm2, xmm1
@@ -149,7 +198,7 @@
 		MaxMinEnd:		
 			XOR eax, eax
 			RET
-	MaxMinFrom2DArray ENDP
+	MaxMin2 ENDP
 	
 	OPTION PROLOGUE:NONE 
 	OPTION EPILOGUE:NONE 

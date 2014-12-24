@@ -41,7 +41,7 @@ option casemap:none
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Includes
+;; External includes
 	include \masm32\include\Windows.inc
 	include \masm32\include\Kernel32.inc
 	include \masm32\include\MSVCRT.inc

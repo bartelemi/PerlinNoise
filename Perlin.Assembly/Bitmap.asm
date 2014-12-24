@@ -122,7 +122,9 @@ CreateBMP PROC USES ebx ecx edx params : THREADPARAMS
 
 	Skip:
 	; Get min and max from generated noise array
-		; INVOKE MaxMinFrom2DArray (params)
+		MOV eax, params._width
+		MUL params._wholeHeight
+		INVOKE MaxMin, NoiseArray, eax, DWORD PTR [min], DWORD PTR [max]
 
 	; Calculate offset to image for current thread
 		MOV eax, params._width
