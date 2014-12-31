@@ -78,20 +78,6 @@ namespace Perlin.GUI.ViewModel
         }
         #endregion // Generating library
 
-        #region File type
-        private FileType _fileType;
-        public FileType GeneratedFileType
-        {
-            get { return _fileType; }
-            set
-            {
-                if(value == _fileType) return;
-                _fileType = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion // File type
-
         #region Number of threads
         private int _numberOfThreads;
         public int NumberOfThreads
@@ -175,8 +161,8 @@ namespace Perlin.GUI.ViewModel
         #endregion // Generator
 
         #region Noise effect bitmap
-        NoiseEffectsBmp _noiseEffectBmp;
-        public NoiseEffectsBmp NoiseEffectBmp
+        NoiseEffects _noiseEffectBmp;
+        public NoiseEffects NoiseEffectBmp
         {
             get { return _noiseEffectBmp; }
             set
@@ -186,19 +172,6 @@ namespace Perlin.GUI.ViewModel
             }
         }
         #endregion // Noise effect bitmap
-
-        #region Noise effect GIF
-        NoiseEffectsGIF _noiseEffectGif;
-        public NoiseEffectsGIF NoiseEffectGif
-        {
-            get { return _noiseEffectGif; }
-            set
-            {
-                _noiseEffectGif = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion // Noise effect GIF
 
         #region Noise color
         private System.Windows.Media.Color _noiseColor;
@@ -235,16 +208,14 @@ namespace Perlin.GUI.ViewModel
         {
             ProgramState = GeneratorState.WaitingForUserAction;
 
-            GeneratingLibrary = Library.PureC;
-            GeneratedFileType = FileType.Bitmap;
+            GeneratingLibrary = Library.Asm;
             Width = Height = 1000;
 
             NumberOfThreads = 2;
             NumberOfOctaves = 6;
             Persistence = 0.025;
 
-            NoiseEffectBmp = NoiseEffectsBmp.SinOfNoise;
-            NoiseEffectGif = NoiseEffectsGIF.Clouds;
+            NoiseEffectBmp = NoiseEffects.SinOfNoise;
 
             NoiseColor = new Color();
             NoiseColor = Color.FromRgb(200, 50, 100);

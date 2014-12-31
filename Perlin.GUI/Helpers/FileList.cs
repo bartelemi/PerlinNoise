@@ -19,22 +19,12 @@ namespace Perlin.GUI.Helpers
         #endregion // Properties
 
         #region Constructor
-        public FileList(FileType ft)
+        public FileList()
         {
             string workingPath = null;
             CurrentLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            
-            switch (ft)
-            {
-                case FileType.Bitmap:
-                    workingPath = CurrentLocation + @"\output\bitmaps";
-                    _filePathList = Directory.GetFiles(workingPath, "*.bmp");
-                    break;
-                case FileType.Gif:
-                    workingPath = CurrentLocation + @"\output\gifs"; //System.IO.Directory.GetCurrentDirectory() 
-                    _filePathList = Directory.GetFiles(workingPath, "*.gif");
-                    break;
-            }
+            workingPath = CurrentLocation + @"\output\bitmaps";
+            _filePathList = Directory.GetFiles(workingPath, "*.bmp");
         }
         #endregion // Constructor
 

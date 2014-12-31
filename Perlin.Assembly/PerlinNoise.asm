@@ -67,8 +67,8 @@ ENDM
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns noise value for point (x, y)
 ;;
-;; Result returned by val pointer
-Noise PROC x : REAL8, y : REAL8, val : DWORD
+;; Result returned by value pointer
+Noise PROC x : REAL8, y : REAL8, value : DWORD
 	LOCAL q					  :  DWORD
 	LOCAL i, j				  :  DWORD
 	LOCAL bx0, bx1, by0, by1  :  DWORD
@@ -139,7 +139,7 @@ Noise PROC x : REAL8, y : REAL8, val : DWORD
 		EaseCurve t, ry0
 
 	MOVSD xmm0, t
-	MOVSD REAL8 PTR [val], xmm0
+	MOVSD REAL8 PTR [value], xmm0
 
 	XOR eax, eax
 	RET

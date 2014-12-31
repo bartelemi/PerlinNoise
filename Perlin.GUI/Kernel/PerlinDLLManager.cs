@@ -115,8 +115,7 @@ namespace Perlin.GUI.Kernel
                 NumberOfOctaves = _generatorParameters.NumberOfOctaves,
                 Persistence = _generatorParameters.Persistence,
                 NoiseColor = _generatorParameters.Color,
-                NoiseEffect = (_generatorParameters.GeneratedFileType == FileType.Bitmap ?
-                              (int)_generatorParameters.BitmapEffect : (int)_generatorParameters.GifEffect)
+                NoiseEffect = (int)_generatorParameters.BitmapEffect
             };
         }
 

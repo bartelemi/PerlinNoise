@@ -114,24 +114,6 @@
                                     </StackPanel>
                                 </Border>
 
-                                <!-- Select bitmap/gif -->
-                                <Border Style="{StaticResource ElementBorder}">
-                                    <StackPanel>
-                                        <Label Style="{StaticResource InfoLabel}"
-                        Content="Rodzaj obiektu"/>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <RadioButton Content="Bitmap" 
-                                IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Bitmap}"
-                                VerticalAlignment="Center"
-                                Margin="25,0,0,0"/>
-                                            <RadioButton Content="GIF"
-                                IsChecked="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Gif}"
-                                VerticalAlignment="Center"
-                                Margin="25,0,0,0"/>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-
                                 <!-- Width and height -->
                                 <Border Style="{StaticResource ElementBorder}">
                                     <StackPanel>
@@ -235,12 +217,12 @@
                                     <Label Style="{StaticResource InfoLabel}"
                     Content="Efekt"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffectsBmp}}}"
-                            DisplayMemberPath="Description"
-                            SelectedValue="{Binding NoiseEffectBmp}"
-                            SelectedValuePath="Value"
-                            Margin="25,0,25,0"
-                            Width="100"/>
+                                        <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffects}}}"
+                                                DisplayMemberPath="Description"
+                                                SelectedValue="{Binding NoiseEffectBmp}"
+                                                SelectedValuePath="Value"
+                                                Margin="25,0,25,0"
+                                                Width="100"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -250,46 +232,6 @@
                                 <StackPanel>
                                     <Label Style="{StaticResource InfoLabel}"
                     Content="Kolor"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Expander>
-                </Canvas>
-
-                <!-- GIF -->
-                <Canvas Grid.Row="3">
-                    <Expander IsEnabled="{Binding GeneratedFileType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=!Bitmap, Mode=OneWay}">
-                        <Expander.Header>
-                            <TextBlock Text="GIF" Margin="3 10 3 3">
-                                <TextBlock.LayoutTransform >
-                                    <RotateTransform Angle="90"/>
-                                </TextBlock.LayoutTransform>
-                            </TextBlock>
-                        </Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <Border Style="{StaticResource ElementBorder}">
-                                <StackPanel>
-                                    <Label Style="{StaticResource InfoLabel}"
-                           Content="Efekt"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ComboBox ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:NoiseEffectsGIF}}}"
-                                  DisplayMemberPath="Description"
-                                  SelectedValue="{Binding NoiseEffectGif}"
-                                  SelectedValuePath="Value"
-                                  Margin="25,0,25,0"
-                                  Width="100"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Select output color -->
-                            <Border Style="{StaticResource ElementBorder}">
-                                <StackPanel>
-                                    <Label Style="{StaticResource InfoLabel}"
-                           Content="Kolor"/>
                                     <StackPanel Orientation="Horizontal">
                                         <xctk:ColorPicker SelectedColor="{Binding NoiseColor}"/>
                                     </StackPanel>

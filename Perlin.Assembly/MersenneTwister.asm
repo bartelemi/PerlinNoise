@@ -6,7 +6,7 @@
 ; Output: None 
 ; Precondition: None
 ;============================================================    
-init_genenerator PROC USES EDI seed : DWORD
+init_genenerator PROC USES ebx ecx edx edi seed : DWORD
  
 	MOV  eax, seed
 	MOV  _state, eax            
@@ -40,7 +40,7 @@ init_genenerator ENDP
 ; Output: None 
 ; Precondition: None
 ;============================================================    
-next_state PROC uses ESI
+next_state PROC USES ecx edx esi
  
 	LEA esi, _state
  
@@ -121,7 +121,7 @@ next_state endp
 ; Output: an integer, the result is placed in the EAX register. 
 ; Precondition: One of the initialization functions must have been called.
 ;============================================================    
-RandInt32 PROC
+RandInt32 PROC USES ecx edx
  
 	DEC DWORD PTR _left
 	JNE @L1_RandInt32

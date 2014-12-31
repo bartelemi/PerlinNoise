@@ -1,6 +1,6 @@
 .686p
 .387
-.model flat, stdcall
+.model flat, c
 option casemap:none
 .xmm
 
@@ -30,6 +30,7 @@ option casemap:none
 		g2		        DWORD  0		; Noise generator initialization array
 		NoiseArray		DWORD  0		; Array for generated noise values
 
+	ALIGN 4
 .data?
 	;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister data
@@ -46,6 +47,8 @@ option casemap:none
 	include \masm32\include\Kernel32.inc
 	include \masm32\include\MSVCRT.inc
 	include \masm32\include\Masm32.inc
+	
+	include \masm32\macros\macros.asm
 
 	includelib \masm32\lib\Kernel32.lib
 	includelib \masm32\lib\MSVCRT.lib
@@ -65,7 +68,7 @@ option casemap:none
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
-		MOVAPS xmm0, [vector]	; Move two values of vector to xmm0
+		MOVUPS xmm0, [vector]	; Move two values of vector to xmm0
 		MOVAPS xmm2, xmm0		; Store vector for later use
 		MULPD  xmm0, xmm0		; Calculate square of each value
 		MOVAPS xmm1, xmm0		; Store vector for calculations
@@ -73,17 +76,17 @@ option casemap:none
 		SQRTPD xmm0, xmm0		; Calculate square root of added components
 
 		DIVPD xmm2, xmm0		; Calculate v[0]/len(v) v[1]/len(v)
-		MOVAPS [vector], xmm2
+		MOVUPS [vector], xmm2
 
-		MOV eax, vector
+		XOR eax, eax
 		RET
 	Normalize ENDP
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initializes program arrays
-	_Init PROC FAR w:DWORD, h:DWORD	
+	_Init PROC USES ebx ecx edx edi w:DWORD, h:DWORD
 
-		LOCAL s     :  DWORD
+		LOCAL tmp     :  DWORD
 		
 		; Initialize xmm registers
 			MOV eax, B
@@ -97,52 +100,83 @@ option casemap:none
 
 		; Initialize random number generator with processor tick count
 			INVOKE GetTickCount
-			MOV s, eax
-			INVOKE init_genenerator, s
+			MOV tmp, eax
+			INVOKE init_genenerator, tmp
 
 		; Allocate memory for arrays
 			MOV eax, B
 			INC eax
 			SHL eax, 3		; eax  <- eax * 2 * sizeof(DWORD)
-			MOV s, eax
-			INVOKE crt_malloc, s
-			MOV p, eax
+			MOV tmp, eax
+			XCHG rv(crt_malloc, [tmp]), p
 			
-			SHL s, 2
-			INVOKE crt_malloc, s
-			MOV g2, eax
+			SHL tmp, 2
+			XCHG rv(crt_malloc, [tmp]), g2
 
 			MOV eax, w
 			MUL h
 			SHL eax, 5
-			INVOKE crt_malloc, eax
-			MOV NoiseArray, eax
+			XCHG  rv(crt_malloc, eax), NoiseArray
 
 		; Initialize arrays for generating Perlin Noise
-			MOV edi, OFFSET p
-			MOV ecx, s
-			SHR ecx, 2
-			InitP_First:
-				MOV eax, ecx
-				STOSD
-				DEC ecx
+			MOV edi, p						; Load address of p
+			MOV esi, g2						; Load address of g2
+			
+			MOV ecx, B						; Copy value of B to ecx
+			InitArr_First:					;
+				DEC ecx						; Go to next index
+				MOV [edi + 4*ecx], ecx		; p[i] <- i
+											;
+				INVOKE   RandInt32			; Generate random number for g2[ecx][0]
+				PINSRD   xmm0, eax, 0		; Store result in xmm0[0-31]
+				INVOKE   RandInt32			; Generate random number for g2[ecx][1]
+				PINSRD   xmm0, eax, 2		; Store result in xmm0[64-95]			
+				CVTDQ2PD xmm0, xmm0			; Convert both results to doubles
+				ANDPD    xmm0, xmm2			; Both modulo (B+B)
+				SUBPD	 xmm0, xmm1			; Both minus B
+				DIVPD	 xmm0, xmm1			; Both divide by B
+											;
+				MOV		 eax, ecx			; Copy current index
+				SHL		 eax, 4				; Calculate offset for g2[ecx][0] element
+											;
+				MOVUPS	 [esi + eax], xmm0	; g2[ecx] <- xmm0 
+				LEA		 edx, [esi + eax]	;
+				MOV		 tmp, edx			;
+				INVOKE Normalize, tmp		; Normalize vector
+				TEST ecx, ecx				; Test if ecx == 0
+				JNZ InitArr_First			; Loop
 
-				INVOKE   RandInt32		; Generate random number for g2[ecx][0]
-				PINSRD   xmm0, eax, 0	; Store result in xmm0[0-31]
-				INVOKE   RandInt32		; Generate random number for g2[ecx][1]
-				PINSRD   xmm0, eax, 2	; Store result in xmm0[64-95]			
-				CVTDQ2PD xmm0, xmm0		; Convert both results to doubles
-				ANDPD    xmm0, xmm2		; Both modulo (B+B)
-				SUBPD	 xmm0, xmm1		; Both minus B
-				DIVPD	 xmm0, xmm1		; Both divide by B
-				
-				MOV		 eax, ecx		; Copy current index
-				SHL		 eax, 4			; Calculate offset for g2[ecx][0] element
-				LEA edx, [g2 + eax]		; Get addres of g2[ecx][0] element
-				MOVUPS	 [edx], xmm0	; Copy xmm0 to g2[ecx]
-
-				INVOKE Normalize, edx 
-			JNZ InitP_First
+			MOV ecx, B						; Copy value of B to ecx
+			InitArr_Second:					;
+				DEC  ecx					; Go to next index
+				INVOKE RandInt32			; Generate random number
+				AND  eax, BMask				; eax <- rand() % B
+				MOV  edx, [edi + 4*eax]		; edx <- p[rand() % B]
+				MOV  [edi + 4*ecx], edx		; p[ecx] <- p[rand() % B]
+				MOV  [edi + 4*eax], ecx		; p[rand() % B] <- p[ecx]
+											;
+				TEST ecx, ecx				; Test if ecx == 0
+				JNZ  InitArr_Second			; Loop
+			
+			MOV ecx, B						; Copy value of B to ecx
+			ADD ecx, 2						; Increase ecx by 2
+			InitArr_Third:					;
+				DEC	   ecx					; Go to next index
+				MOV	   ebx, B				; ebx <- B
+				ADD	   ebx, ecx				; ebx <- (B + ecx)
+				SHL	   ebx, 2				; ebx <- ebx * 4
+											;
+				MOV	   eax, [edi + ecx]		; eax <- p[ecx]
+				MOV	   [edi + ebx], eax		; p[B+ecx] <- eax
+											;
+				MOV	   eax, ecx				; eax <- ecx
+				SHL	   eax, 4				; eax <- eax * 16
+				MOVUPS xmm0, [esi + eax]	; xmm0 <- g2[ecx] 
+				LEA	   eax, [esi + 4*ebx]	; eax <- g2[B+ecx]
+				MOVUPS [eax], xmm0			; g2[B+ecx] <- g2[ecx]
+											;
+				TEST   ecx, ecx				; Test if ecx == 0
+				JNZ	   InitArr_Third		; Loop
 
 		XOR eax, eax
 		RET
@@ -160,7 +194,7 @@ option casemap:none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Cleans up memory
-	_Finalize PROC FAR
+	_Finalize PROC
 
 		INVOKE crt_free, p
 		INVOKE crt_free, g2

@@ -2,7 +2,7 @@
 
 namespace Perlin.GUI.Models
 {
-    public enum NoiseEffectsBmp
+    public enum NoiseEffects
     {
         [Description("Szum")]
         Noise,

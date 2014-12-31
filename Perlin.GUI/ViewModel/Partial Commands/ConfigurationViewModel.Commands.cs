@@ -28,18 +28,16 @@ namespace Perlin.GUI.ViewModel
         {
             SaveGeneratedFileCommand = new RelayCommand(() =>
             {
-                var isBitmap = (GeneratedFileType == FileType.Bitmap);
-                var fileExtension = isBitmap ? ".bmp" : ".gif";
+                var fileExtension = ".bmp";
 
                 var saveFileDialog = new SaveFileDialog
                 {
                     FileName = string.Format("PerlinNoise_{0}", DateTime.Now.ToString("yyyy-MM-dd HH#mm#ss")),
                     DefaultExt = fileExtension,
-                    Filter = (isBitmap ? "Bitmap files (*.bmp)|*.bmp"
-                                       : "GIF files (*.gif)|*.gif")
-                                       + "|All Files (*.*)|*.*",
+                    Filter = "Bitmap files (*.bmp)|*.bmp"
+                           + "|All Files (*.*)|*.*",
                     InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-                                       + (isBitmap ? @"\output\bitmaps" : @"\output\gifs"),
+                                     + @"\output\bitmaps",
                     CheckPathExists = true,
                     ValidateNames = true
                 };
@@ -68,7 +66,6 @@ namespace Perlin.GUI.ViewModel
             {
                 _perlinDllManager = new PerlinDllManager(new GeneratorParameters()
                 {
-                    GeneratedFileType = GeneratedFileType,
                     GeneratingLibrary = GeneratingLibrary,
                     NumberOfThreads = NumberOfThreads,
                     NumberOfOctaves = NumberOfOctaves,
@@ -76,7 +73,6 @@ namespace Perlin.GUI.ViewModel
                     Width = Width,
                     Height = Height,
                     BitmapEffect = NoiseEffectBmp,
-                    GifEffect = NoiseEffectGif,
                     Color = new RGBColor()
                     {
                         R = NoiseColor.R,

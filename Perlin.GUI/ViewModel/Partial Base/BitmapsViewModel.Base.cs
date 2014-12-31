@@ -32,7 +32,7 @@ namespace Perlin.GUI.ViewModel
         public BitmapsViewModel()
         {
             InitializeCommands();
-            _bitmapsList = new FileList(FileType.Bitmap);
+            _bitmapsList = new FileList();
         }
         #endregion // Constructor
 

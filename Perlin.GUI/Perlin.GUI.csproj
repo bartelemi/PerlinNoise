@@ -89,10 +89,8 @@
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Kernel\PerlinDLLManager.cs" />
     <Compile Include="Kernel\Stopwatch.cs" />
-    <Compile Include="Models\Enumerator types\NoiseEffectsGIF.cs" />
     <Compile Include="Models\RGBColor.cs" />
-    <Compile Include="Models\Enumerator types\NoiseEffectsBmp.cs" />
-    <Compile Include="Models\Enumerator types\FileType.cs" />
+    <Compile Include="Models\Enumerator types\NoiseEffects.cs" />
     <Compile Include="Models\Enumerator types\Library.cs" />
     <Compile Include="Models\RunParameters\GeneratorParameters.cs" />
     <Compile Include="Models\RunParameters\ThreadParameters.cs" />
@@ -104,7 +102,6 @@
     <Compile Include="Helpers\FileList.cs" />
     <Compile Include="Helpers\ViewModelBase.cs" />
     <Compile Include="ViewModel\Partial Base\BitmapsViewModel.Base.cs" />
-    <Compile Include="ViewModel\Partial Base\GifsViewModel.Base.cs" />
     <Compile Include="ViewModel\Partial Commands\BitmapsViewModel.Commands.cs" />
     <Compile Include="ViewModel\Partial Commands\ConfigurationViewModel.Commands.cs" />
     <Compile Include="ViewModel\Partial Base\ConfigurationViewModel.Base.cs" />
@@ -114,9 +111,6 @@
     </Compile>
     <Compile Include="View\TabControls\TabConfigurationControl.xaml.cs">
       <DependentUpon>TabConfigurationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\TabControls\TabGIFsControl.xaml.cs">
-      <DependentUpon>TabGIFsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Partial Commands\MainWindowViewModel.Commands.cs" />
     <Compile Include="ViewModel\Partial Base\MainWindowViewModel.Base.cs" />
@@ -137,10 +131,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\TabControls\TabConfigurationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TabControls\TabGIFsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -177,14 +167,17 @@
     <Resource Include="Resources\Images\Previous.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="libs\Perlin.Assembly.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\Perlin.Assembly.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libs\Perlin.PureC.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="libs\Perlin.PureC.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="libs\WpfAnimatedGif.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="libs\Xceed.Wpf.Toolkit.dll" />
     <None Include="README.txt" />
@@ -192,7 +185,6 @@
     <Resource Include="Resources\Images\Tab icons\Config.png" />
     <Resource Include="Resources\Images\Tab icons\Gif.png" />
     <Resource Include="Resources\Images\Tab icons\Work done.png" />
-    <Resource Include="libs\WpfAnimatedGif.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
