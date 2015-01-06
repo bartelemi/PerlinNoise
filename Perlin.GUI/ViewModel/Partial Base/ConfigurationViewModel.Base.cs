@@ -211,11 +211,11 @@ namespace Perlin.GUI.ViewModel
             GeneratingLibrary = Library.Asm;
             Width = Height = 1000;
 
-            NumberOfThreads = 2;
+            NumberOfThreads = 1;
             NumberOfOctaves = 6;
             Persistence = 0.025;
 
-            NoiseEffectBmp = NoiseEffects.SinOfNoise;
+            NoiseEffectBmp = NoiseEffects.Noise;
 
             NoiseColor = new Color();
             NoiseColor = Color.FromRgb(200, 50, 100);

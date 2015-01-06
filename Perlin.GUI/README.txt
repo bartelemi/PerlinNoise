@@ -22,7 +22,6 @@ TODO:																									  |
 		3. Bitmap/Experimental1																			  |
 		4. Bitmap/Experimental2																			  |
 		5. Bitmap/Experimental3																			  |
-		6. Helpers/MaxMinFrom2DArray																	  |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
 		Bitmap/CreateBMP																				  |
@@ -32,6 +31,7 @@ TODO:																									  |
 		Helpers/Alloc2DArray																		      |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
+		Helpers/MaxMinFrom2DArray																		  |
 		Helpers/Power																					  | 
 		PerlinNoise/Noise																				  | 
 		PerlinNoise/PerlinNoise2D																	      |
@@ -46,10 +46,6 @@ TODO:																									  |
 		Helpers/memCopy																					  |
 		Bitmap/FillHeader																				  |
 		Bitmap/WriteFileHdr																				  |
-																										  |
-  ========================================================================================================+
-  Czyszczenie																							  |
-  * usunąć ten plik :)																					  |
 																										  |
 ==========================================================================================================+
 

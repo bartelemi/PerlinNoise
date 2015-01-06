@@ -3,9 +3,9 @@
 		
 	FillHeader		PROTO w : DWORD, h : DWORD
 	WriteFileHdr	PROTO filePtr : DWORD, w : DWORD, h : DWORD
-	CreateBMP		PROTO params : THREADPARAMS
+	CreateBMP		PROTO args : PARAMS
 	GetColor		PROTO value : REAL8, min : REAL8, max : REAL8, color : DWORD 
-	GetPixelValues	PROTO x : DWORD, y : DWORD, min : DWORD, max : DWORD, params : THREADPARAMS 
+	GetPixelValues	PROTO x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS 
 	SinNoise		PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 	SqrtNoise		PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 	Experimental1	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
@@ -85,9 +85,10 @@ WriteFileHdr ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creates BMP using data from NoiseArray
-CreateBMP PROC USES ebx ecx edx params : THREADPARAMS 
+CreateBMP PROC USES ebx ecx edx args : PARAMS 
 
-	LOCAL min, max  :  REAL8
+	LOCAL min		:  REAL8
+	LOCAL max		:  REAL8
 	LOCAL pixSize   :  DWORD
 	LOCAL nPad		:  DWORD
 	LOCAL pad		:  DWORD
@@ -96,7 +97,7 @@ CreateBMP PROC USES ebx ecx edx params : THREADPARAMS
 
 	; Initialize local variables
 			MOV pixSize, SIZEOF PIXEL		; Store sizeof(PIXEL)
-			MOV eax, params._width			; Calculate pad size
+			MOV eax, args._width			; Calculate pad size
 			MUL pixSize						;
 			AND eax, 3						;
 			MOV ebx, 4						;
@@ -107,30 +108,30 @@ CreateBMP PROC USES ebx ecx edx params : THREADPARAMS
 			INVOKE crt_calloc, nPad, SIZEOF(BYTE)	; Allocate memory for row pad
 			MOV pad, eax							; Store allocated memory pointer
 
-			LEA eax, [params._imgPtr]				; Load address of pointer to bitmap
+			LEA eax, [args._imgPtr]				; Load address of pointer to bitmap
 			MOV pointer, eax						; Copy pointer to picture array
 							
-			MOV eax, params._offset					; Calculate end of image offset
-			ADD eax, params._height					;
+			MOV eax, args._offset					; Calculate end of image offset
+			ADD eax, args._height					;
 			MOV offsetEnd, eax						; Store value in local variable
 
 	; Check if current thread has Id==0 and if so create file header
-			MOV eax, params._threadId		
+			MOV eax, args._threadId		
 			TEST eax, eax
 			JNZ Skip
-			INVOKE WriteFileHdr, pointer, params._width, params._height
+			INVOKE WriteFileHdr, pointer, args._width, args._height
 
 	Skip:
 	; Get min and max from generated noise array
-		MOV eax, params._width
-		MUL params._wholeHeight
+		MOV eax, args._width
+		MUL args._wholeHeight
 		INVOKE MaxMin, NoiseArray, eax, DWORD PTR [min], DWORD PTR [max]
 
 	; Calculate offset to image for current thread
-		MOV eax, params._width
+		MOV eax, args._width
 		MUL pixSize
 		ADD eax, nPad
-		MOV ebx, params._offset
+		MOV ebx, args._offset
 		MUL ebx
 		ADD eax, SIZEOF(BMPFILEHEADER)
 		ADD pointer, eax							
@@ -140,11 +141,11 @@ CreateBMP PROC USES ebx ecx edx params : THREADPARAMS
 			XOR edx, edx	; edx holds current position in image array
 			RowLoop:
 				ADD pointer, edx
-				INVOKE GetPixelValues, ebx, ecx, DWORD PTR [min], DWORD PTR [max], params
+				INVOKE GetPixelValues, ebx, ecx, DWORD PTR [min], DWORD PTR [max], args
 				memCopy pointer, eax, SIZEOF PIXEL
 			INC ecx
 			ADD edx, pixSize
-			CMP ecx, params._width
+			CMP ecx, args._width
 			JNE RowLoop
 		INC ebx
 		CMP ebx, offsetEnd
@@ -158,7 +159,7 @@ CreateBMP ENDP
 ;;
 ;;
 ;; Returns pointer to new PIXEL in eax
-GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DWORD, params : THREADPARAMS 
+GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS 
 
 	LOCAL _x			  :  DWORD
 	LOCAL _y			  :  DWORD
@@ -191,7 +192,7 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	LEA ebx, [minAfterEffect]		; Load pointer to minAfterEffect
 	LEA ecx, [maxAfterEffect]		; Load pointer to minAfterEffect
 		
-	MOV edx, params._effect
+	MOV edx, args._effect
 	DEC edx
 	JNZ @F 
 		

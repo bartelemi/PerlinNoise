@@ -1,10 +1,12 @@
-.686p
+.686
 .387
-.model flat, c
-option casemap:none
+.model flat, stdcall
+option casemap : none
 .xmm
 
 .const
+	ALIGN 8
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
 
@@ -21,7 +23,6 @@ option casemap:none
 		LMASK       equ		07fffffffH	; least significant r bits
 
 .data
-	ALIGN 16
 
 	;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initialization arrays
@@ -30,7 +31,6 @@ option casemap:none
 		g2		        DWORD  0		; Noise generator initialization array
 		NoiseArray		DWORD  0		; Array for generated noise values
 
-	ALIGN 4
 .data?
 	;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister data
@@ -89,34 +89,34 @@ option casemap:none
 		LOCAL tmp     :  DWORD
 		
 		; Initialize xmm registers
-			MOV eax, B
+			MOV		 eax, B
 			PINSRD   xmm1, eax, 0
 			PINSRD   xmm1, eax, 2
 			CVTDQ2PD xmm1, xmm1
-			SHL eax, 1
+			SHL		 eax, 1
 			PINSRD   xmm2, eax, 0
 			PINSRD   xmm2, eax, 2
 			CVTDQ2PD xmm2, xmm2
 
 		; Initialize random number generator with processor tick count
-			INVOKE GetTickCount
-			MOV tmp, eax
-			INVOKE init_genenerator, tmp
+			INVOKE	 GetTickCount
+			MOV		 tmp, eax
+			INVOKE	 init_genenerator, tmp
 
 		; Allocate memory for arrays
-			MOV eax, B
-			INC eax
-			SHL eax, 3		; eax  <- eax * 2 * sizeof(DWORD)
-			MOV tmp, eax
-			XCHG rv(crt_malloc, [tmp]), p
+			MOV		 eax, B
+			INC		 eax
+			SHL		 eax, 3		; eax  <- eax * 2 * sizeof(DWORD)
+			MOV		 tmp, eax
+			XCHG	 rv(crt_malloc, tmp), p
 			
-			SHL tmp, 2
-			XCHG rv(crt_malloc, [tmp]), g2
+			SHL		 tmp, 2
+			XCHG	 rv(crt_malloc, tmp), g2
 
-			MOV eax, w
-			MUL h
-			SHL eax, 5
-			XCHG  rv(crt_malloc, eax), NoiseArray
+			MOV		 eax, w
+			MUL		 h
+			SHL		 eax, 5
+			XCHG	 rv(crt_calloc, eax, sizeof REAL8), NoiseArray
 
 		; Initialize arrays for generating Perlin Noise
 			MOV edi, p						; Load address of p
@@ -124,8 +124,8 @@ option casemap:none
 			
 			MOV ecx, B						; Copy value of B to ecx
 			InitArr_First:					;
-				DEC ecx						; Go to next index
-				MOV [edi + 4*ecx], ecx		; p[i] <- i
+				DEC		 ecx				; Go to next index
+				MOV		 [edi + 4*ecx], ecx	; p[i] <- i
 											;
 				INVOKE   RandInt32			; Generate random number for g2[ecx][0]
 				PINSRD   xmm0, eax, 0		; Store result in xmm0[0-31]
@@ -142,21 +142,21 @@ option casemap:none
 				MOVUPS	 [esi + eax], xmm0	; g2[ecx] <- xmm0 
 				LEA		 edx, [esi + eax]	;
 				MOV		 tmp, edx			;
-				INVOKE Normalize, tmp		; Normalize vector
-				TEST ecx, ecx				; Test if ecx == 0
-				JNZ InitArr_First			; Loop
+				INVOKE	 Normalize, tmp		; Normalize vector
+				TEST	 ecx, ecx			; Test if ecx == 0
+				JNZ		 InitArr_First		; Loop
 
 			MOV ecx, B						; Copy value of B to ecx
 			InitArr_Second:					;
-				DEC  ecx					; Go to next index
+				DEC	   ecx					; Go to next index
 				INVOKE RandInt32			; Generate random number
-				AND  eax, BMask				; eax <- rand() % B
-				MOV  edx, [edi + 4*eax]		; edx <- p[rand() % B]
-				MOV  [edi + 4*ecx], edx		; p[ecx] <- p[rand() % B]
-				MOV  [edi + 4*eax], ecx		; p[rand() % B] <- p[ecx]
+				AND    eax, BMask			; eax <- rand() % B
+				MOV    edx, [edi + 4*eax]	; edx <- p[rand() % B]
+				MOV    [edi + 4*ecx], edx	; p[ecx] <- p[rand() % B]
+				MOV    [edi + 4*eax], ecx	; p[rand() % B] <- p[ecx]
 											;
-				TEST ecx, ecx				; Test if ecx == 0
-				JNZ  InitArr_Second			; Loop
+				TEST   ecx, ecx				; Test if ecx == 0
+				JNZ	   InitArr_Second		; Loop
 			
 			MOV ecx, B						; Copy value of B to ecx
 			ADD ecx, 2						; Increase ecx by 2
@@ -184,10 +184,11 @@ option casemap:none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Generate noisy bitmap with applied effect
-	_PerlinNoiseBmp PROC params : THREADPARAMS
+	_PerlinNoiseBmp PROC args : PARAMS
 		
-		INVOKE PerlinNoise2D, params	; Generate noise array with parameters
-		INVOKE CreateBMP, params		; Create bitmap from noise array
+		INVOKE PerlinNoise2D, args	; Generate noise array with parameters
+		INVOKE CreateBMP, args		; Create bitmap from noise array
+		
 		XOR eax, eax
 		RET
 	_PerlinNoiseBmp ENDP

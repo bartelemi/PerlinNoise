@@ -18,22 +18,22 @@ namespace Perlin.GUI.Kernel
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Init", CallingConvention = CallingConvention.Cdecl)]
         private static extern void InitPureC(int width, int height);
 
-        [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Finalize", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FinalizePureC(int height);
-
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GeneratePerlinNoiseBitmapC(ThreadParameters threadParameters);
+
+        [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Finalize", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void FinalizePureC(int height);
         #endregion // PureC
 
         #region Assembly
-        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Init", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Init", CallingConvention = CallingConvention.StdCall)]
         private static extern void InitAsm(int width, int height);
 
-        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Finalize", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void FinalizeAsm(int height);
-
-        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoiseBmp", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoiseBmp", CallingConvention = CallingConvention.StdCall)]
         private static extern void GeneratePerlinNoiseBitmapAssembly(ThreadParameters threadParameters);
+
+        [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Finalize", CallingConvention = CallingConvention.StdCall)]
+        private static extern void FinalizeAsm(int height);
         #endregion // Assembly
         #endregion // Import DLLs
 

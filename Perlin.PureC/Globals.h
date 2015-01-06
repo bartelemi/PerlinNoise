@@ -8,7 +8,7 @@
 	#define B 0x1000
 
 	// Array size mask
-	#define BMask 0xfff
+	#define BMask 0xFFF
 
 	// Initialization arrays
 	int *p;

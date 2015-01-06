@@ -53,30 +53,6 @@
 		POP edi						; Restore edi
 		POP esi						; Restore esi
 	ENDM
-
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Calculates base^exponent and returns in result
-	;; 
-	;; Params:
-	;;	base	 - xmm register with base number value
-	;;	exponent - DWORD value of exponent number
-	;;	result	 - REAL8 PTR to result variable
-	;Power PROC base : REAL8, exponent : DWORD, result : DWORD
-
-		
-	;	MOVSD xmm0, base	  ; xmm0[0-63] <- base
-	;	MOVSD xmm1, base	  ; xmm1[0-63] <- base
-
-	;	IterPower:
-	;		MULSD xmm0, xmm1  ; xmm0[0-63] <- xmm0[0-63] * base
-	;		DEC ecx
-	;		TEST ecx, ecx
-	;		JNZ IterPower
-
-	;	MOVSD REAL8 PTR [result], xmm0  ; store the result back to the variable 
-	;	XOR eax, eax		 
-	;	RET
-	;Power ENDP
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Calculates base^exp and returns in res
