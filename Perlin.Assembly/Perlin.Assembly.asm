@@ -111,7 +111,7 @@ option casemap : none
 				LEA	   ecx, [esi + 4*ebx]			; Load address of next element
 				MOV	   [ecx], eax					; Store allocated memory under address stored in tmp
 													;
-				TEST	ebx, ebx					; Test if it was last index
+			    TEST	ebx, ebx					; Test if it was last index
 				JNZ		@allocRow					; Loop
 
 			MOV		 eax, w		; eax <- width
@@ -173,7 +173,7 @@ option casemap : none
 				MOV	   ebx, B				; ebx <- B
 				ADD	   ebx, ecx				; ebx <- (B + ecx)
 											;
-				MOV	   eax, [edi + 4*ecx]	; eax <- p[ecx]
+		  		MOV	   eax, [edi + 4*ecx]	; eax <- p[ecx]
 				MOV	   [edi + 4*ebx], eax	; p[B+ecx] <- eax
 											;
 				MOV	   eax, [esi + 4*ecx]	; Load address of vector

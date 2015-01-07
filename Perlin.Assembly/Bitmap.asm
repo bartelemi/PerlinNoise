@@ -76,7 +76,7 @@ FillHeader ENDP
 WriteFileHdr PROC filePtr : DWORD, w : DWORD, h : DWORD
 
 	INVOKE FillHeader, w, h
-	memCopy eax, [filePtr], 54
+	memCopy eax, filePtr, 54
 	INVOKE crt_free, eax
 
 	XOR eax, eax
@@ -105,10 +105,10 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 			AND ebx, 3						;
 			MOV nPad, ebx					; Store pad size to local var
 
-			INVOKE crt_calloc, nPad, SIZEOF(BYTE)	; Allocate memory for row pad
+			INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row pad
 			MOV pad, eax							; Store allocated memory pointer
 
-			LEA eax, [args._imgPtr]				; Load address of pointer to bitmap
+			MOV eax, [args._imgPtr]					; Load address of pointer to bitmap
 			MOV pointer, eax						; Copy pointer to picture array
 							
 			MOV eax, args._offset					; Calculate end of image offset
@@ -125,7 +125,9 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 	; Get min and max from generated noise array
 		MOV eax, args._width
 		MUL args._wholeHeight
-		INVOKE MaxMin, NoiseArray, eax, DWORD PTR [min], DWORD PTR [max]
+		LEA ebx, [min]
+		LEA ecx, [max]
+		INVOKE MaxMin, NoiseArray, eax, ebx, ecx
 
 	; Calculate offset to image for current thread
 		MOV eax, args._width
@@ -133,7 +135,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 		ADD eax, nPad
 		MOV ebx, args._offset
 		MUL ebx
-		ADD eax, SIZEOF(BMPFILEHEADER)
+		ADD eax, 54
 		ADD pointer, eax							
 			
 		ColumnLoop:
@@ -141,7 +143,9 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 			XOR edx, edx	; edx holds current position in image array
 			RowLoop:
 				ADD pointer, edx
-				INVOKE GetPixelValues, ebx, ecx, DWORD PTR [min], DWORD PTR [max], args
+				LEA edi, [min]
+				LEA esi, [max]
+				INVOKE GetPixelValues, ebx, ecx, edi, esi, args
 				memCopy pointer, eax, SIZEOF PIXEL
 			INC ecx
 			ADD edx, pixSize
@@ -164,34 +168,45 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	LOCAL _x			  :  DWORD
 	LOCAL _y			  :  DWORD
 	LOCAL pix			  :  DWORD
+	LOCAL pmin			  :  DWORD
+	LOCAL pmax			  :  DWORD
 	LOCAL value           :  REAL8
 	LOCAL minAfterEffect  :  REAL8
 	LOCAL maxAfterEffect  :  REAL8
 
 
-	MOV ebx, x						; Copy value of x
-	MOV ecx, y						; Copy value of y
-	MOV _x, ebx						; Store value of x in local variable
-	MOV _y, ecx						; Store value of x in local variable
-
-	LEA eax, [NoiseArray + 4*ebx]	; Get address of column in NoiseArray
-	LEA esi, [eax + 8*ecx]			; Get address of element in row in Noise Array
-	MOVSD xmm0, REAL8 PTR [esi]		; Init value
-	MOVSD value, xmm0				; Store value in local variable
-
-	MOVSD xmm0, REAL8 PTR [min]		; Init minAfterEffect
-	MOVSD minAfterEffect, xmm0		; Store value in local variable
-
-	MOVSD xmm0, REAL8 PTR [max]		; Init maxAfterEffect
-	MOVSD maxAfterEffect, xmm0		; Store value in local variable
-		
-	INVOKE crt_malloc, 24			; Alloc memory for new pixel
-	MOV pix, eax  					; Init pixel
-
-	LEA eax, [value]				; Load pointer to value
-	LEA ebx, [minAfterEffect]		; Load pointer to minAfterEffect
-	LEA ecx, [maxAfterEffect]		; Load pointer to minAfterEffect
-		
+	MOV eax, x							; Copy value of x
+	MOV _x, eax							; Store value of x in local variable
+	MOV eax, y							; Copy value of y
+	MOV _y, eax							; Store value of y in local variable
+	MOV eax, min						; Copy value of min
+	MOV pmin, eax						; Store value of min in local variable
+	MOV eax, max						; Copy value of max
+	MOV pmax, eax						; Store value of max in local variable
+										;
+	MOV eax, x							; eax <- x index
+	MUL args._width						; eax <- x * width
+	ADD eax, y							; eax <- x * width + y
+	SHL eax, 3							; eax <- (x * width + y) * (sizeof REAL8) - current array offset
+	MOV esi, NoiseArray					; esi <- base address of NoiseArray
+	MOVSD xmm0, REAL8 PTR [esi + eax]	; Init value
+	MOVSD value, xmm0					; Store value in local variable
+										;
+	MOV eax, pmin						; eax <- address of min
+	MOVSD xmm0, REAL8 PTR [eax]			; Init minAfterEffect
+	MOVSD minAfterEffect, xmm0			; Store value in local variable
+										;
+	MOV eax, pmax						; eax <- address of max										
+	MOVSD xmm0, REAL8 PTR [eax]			; Init maxAfterEffect
+	MOVSD maxAfterEffect, xmm0			; Store value in local variable
+										;	
+	INVOKE crt_malloc, 24				; Alloc memory for new pixel
+	MOV pix, eax  						; Init pixel
+										;
+	LEA eax, [value]					; Load pointer to value
+	LEA ebx, [minAfterEffect]			; Load pointer to minAfterEffect
+	LEA ecx, [maxAfterEffect]			; Load pointer to minAfterEffect
+										;	
 	MOV edx, args._effect
 	DEC edx
 	JNZ @F 
@@ -217,7 +232,7 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 
 	INVOKE GetColor, value, minAfterEffect, maxAfterEffect, pix
 
-	MOV eax, pix			; Move pointer to pixel to eax for return
+	MOV eax, pix				; Move pointer to pixel to eax for return
 	RET
 GetPixelValues ENDP
 
@@ -275,7 +290,7 @@ Experimental3 ENDP
 ;;           max - min
 ;;
 ;; Result in eax.
-ScaleToChar PROC x:REAL8, min:REAL8, max:REAL8
+ScaleToChar PROC x : REAL8, min : REAL8, max : REAL8
 
 	MOVLPD  xmm0, REAL8 PTR [x]		; Store x to lower quadword of xmm0
 	MOVHPD  xmm0, REAL8 PTR [max]	; Store max to upper quadword of xmm0
@@ -302,7 +317,7 @@ GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : DWORD
 	CalcColor:
 		SHL eax, 8
 		MOV ebx, eax
-		LEA esi, [color]
+		MOV esi, [color]
 
 		MOV ecx, [esi + 16]
 		INC ecx
