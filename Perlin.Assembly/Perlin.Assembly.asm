@@ -5,7 +5,7 @@ option casemap : none
 .xmm
 
 .const
-	ALIGN 8
+	ALIGN 16
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
@@ -68,15 +68,16 @@ option casemap : none
 	;; Normalizes REAL8 2D vector 
 	Normalize PROC vector : DWORD
 
-		MOVUPS xmm0, [vector]	; Move two values of vector to xmm0
-		MOVAPS xmm2, xmm0		; Store vector for later use
-		MULPD  xmm0, xmm0		; Calculate square of each value
-		MOVAPS xmm1, xmm0		; Store vector for calculations
-		ADDPD  xmm0, xmm1		; Add squares of vector components
-		SQRTPD xmm0, xmm0		; Calculate square root of added components
-
-		DIVPD xmm2, xmm0		; Calculate v[0]/len(v) v[1]/len(v)
-		MOVUPS [vector], xmm2
+		MOV	   eax, vector
+		MOVUPD xmm0, [eax]	; Move two values of vector to xmm0
+		MOVAPD xmm2, xmm0	; Store vector for later use
+		MULPD  xmm0, xmm0	; Calculate square of each value
+		MOVAPD xmm1, xmm0	; Store vector for calculations
+		ADDPD  xmm0, xmm1	; Add squares of vector components
+		SQRTPD xmm0, xmm0	; Calculate square root of added components
+							;
+		DIVPD xmm2, xmm0	; Calculate v[0]/len(v) v[1]/len(v)
+		MOVUPD [eax], xmm2	; Store result in vector
 
 		XOR eax, eax
 		RET
@@ -84,39 +85,48 @@ option casemap : none
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initializes program arrays
-	_Init PROC USES ebx ecx edx edi w:DWORD, h:DWORD
+	_Init PROC USES ebx ecx edx edi w : DWORD, h : DWORD
 
 		LOCAL tmp     :  DWORD
-		
-		; Initialize xmm registers
-			MOV		 eax, B
-			PINSRD   xmm1, eax, 0
-			PINSRD   xmm1, eax, 2
-			CVTDQ2PD xmm1, xmm1
-			SHL		 eax, 1
-			PINSRD   xmm2, eax, 0
-			PINSRD   xmm2, eax, 2
-			CVTDQ2PD xmm2, xmm2
 
 		; Initialize random number generator with processor tick count
-			INVOKE	 GetTickCount
-			MOV		 tmp, eax
+			XCHG	 rv(GetTickCount), tmp
 			INVOKE	 init_genenerator, tmp
 
 		; Allocate memory for arrays
-			MOV		 eax, B
-			INC		 eax
-			SHL		 eax, 3		; eax  <- eax * 2 * sizeof(DWORD)
-			MOV		 tmp, eax
+			MOV		 eax, B		; eax <- B
+			INC		 eax		; eax <- B + 1
+			SHL		 eax, 3		; eax <- (B + 1) * 2 * sizeof(DWORD)
+			MOV		 tmp, eax	; tmp <- eax
 			XCHG	 rv(crt_malloc, tmp), p
 			
-			SHL		 tmp, 2
+			
 			XCHG	 rv(crt_malloc, tmp), g2
+			MOV		 esi, g2	; ebx <- address of g2
+			MOV		 ebx, tmp	; edi <- (2B + 2) * sizeof(DWORD)
+			SHR		 ebx, 2		; edi <- 2B + 2 - index count of g2
+			@allocRow:
+				DEC	   ebx							; Go to next index
+				INVOKE crt_calloc, 2, sizeof REAL8	;
+				LEA	   ecx, [esi + 4*ebx]			; Load address of next element
+				MOV	   [ecx], eax					; Store allocated memory under address stored in tmp
+													;
+				TEST	ebx, ebx					; Test if it was last index
+				JNZ		@allocRow					; Loop
 
-			MOV		 eax, w
-			MUL		 h
-			SHL		 eax, 5
+			MOV		 eax, w		; eax <- width
+			MUL		 h			; eax <- width * height
 			XCHG	 rv(crt_calloc, eax, sizeof REAL8), NoiseArray
+			
+		; Initialize xmm registers
+			MOV		 eax, B
+			PINSRD   xmm1, eax, 00b
+			PINSRD   xmm1, eax, 01b
+			CVTDQ2PD xmm1, xmm1
+			SHL		 eax, 1
+			PINSRD   xmm2, eax, 00b
+			PINSRD   xmm2, eax, 01b
+			CVTDQ2PD xmm2, xmm2
 
 		; Initialize arrays for generating Perlin Noise
 			MOV edi, p						; Load address of p
@@ -128,21 +138,19 @@ option casemap : none
 				MOV		 [edi + 4*ecx], ecx	; p[i] <- i
 											;
 				INVOKE   RandInt32			; Generate random number for g2[ecx][0]
-				PINSRD   xmm0, eax, 0		; Store result in xmm0[0-31]
+				PINSRD   xmm0, eax, 00b		; Store result in xmm0[0-31]
 				INVOKE   RandInt32			; Generate random number for g2[ecx][1]
-				PINSRD   xmm0, eax, 2		; Store result in xmm0[64-95]			
+				PINSRD   xmm0, eax, 01b		; Store result in xmm0[64-95]					
 				CVTDQ2PD xmm0, xmm0			; Convert both results to doubles
 				ANDPD    xmm0, xmm2			; Both modulo (B+B)
 				SUBPD	 xmm0, xmm1			; Both minus B
 				DIVPD	 xmm0, xmm1			; Both divide by B
 											;
-				MOV		 eax, ecx			; Copy current index
-				SHL		 eax, 4				; Calculate offset for g2[ecx][0] element
-											;
-				MOVUPS	 [esi + eax], xmm0	; g2[ecx] <- xmm0 
-				LEA		 edx, [esi + eax]	;
-				MOV		 tmp, edx			;
+				MOV		 edx, [esi + 4*ecx]	; Load address of vector
+				MOVUPD	 [edx], xmm0		; g2[ecx] <- xmm0 
+				MOV		 tmp, edx			; Store address in variable
 				INVOKE	 Normalize, tmp		; Normalize vector
+											;
 				TEST	 ecx, ecx			; Test if ecx == 0
 				JNZ		 InitArr_First		; Loop
 
@@ -164,16 +172,14 @@ option casemap : none
 				DEC	   ecx					; Go to next index
 				MOV	   ebx, B				; ebx <- B
 				ADD	   ebx, ecx				; ebx <- (B + ecx)
-				SHL	   ebx, 2				; ebx <- ebx * 4
 											;
-				MOV	   eax, [edi + ecx]		; eax <- p[ecx]
-				MOV	   [edi + ebx], eax		; p[B+ecx] <- eax
+				MOV	   eax, [edi + 4*ecx]	; eax <- p[ecx]
+				MOV	   [edi + 4*ebx], eax	; p[B+ecx] <- eax
 											;
-				MOV	   eax, ecx				; eax <- ecx
-				SHL	   eax, 4				; eax <- eax * 16
-				MOVUPS xmm0, [esi + eax]	; xmm0 <- g2[ecx] 
-				LEA	   eax, [esi + 4*ebx]	; eax <- g2[B+ecx]
-				MOVUPS [eax], xmm0			; g2[B+ecx] <- g2[ecx]
+				MOV	   eax, [esi + 4*ecx]	; Load address of vector
+				MOVUPD xmm0, [eax]			; xmm0 <- g2[ecx] 
+				MOV	   eax, [esi + 4*ebx]	; eax <- g2[B+ecx]
+				MOVUPD [eax], xmm0			; g2[B+ecx] <- g2[ecx]
 											;
 				TEST   ecx, ecx				; Test if ecx == 0
 				JNZ	   InitArr_Third		; Loop

@@ -1,20 +1,17 @@
+ALIGN 16
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; at2(rx,ry) ((rx) * q[0] + (ry) * q[1])
 at2 MACRO rx, ry, q, res
-		
-	PUSH edi			  ; Store edi
-	PUSH esi			  ; Store esi
-
-	MOVLPD  xmm0, [rx]				; xmm0[0-63]   <- rx
-	MOVHPD  xmm0, [ry]				; xmm0[64-127] <- ry
-	MOVUPS  xmm1, [q]				; xmm1[0-127]  <- q
+				
+	MOVLPD  xmm0, REAL8 PTR [rx]	; xmm0[0-63]   <- rx
+	MOVHPD  xmm0, REAL8 PTR [ry]	; xmm0[64-127] <- ry
+	MOVUPD  xmm1, [q]				; xmm1[0-127]  <- q
 	MULPD   xmm0, xmm1				; xmm0[0-63]   <- rx * q[0]; xmm0[64-127] <- ry * q[1] 
 	MOVHLPS xmm1, xmm0				; xmm1[0-63]   <- ry * q[1]
 	ADDSD   xmm0, xmm1				; xmm[0-63]    <- rx*q[0] + ry*q[1]
 	MOVSD   REAL8 PTR [res], xmm0	; [res]		   <- result
 	
-	POP esi				  ; Restore esi
-	POP edi				  ; Resotre edi
 ENDM
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -28,9 +25,6 @@ ENDM
 ;; r1  = r0 - 1.0
 Setup MACRO i, b0, b1, r0, r1
 		
-	PUSH edi			  ; Store edi
-	PUSH esi			  ; Store esi
-
 	; Calculate tmp
 		MOV		 eax, B
 		CVTSI2SD xmm0, eax			  ; Convert B in xmm0 to double
@@ -58,8 +52,6 @@ Setup MACRO i, b0, b1, r0, r1
 	SUBSD  xmm0, xmm1				; xmm0 <- r0 - 1
 	MOVLPD REAL8 PTR [r1], xmm0		; Store value into r0
 
-	POP esi				  ; Restore esi
-	POP edi				  ; Resotre edi
 ENDM
 
 
@@ -103,17 +95,15 @@ Noise PROC x : REAL8, y : REAL8, value : DWORD
 	; Calculate first vector on x-axis
 		MOV eax, i				; eax  <- i
 		ADD eax, by0			; eax  <- i + by0
-		MOV ebx, [edi+ 4*eax]	; ebx  <- p[i + by0]
-		SHL ebx, 4				; ebx  <- ebx * 16
-		MOV ecx, [esi + ebx]	; ecx  <- &g2[ebx]
+		MOV ebx, [edi + 4*eax]	; ebx  <- p[i + by0]
+		MOV ecx, [esi + 4*ebx]	; ecx  <- g2[ebx] (address of row)
 		at2 rx0, ry0, ecx, u
 
 	; Calculate second vector on x-axis
 		MOV eax, j				; eax  <- j
 		ADD eax, by0			; eax  <- j + by0
 		MOV ebx, [edi + 4*eax]	; ebx  <- p[j + by0]
-		SHL ebx, 4				; ebx  <- ebx * 16
-		MOV ecx, [esi + ebx]	; ecx  <- &g2[ebx]
+		MOV ecx, [esi + 4*ebx]	; ecx  <- g2[ebx] (address of row)
 		at2 rx1, ry0, ecx, v		
 
 	; Interpolate vectors on x-axis and store result in a
@@ -123,16 +113,14 @@ Noise PROC x : REAL8, y : REAL8, value : DWORD
 		MOV eax, i				; eax  <- i
 		ADD eax, by1			; eax  <- i + by1
 		MOV ebx, [edi + 4*eax]	; ebx  <- p[i + by1]
-		SHL ebx, 4				; ebx  <- ebx * 16
-		MOV ecx, [esi + ebx]	; ecx  <- &g2[ebx]
+		MOV ecx, [esi + 4*ebx]	; ecx  <- g2[ebx] (address of row)
 		at2 rx0, ry1, ecx, u
 
 	; Calculate second vector on y-axis
 		MOV eax, j				; eax  <- j
 		ADD eax, by1			; eax  <- j + by1
 		MOV ebx, [edi + 4*eax]	; ebx  <- p[j + by1]
-		SHL ebx, 4				; ebx  <- ebx * 16
-		MOV ecx, [esi + ebx]	; ecx  <- &g2[ebx]
+		MOV ecx, [esi + 4*ebx]	; ecx  <- g2[ebx] (address of row)
 		at2 rx1, ry1, ecx, v
 
 	; Interpolate vectors on y-axis and store result in b
@@ -143,7 +131,8 @@ Noise PROC x : REAL8, y : REAL8, value : DWORD
 
 	; Store result under value pointer
 		MOVSD xmm0, t
-		MOVSD REAL8 PTR [value], xmm0
+		MOV eax, value
+		MOVSD REAL8 PTR [eax], xmm0
 
 	XOR eax, eax
 	RET
@@ -166,7 +155,7 @@ PerlinNoise2D PROC args : PARAMS
 
 	NoiseLoopK:
 		MOV eax, 2												; Base to eax
-		PINSRD xmm4, eax, 0 									; Copy base to xmm1
+		PINSRD xmm4, eax, 00b 									; Copy base to xmm1
 		Power xmm4, k											; Calculate 2^k
 		MOVSD REAL8 PTR [amp], xmm4 							; Store result in amp xmm4
 
@@ -189,19 +178,19 @@ PerlinNoise2D PROC args : PARAMS
 
 			NoiseLoopJ:
 				MOV eax, 100		
-				PINSRD   xmm1, eax, 0							; Insert 100 to xmm1[0-31]
-				PINSRD   xmm1, eax, 2							; Insert 100 to xmm1[64-95]
+				PINSRD   xmm1, eax, 00b							; Insert 100 to xmm1[0-31]
+				PINSRD   xmm1, eax, 01b							; Insert 100 to xmm1[64-95]
 				CVTDQ2PD xmm1, xmm1								; Convert xmm1 values from integers to doubles
 																;
-				PINSRD   xmm2, DWORD PTR [i], 0					; Insert i to xmm2[0-31]
-				PINSRD   xmm2, DWORD PTR [j], 2					; Insert j to xmm2[64-95]
+				PINSRD   xmm2, DWORD PTR [i], 00b				; Insert i to xmm2[0-31]
+				PINSRD   xmm2, DWORD PTR [j], 01b				; Insert j to xmm2[64-95]
 				CVTDQ2PD xmm2, xmm2								; Convert i and j from integers to doubles
 																;
 				INVOKE RandInt32								; Generate random dot product for x
-				PINSRD xmm0, eax, 0								; Insert first random to xmm0[0-31]
+				PINSRD xmm0, eax, 00b							; Insert first random to xmm0[0-31]
 																;					
 				INVOKE RandInt32								; Generate random dot product for y
-				PINSRD xmm0, eax, 2								; Insert second random to xmm0[64-95]
+				PINSRD xmm0, eax, 01b							; Insert second random to xmm0[64-95]
 																;
 				CVTDQ2PD xmm0, xmm0								; Convert x and y randoms to doubles
 																;

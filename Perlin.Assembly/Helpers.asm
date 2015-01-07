@@ -8,28 +8,24 @@
 	;; Only for REAL8! (doubles)
 	EaseCurve MACRO res, x
 		
-		PUSH esi			   ; Preserve ESI
-		PUSH edi			   ; Preserve EDI
+		MOVDDUP  xmm0, REAL8 PTR [x]    ; xmm0[0-63]   <- x, xmm0[64-127]   <- x
+		MOVAPD   xmm1, xmm0				; xmm1[0-63]   <- x, xmm1[64-127]   <- x
+		MULPD    xmm0, xmm1				; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
+		MOV      eax, 2					; eax		   <- 2
+		PINSRD   xmm2, eax, 00b			; xmm2[0-31]   <- 2
+		CVTSS2SD xmm2, xmm2				; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
+		MULSD    xmm1, xmm2				; xmm1[0-63]   <- 2.0 * x
+		MOV      eax, 3					; eax		  <- 3
+		PINSRD   xmm2, eax, 00b			; xmm2[0-31]   <- 3
+		CVTSS2SD xmm2, xmm2				; xmm2[0-63]   <- 3.0  (conversion) [OLD: MOVHPD  xmm2, [three]]
+		MOVLHPS  xmm1, xmm2	   			; xmm1[63-127] <- 3.0  
+		MULPD    xmm0, xmm1    			; xmm0[0-63]   <- x*x*x*2.0 , xmm0[64-127] <- x*X*3.0
+		MOVHLPS  xmm1, xmm0    			; xmm1[0-63]   <- x*x*x*2.0
+		PSRLDQ   xmm0, 8	   			; xmm0[0-63]   <- x*x*3.0
+		SUBSD    xmm0, xmm1	   			; xmm0[0-63]   <- x*x*(3.0-(x*2.0))
+								 		;
+		MOVSD REAL8 PTR [res], xmm0		; store the result back to the variable 
 
-		MOVDDUP  xmm0, REAL8 PTR [x]     ; xmm0[0-63]   <- x, xmm0[64-127]   <- x
-		MOVAPD   xmm1, xmm0    ; xmm1[0-63]   <- x, xmm1[64-127]   <- x
-		MULPD    xmm0, xmm1    ; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
-		MOV      eax, 2	   ; eax		  <- 2
-		PINSRD   xmm2, eax, 0  ; xmm2[0-31]   <- 2
-		CVTSS2SD xmm2, xmm2	   ; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
-		MULSD    xmm1, xmm2	   ; xmm1[0-63]   <- 2.0 * x
-		MOV      eax, 3	   ; eax		  <- 3
-		PINSRD   xmm2, eax, 0  ; xmm2[0-31]   <- 3
-		CVTSS2SD xmm2, xmm2	   ; xmm2[0-63]   <- 3.0  (conversion) [OLD: MOVHPD  xmm2, [three]]
-		MOVLHPS  xmm1, xmm2	   ; xmm1[63-127] <- 3.0  
-		MULPD    xmm0, xmm1    ; xmm0[0-63]   <- x*x*x*2.0 , xmm0[64-127] <- x*X*3.0
-		MOVHLPS  xmm1, xmm0    ; xmm1[0-63]   <- x*x*x*2.0
-		PSRLDQ   xmm0, 8	   ; xmm0[0-63]   <- x*x*3.0
-		SUBSD    xmm0, xmm1	   ; xmm0[0-63]   <- x*x*(3.0-(x*2.0))
-								 
-		MOVSD REAL8 PTR [res], xmm0	   ; store the result back to the variable 
-		POP edi				  ; Restore edi
-		POP esi				  ; Restore esi
 	ENDM
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

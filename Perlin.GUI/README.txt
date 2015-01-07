@@ -60,3 +60,7 @@ Optymalizacja ASM:
 
 	PerlinNoise: sprawdzić co w jakich pętlach się zmienia i przenieść jakieś
 				 najczęściej używane wartości do rejestrów xmm na stałe (np. wartość 100)
+
+
+Problemy:
+ - sprawdzić czy w PerlinNoise2D LEA jest dobrze użyte

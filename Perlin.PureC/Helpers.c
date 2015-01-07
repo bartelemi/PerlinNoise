@@ -15,7 +15,7 @@ double Power(double base, int exponent)
 double** alloc2DArray(size_t width, size_t height)
 {
 	size_t i;
-	double **pointer = (double**)calloc(height, sizeof(double*));
+	double **pointer = (double**)malloc(height * sizeof(double*));
 	for (i = 0; i < height; i++)
 	{
 		pointer[i] = (double*)calloc(width, sizeof(double));
