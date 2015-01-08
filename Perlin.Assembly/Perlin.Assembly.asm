@@ -187,7 +187,7 @@ option casemap : none
 		XOR eax, eax
 		RET
 	_Init ENDP
-
+	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Generate noisy bitmap with applied effect
 	_PerlinNoiseBmp PROC USES ebx args : PARAMS

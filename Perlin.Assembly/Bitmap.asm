@@ -149,8 +149,9 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 				LEA     edi, [min]
 				LEA     esi, [max]
 				INVOKE  GetPixelValues, ebx, ecx, edi, esi, args
-				ADD     pointer, edx
-				memCopy eax, pointer, sizeof PIXEL
+				MOV     edi, pointer
+				ADD		edi, edx
+				memCopy eax, edi, sizeof PIXEL
 			INC ecx
 			ADD edx, sizeof PIXEL
 			CMP ecx, args._width

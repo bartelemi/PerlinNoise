@@ -92,28 +92,28 @@
 	;; max and min pointers.
 	;;
 	;;
-	MaxMin PROC USES ebx arr : DWORD, n : DWORD, pmin : DWORD, pmax : DWORD
+	MaxMin PROC arr : DWORD, n : DWORD, pmin : DWORD, pmax : DWORD
 
 		LOCAL pmin_tmp		:  DWORD
 		LOCAL pmax_tmp		:  DWORD
 
-		MOV ebx, arr							; ebx <- array base
+		MOV edx, arr							; ebx <- array base
 		MOV eax, pmin							;
 		MOV pmin_tmp, eax						; Store pointer to min in local variable
 		MOV eax, pmax							;
 		MOV pmax_tmp, eax						; Store pointer to max in local variable
 												;
-		MOVSD xmm0, REAL8 PTR [ebx]				; xmm0 <- array[0]
+		MOVSD xmm0, REAL8 PTR [edx]				; xmm0 <- array[0]
 		MOVSD xmm1, xmm0						; xmm1 <- array[0]
-		
+												;		
 		MOV eax, n								; eax <- n
 		TEST eax, eax							; Test for array size of 1
 		JZ @MaxMinFinalize						; Go to end if array size = 1
-
+												;
 		XOR edi, edi							; edi <- 0
 		INC edi									; edi <- 1 (second index in array)
 		@MaxMinLoop:
-			MOVSD xmm2, REAL8 PTR [ebx + 8*edi]
+			MOVSD xmm2, REAL8 PTR [edx + 8*edi]
 			CMPSD xmm0, xmm2, 001B				; Test for "less than xmm0"
 			PEXTRW eax, xmm0, 0
 			NEG eax
@@ -138,10 +138,10 @@
 				JNE @MaxMinLoop
 
 		@MaxMinFinalize:
-			MOV   eax, pmin_tmp
-			MOVSD REAL8 PTR [eax], xmm0			; *min <- found min value
-			MOV   eax, pmax_tmp
-			MOVSD REAL8 PTR [eax], xmm1			; *max <- found max value
+			MOV   edx, pmin_tmp
+			MOVSD REAL8 PTR [edx], xmm0			; *min <- found min value
+			MOV   edx, pmax_tmp
+			MOVSD REAL8 PTR [edx], xmm1			; *max <- found max value
 
 		XOR eax, eax
 		RET
