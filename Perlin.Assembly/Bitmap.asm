@@ -167,7 +167,6 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 
 	LOCAL _x			  :  DWORD
 	LOCAL _y			  :  DWORD
-	LOCAL pix			  :  DWORD
 	LOCAL pmin			  :  DWORD
 	LOCAL pmax			  :  DWORD
 	LOCAL value           :  REAL8
@@ -199,9 +198,6 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	MOV eax, pmax						; eax <- address of max										
 	MOVSD xmm0, REAL8 PTR [eax]			; Init maxAfterEffect
 	MOVSD maxAfterEffect, xmm0			; Store value in local variable
-										;	
-	INVOKE crt_malloc, 24				; Alloc memory for new pixel
-	MOV pix, eax  						; Init pixel
 										;
 	LEA eax, [value]					; Load pointer to value
 	LEA ebx, [minAfterEffect]			; Load pointer to minAfterEffect
@@ -230,9 +226,9 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	INVOKE Experimental3, eax, ebx, ecx, x, y
 	@@:	
 
-	INVOKE GetColor, value, minAfterEffect, maxAfterEffect, pix
+	LEA ebx, args._color
+	INVOKE GetColor, value, minAfterEffect, maxAfterEffect, ebx
 
-	MOV eax, pix				; Move pointer to pixel to eax for return
 	RET
 GetPixelValues ENDP
 
@@ -306,35 +302,43 @@ ScaleToChar PROC x : REAL8, min : REAL8, max : REAL8
 ScaleToChar ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Returns colored pixel
+;; Returns colored pixel in eax
 GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : DWORD
 	
-	INVOKE ScaleToChar, value, min, max
-	TEST eax, eax
-	JNE CalcColor
-		INC eax
+	LOCAL pix	:  DWORD
+
+	XCHG rv(crt_malloc, 24), edi		; Alloc memory for new pixel
+	INVOKE ScaleToChar, value, min, max	; Scale given value
+	TEST eax, eax						; Test if returned value is equal to zero
+	JNE CalcColor						; If it's not, then continue
+		INC eax							; Else eax <- 1
 
 	CalcColor:
-		SHL eax, 8
-		MOV ebx, eax
-		MOV esi, [color]
-
-		MOV ecx, [esi + 16]
-		INC ecx
-		DIV ecx
-		MOV [esi+16], eax
+		SHL eax, 8						; eax <- value * 256
+		MOV ebx, eax					; ebx <- value * 256 (for later use)
+		MOV esi, [color]				; esi <- address of color
+		XOR ecx, ecx					; ecx <- 0
+										;
+		MOV cl, BYTE PTR [esi + 2]		; cl <- blue value 
+		INC ecx							;
+		XOR edx, edx					; edx <- 0 before div
+		DIV ecx							;
+		MOV BYTE PTR [edi + 2], al		;
+										;
+		MOV eax, ebx					;
+		MOV cl, BYTE PTR [esi + 1]		; cl <- green value
+		INC ecx							;
+		XOR edx, edx					; edx <- 0 before div
+		DIV ecx							;
+		MOV BYTE PTR [edi + 1], al		;
+										;
+		MOV eax, ebx					;
+		MOV cl, BYTE PTR [esi]			; cl <- red value
+		INC ecx							;
+		XOR edx, edx					; edx <- 0 before div
+		DIV ecx							;
+		MOV BYTE PTR [edi], al			;
 		
-		MOV eax, ebx
-		MOV ecx, [esi+8]	
-		INC ecx
-		DIV ecx
-		MOV [esi+8], eax
-
-		MOV eax, ebx
-		MOV ecx, [esi]
-		INC ecx
-		DIV ecx
-		MOV [esi], eax
-
+		MOV eax, edi
 	RET
 GetColor ENDP

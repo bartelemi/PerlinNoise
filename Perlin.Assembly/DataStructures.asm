@@ -17,7 +17,7 @@
 		_width			DWORD  ?
 		_wholeHeight	DWORD  ? 
 		_height			DWORD  ?
-		_color			PIXEL  {? ? ? ?}
+		_color			PIXEL  {? ? ?}
 		_reserved		BYTE   ?
 		_effect			DWORD  ?
 		_octaves		DWORD  ?
