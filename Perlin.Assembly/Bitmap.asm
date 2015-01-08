@@ -16,7 +16,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns filled BMPFILEHEADER
-FillHeader PROC w : DWORD, h : DWORD
+FillHeader PROC USES ebx w : DWORD, h : DWORD
 		
 	LOCAL fSize : DWORD
 
@@ -89,71 +89,82 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 
 	LOCAL min		:  REAL8
 	LOCAL max		:  REAL8
-	LOCAL pixSize   :  DWORD
+	LOCAL rowSize   :  DWORD
 	LOCAL nPad		:  DWORD
 	LOCAL pad		:  DWORD
 	LOCAL pointer   :  DWORD
 	LOCAL offsetEnd :  DWORD
 
 	; Initialize local variables
-			MOV pixSize, SIZEOF PIXEL		; Store sizeof(PIXEL)
-			MOV eax, args._width			; Calculate pad size
-			MUL pixSize						;
-			AND eax, 3						;
-			MOV ebx, 4						;
-			SUB ebx, eax					;
-			AND ebx, 3						;
-			MOV nPad, ebx					; Store pad size to local var
-
+			MOV eax, sizeof PIXEL					; Calculate pad size
+			MUL args._width							;
+			AND eax, 3								;
+			MOV ebx, 4								;
+			SUB ebx, eax							;
+			AND ebx, 3								;
+			MOV nPad, ebx							; Store pad size to local var
+													;
 			INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row pad
 			MOV pad, eax							; Store allocated memory pointer
-
+													;
 			MOV eax, [args._imgPtr]					; Load address of pointer to bitmap
 			MOV pointer, eax						; Copy pointer to picture array
-							
+													;							
 			MOV eax, args._offset					; Calculate end of image offset
 			ADD eax, args._height					;
 			MOV offsetEnd, eax						; Store value in local variable
+													;
+			MOV eax, sizeof PIXEL					; Calculate size of single row
+			MUL args._width									; eax <- width*sizeof(PIXEL)
+			ADD eax, nPad							; eax <- width*sizeof(PIXEL) + nPad					
+			MOV rowSize, eax						; Store value in local variable
 
 	; Check if current thread has Id==0 and if so create file header
-			MOV eax, args._threadId		
-			TEST eax, eax
-			JNZ Skip
+			MOV    eax, args._threadId		
+			TEST   eax, eax
+			JNZ    @Skip
 			INVOKE WriteFileHdr, pointer, args._width, args._height
 
-	Skip:
+	@Skip:
 	; Get min and max from generated noise array
-		MOV eax, args._width
-		MUL args._wholeHeight
-		LEA ebx, [min]
-		LEA ecx, [max]
+		MOV    eax, args._width
+		MUL    args._wholeHeight
+		LEA    ebx, [min]
+		LEA    ecx, [max]
 		INVOKE MaxMin, NoiseArray, eax, ebx, ecx
 
 	; Calculate offset to image for current thread
-		MOV eax, args._width
-		MUL pixSize
+		MOV eax, sizeof PIXEL 
+		MUL args._width
 		ADD eax, nPad
-		MOV ebx, args._offset
-		MUL ebx
+		MUL args._offset
 		ADD eax, 54
 		ADD pointer, eax							
 			
-		ColumnLoop:
+		MOV ebx, args._offset
+		@ColumnLoop:
 			XOR ecx, ecx	; ecx holds current position in noise array
 			XOR edx, edx	; edx holds current position in image array
-			RowLoop:
-				ADD pointer, edx
-				LEA edi, [min]
-				LEA esi, [max]
-				INVOKE GetPixelValues, ebx, ecx, edi, esi, args
-				memCopy pointer, eax, SIZEOF PIXEL
+			@RowLoop:
+				LEA     edi, [min]
+				LEA     esi, [max]
+				INVOKE  GetPixelValues, ebx, ecx, edi, esi, args
+				ADD     pointer, edx
+				memCopy eax, pointer, sizeof PIXEL
 			INC ecx
-			ADD edx, pixSize
+			ADD edx, sizeof PIXEL
 			CMP ecx, args._width
-			JNE RowLoop
+			JNE @RowLoop
+
+			memCopy pad, pointer, nPad
+			MOV     eax, pointer
+			ADD     eax, rowSize
+			MOV     pointer, eax
+
 		INC ebx
 		CMP ebx, offsetEnd
-			
+		JNE @ColumnLoop	
+
 	XOR eax, eax
 	RET
 CreateBMP ENDP
@@ -172,7 +183,6 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	LOCAL value           :  REAL8
 	LOCAL minAfterEffect  :  REAL8
 	LOCAL maxAfterEffect  :  REAL8
-
 
 	MOV eax, x							; Copy value of x
 	MOV _x, eax							; Store value of x in local variable
@@ -271,6 +281,7 @@ Experimental3 PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD , y : DWOR
 	
 	MOV eax, x
 	ADD eax, y
+
 	XOR eax, eax
 	RET
 Experimental3 ENDP
@@ -298,15 +309,14 @@ ScaleToChar PROC x : REAL8, min : REAL8, max : REAL8
 	CVTSI2SD xmm1, eax				; xmm1[63-0] <- 255.0
 	MULSD xmm0, xmm1				; xmm0[63-0] <- 255.0 * (x-min) / (max-min)
 	CVTSD2SI eax, xmm0				; eax		 <- (int)(255.0 * (x-min) / (max-min))
+	
 	RET
 ScaleToChar ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns colored pixel in eax
-GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : DWORD
+GetColor PROC USES ebx value : REAL8, min : REAL8, max : REAL8, color : DWORD
 	
-	LOCAL pix	:  DWORD
-
 	XCHG rv(crt_malloc, 24), edi		; Alloc memory for new pixel
 	INVOKE ScaleToChar, value, min, max	; Scale given value
 	TEST eax, eax						; Test if returned value is equal to zero
@@ -339,6 +349,6 @@ GetColor PROC value : REAL8, min : REAL8, max : REAL8, color : DWORD
 		DIV ecx							;
 		MOV BYTE PTR [edi], al			;
 		
-		MOV eax, edi
+	MOV eax, edi
 	RET
 GetColor ENDP

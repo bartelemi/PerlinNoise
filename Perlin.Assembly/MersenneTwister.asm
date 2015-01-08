@@ -91,7 +91,7 @@ next_state PROC USES ecx edx esi
 	SBB eax, eax
 	AND eax, MATRIX_A
 	XOR edx, eax
-	XOR edx, DWORD PTR [esi + ( (M-N)*SIZEOF DWORD )] ; note: M-N will be negative, so that gives [ESI+(-908)] -> [ESI-908] with standard M and N
+	XOR edx, DWORD PTR [esi + ( (M-N)*sizeof DWORD )] ; note: M-N will be negative, so that gives [ESI+(-908)] -> [ESI-908] with standard M and N
 	MOV DWORD PTR [esi], edx
 	ADD esi, 4    
 	DEC ecx
@@ -108,7 +108,7 @@ next_state PROC USES ecx edx esi
 	SBB eax, eax
 	AND eax, MATRIX_A
 	XOR edx, eax
-	XOR edx, DWORD PTR [esi+( (M-N)*SIZEOF DWORD )] ; see note above
+	XOR edx, DWORD PTR [esi+( (M-N)*sizeof DWORD )] ; see note above
 	MOV DWORD PTR [esi], edx    
  
 	RET
@@ -149,7 +149,7 @@ RandInt32 PROC USES ecx edx
  
 		MOV eax, ecx
 		SHR eax, 18
-		XOR eax, ecx    
- 
+		
+	XOR eax, ecx    
 	RET
 RandInt32 endp

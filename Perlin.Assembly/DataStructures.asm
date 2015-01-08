@@ -18,7 +18,7 @@
 		_wholeHeight	DWORD  ? 
 		_height			DWORD  ?
 		_color			PIXEL  {? ? ?}
-		_reserved		BYTE   ?
+		ALIGN 4
 		_effect			DWORD  ?
 		_octaves		DWORD  ?
 		_persistence	REAL8  ?

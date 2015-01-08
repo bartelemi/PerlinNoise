@@ -92,50 +92,52 @@
 	;; max and min pointers.
 	;;
 	;;
-	MaxMin PROC arr : DWORD, n : DWORD, pmin : DWORD, pmax : DWORD
+	MaxMin PROC USES ebx arr : DWORD, n : DWORD, pmin : DWORD, pmax : DWORD
 
 		LOCAL pmin_tmp		:  DWORD
 		LOCAL pmax_tmp		:  DWORD
 
+		MOV ebx, arr							; ebx <- array base
 		MOV eax, pmin							;
 		MOV pmin_tmp, eax						; Store pointer to min in local variable
 		MOV eax, pmax							;
 		MOV pmax_tmp, eax						; Store pointer to max in local variable
-		MOV ebx, arr							; ebx <- array base
-		MOV edi, n								; edi <- array size
-		DEC edi									; edi <- last array index
 												;
-		MOVSD xmm0, REAL8 PTR [ebx + 8*edi]		; xmm0 <- array[N-1]
-		MOVSD xmm1, REAL8 PTR [ebx + 8*edi]		; xmm1 <- array[N-1]
+		MOVSD xmm0, REAL8 PTR [ebx]				; xmm0 <- array[0]
+		MOVSD xmm1, xmm0						; xmm1 <- array[0]
 		
-		TEST edi, edi							; Test for array size of 1
-		JZ MaxMinFinalize						; Go to end if array size = 1
+		MOV eax, n								; eax <- n
+		TEST eax, eax							; Test for array size of 1
+		JZ @MaxMinFinalize						; Go to end if array size = 1
 
-		MaxMinLoop:
-			DEC edi
+		XOR edi, edi							; edi <- 0
+		INC edi									; edi <- 1 (second index in array)
+		@MaxMinLoop:
 			MOVSD xmm2, REAL8 PTR [ebx + 8*edi]
 			CMPSD xmm0, xmm2, 001B				; Test for "less than xmm0"
 			PEXTRW eax, xmm0, 0
 			NEG eax
-			JZ NewMin
+			JZ @NewMin
 			
+			MOVSD xmm3, xmm2
 			CMPSD xmm2, xmm1, 001B 				; Test for "more than xmm1"
 			PEXTRW eax, xmm1, 0
 			NEG eax
-			JZ NewMax
+			JZ @NewMax
 
-			NewMin:
+			@NewMin:
 				MOVSD xmm0, xmm2				; Load new minimum value
-				JMP NextStep
+				JMP @NextStep
 
-			NewMax:
-				MOVSD xmm1, xmm2				; Load new maximum value
+			@NewMax:
+				MOVSD xmm1, xmm3				; Load new maximum value
 
-			NextStep:
-				TEST edi, edi
-				JNZ MaxMinLoop
+			@NextStep:
+				INC edi
+				CMP edi, n
+				JNE @MaxMinLoop
 
-		MaxMinFinalize:
+		@MaxMinFinalize:
 			MOV   eax, pmin_tmp
 			MOVSD REAL8 PTR [eax], xmm0			; *min <- found min value
 			MOV   eax, pmax_tmp
@@ -145,83 +147,13 @@
 		RET
 	MaxMin ENDP
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Finds min and max value in array2D
-	MaxMin2 PROC FAR arr : DWORD, n : DWORD, min : DWORD, max : DWORD
-	
-		LEA ebx, arr						; ebx <- array base
-		MOV ecx, n							; ecx <- array size
-		
-		DEC ecx								; ecx points now last element of the array
-		MOVSD xmm0, REAL8 PTR [ebx+8*ecx]	; xmm0[0-63] <- array[n-1]
-		MOVSD REAL8 PTR [min], xmm0			; minimum <- array[n-1]
-		MOVSD REAL8 PTR [max], xmm0			; maximum <- array[n-1]
-		CMP   ecx, 0						; test for array of size = 1
-		JE MaxMinEnd						; jump if array of one element
-
-		TEST ecx, 1							; if n is odd than: ZF <- 1
-		JNZ MaxMinLoop						; if n is odd than ok
-
-		MOVSD xmm1, REAL8 PTR [ebx + 8*ecx]		; xmm1[0-63] <- array[n-2]
-		MOVSD xmm2, xmm1
-		CMPSD xmm2, xmm0, 001b
-
-
-
-		MaxMinLoop:
-			MOVDQA xmm0, [ebx + ecx]
-								
-			
-
-			DEC ecx
-			DEC ecx
-			JNZ MaxMinLoop
-
-		MaxMinEnd:		
-			XOR eax, eax
-			RET
-	MaxMin2 ENDP
-	
-	OPTION PROLOGUE:NONE 
-	OPTION EPILOGUE:NONE 
-	MyMinMax    PROC    arr:dword, n:dword
-
-			MOV     ecx, [esp+8]    ;n
-			MOV     edx, [esp+4]    ;p
-			FLD     real4 PTR [edx]             ; set st(1) to MAX value        
-			FLD     st(0)                       ; set st(0) to MIN value
-			SUB     ecx, 1                      ; points to the last value
-	  L0:
-			FLD     real4 ptr [edx+ecx*4]
-			FCOMI   st, st(1)                   ; compare st(1)=MIN with st(0)
-			JAE     L1
-			FXCH    st(1)
-
-			FSTP    st
-			SUB     ecx, 1
-			JNZ     L0                          ; if ecx>0 loop to L0        
-			RET     8
-                
-	  L1:   FCOMI   st, st(2)                   ; compare st(2)=MAX with st(0)
-			JBE     L2
-			FXCH    st(2)
-
-	  L2:   FSTP    st
-			SUB     ecx, 1
-			JNZ     L0                          ; if ecx>0 loop to L0        
-			RET     8
-	MyMinMax    ENDP
-	OPTION PROLOGUE:PrologueDef 
-	OPTION EPILOGUE:EpilogueDef
-
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Copies len bytes from src to dst
 	memCopy MACRO src, dst, len 
 
 		PUSH esi ; preserve ESI
 		PUSH edi ; preserve EDI
-
+		PUSH ecx ; preserve ECX
 		CLD 
 		MOV esi, src ; source
 		MOV edi, dst ; destination
@@ -234,6 +166,7 @@
 		AND ecx, 3 
 		REP MOVSD
 
+		POP ecx ; restore ECX
 		POP edi ; restore EDI
 		POP esi ; restore ESI 
 	ENDM

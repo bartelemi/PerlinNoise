@@ -50,10 +50,9 @@ void CreateBMP(double **noiseArray, ThreadParameters params)
 	Pixel pixel;
 	double min, max;
 	size_t i, j, l;
-	size_t pixelSize = sizeof(Pixel);
 	size_t width = params.width;
 	size_t height = params.height;
-	size_t npad = ((4 - ((width * pixelSize) & 3)) & 3);
+	size_t npad = ((4 - ((width*sizeof(Pixel)) & 3)) & 3);
 	unsigned char *pad = calloc(npad, sizeof(unsigned char));
 	unsigned char *pointer = (unsigned char*)params.imagePointer;
 	
@@ -64,18 +63,18 @@ void CreateBMP(double **noiseArray, ThreadParameters params)
 
 	// Move pointer by current thread offset
 	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
-		     + ((params.offset)*(width*pixelSize + npad));
+			+  ((params.offset)*(width*sizeof(Pixel) + npad));
 
 	for (i = params.offset; i < height + params.offset; i++)
 	{
-		for (l = 0, j = 0; l < width; l++, j += pixelSize)
+		for (l = 0, j = 0; l < width; l++, j += sizeof(Pixel))
 		{
 			pixel = GetPixel(i, l, &min, &max, noiseArray, &params);
-			memcpy(pointer + j, &pixel, pixelSize);
+			memcpy(pointer + j, &pixel, sizeof(Pixel));
 		}
 
 		memcpy(pointer + j, pad, npad);
-		pointer += (width*pixelSize + npad);
+		pointer += (width*sizeof(Pixel) + npad);
 	}
 }
 

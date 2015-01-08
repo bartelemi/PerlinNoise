@@ -190,7 +190,7 @@ option casemap : none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Generate noisy bitmap with applied effect
-	_PerlinNoiseBmp PROC args : PARAMS
+	_PerlinNoiseBmp PROC USES ebx args : PARAMS
 		
 		INVOKE PerlinNoise2D, args	; Generate noise array with parameters
 		INVOKE CreateBMP, args		; Create bitmap from noise array
@@ -201,7 +201,7 @@ option casemap : none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Cleans up memory
-	_Finalize PROC
+	_Finalize PROC USES ebx
 
 		INVOKE crt_free, p
 		INVOKE crt_free, g2
