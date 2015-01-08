@@ -58,16 +58,16 @@
 		XOR eax, eax		; eax <- 0
 		INC eax				; eax <- 1
 		CVTSI2SD xmm0, eax	; xmm0 <- 1.0
-
-		MOV eax, exp		; eax  <- exponent
 		MOVSD xmm1, base	; xmm1 <- base
 
+		XOR eax, eax
 		@@:
+			CMP   eax, exp		; Test counter for equal exp
+			JE    @F			; Continue if counter is different from exp
 			MULSD xmm0, xmm1	; xmm0 <- xmm0 * base
-			DEC   eax			; Decrement counter
-			TEST  eax, eax		; Test counter for zero
-			JNZ   @B			; Continue if counter is greater than zero
-
+			INC   eax			; Increment counter
+			JMP   @B			; Loop
+		@@:
 	ENDM
 
 ;;;;;;;;;;;;;;;;;;
@@ -83,6 +83,7 @@
 		LOCAL pmin_tmp		:  DWORD
 		LOCAL pmax_tmp		:  DWORD
 
+
 		MOV edx, arr							; ebx <- array base
 		MOV eax, pmin							;
 		MOV pmin_tmp, eax						; Store pointer to min in local variable
@@ -91,42 +92,53 @@
 												;
 		MOVSD xmm0, REAL8 PTR [edx]				; xmm0 <- array[0]
 		MOVSD xmm1, xmm0						; xmm1 <- array[0]
+		MOVSD xmm5, xmm0						; xmm5 <- copy min
+		MOVSD xmm6, xmm0						; xmm6 <- copy max
 												;		
-		MOV eax, n								; eax <- n
+		MOV  eax, n								; eax <- n
+		DEC  eax								; eax <- n-1
 		TEST eax, eax							; Test for array size of 1
-		JZ @MaxMinFinalize						; Go to end if array size = 1
+		JZ   @MaxMinFinalize					; Go to end if array size = 1
 												;
 		XOR edi, edi							; edi <- 0
 		INC edi									; edi <- 1 (second index in array)
 		@MaxMinLoop:
-			MOVSD xmm2, REAL8 PTR [edx + 8*edi]
-			CMPSD xmm0, xmm2, 001B				; Test for "less than xmm0"
-			PEXTRW eax, xmm0, 0
-			NEG eax
-			JZ @NewMin
-			
-			MOVSD xmm3, xmm2
-			CMPSD xmm2, xmm1, 001B 				; Test for "more than xmm1"
-			PEXTRW eax, xmm1, 0
-			NEG eax
-			JZ @NewMax
-
-			@NewMin:
-				MOVSD xmm0, xmm2				; Load new minimum value
-				JMP @NextStep
-
+			MOVSD  xmm2, REAL8 PTR [edx + 8*edi]; Load next element
+			MOVSD  xmm3, xmm2					; Store current value for later use
+												;
+			CMPSD  xmm1, xmm2, 001B 			; Test for "more than xmm1"
+			PEXTRD eax, xmm1, 00B				; Extract low dword of result to eax
+			NOT    eax							; Reverse eax
+			TEST   eax, eax						; Test eax for 0
+			JZ     @NewMax						; If eax == 0 than comparison successfull
+												;
+			CMPSD  xmm2, xmm0, 001B				; Test for "less than xmm0"
+			PEXTRD eax, xmm2, 00B				; Extract low dword of result to eax
+			NOT    eax							; Reverse eax
+			TEST   eax, eax						; Test eax for 0
+			JZ     @NewMin						; If eax == 0 than comparison successfull
+			JMP	   @NextStep					; Go to next iteration
+						
 			@NewMax:
 				MOVSD xmm1, xmm3				; Load new maximum value
+				MOVSD xmm6, xmm3				; Copy new max
+				JMP @NextStep					; Go to next iteration
+
+			@NewMin:
+				MOVSD xmm0, xmm3				; Load new minimum value
+				MOVSD xmm5, xmm3				; Copy new min				
 
 			@NextStep:
-				INC edi
-				CMP edi, n
-				JNE @MaxMinLoop
+				MOVSD  xmm0, xmm5					; Restore current min
+				MOVSD  xmm1, xmm6					; Restore current max
+				INC edi							; Increment counter
+				CMP edi, n						; Compare with array size
+				JNE @MaxMinLoop					; Loop
 
 		@MaxMinFinalize:
-			MOV   edx, pmin_tmp
+			MOV   edx, pmin_tmp					; Get address of pmin
 			MOVSD REAL8 PTR [edx], xmm0			; *min <- found min value
-			MOV   edx, pmax_tmp
+			MOV   edx, pmax_tmp					; Get address of pmax
 			MOVSD REAL8 PTR [edx], xmm1			; *max <- found max value
 
 		XOR eax, eax
