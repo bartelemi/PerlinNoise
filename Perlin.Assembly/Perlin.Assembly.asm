@@ -1,7 +1,7 @@
 .686
 .387
 .model flat, stdcall
-option casemap : none
+ option casemap : none
 .xmm
 
 .const
@@ -9,24 +9,20 @@ option casemap : none
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
-
 		B			equ		1000h		; Array size
 		BMask		equ		0FFFh		; Array size mask
 										
 	;;;;;;;;;;;;;;;;;;;;;;;;;;				
-	;; Mersenne twister consts					
-										
-		N           equ		624			; degree of recurrence: number of 32-bit integers in the  internal state array.
-		M           equ		397			; middle word, or the number of parallel sequences, 1 <= m <= n.
-		MATRIX_A    equ		09908b0dfH	; constant vector a: coefficients of the rational normal form twist matrix.
+	;; Mersenne twister consts										
+		N           equ		624			; degree of recurrence: number of 32-bit integers in the  internal state array
+		M           equ		397			; middle word, or the number of parallel sequences, 1 <= m <= n
+		MATRIX_A    equ		09908b0dfH	; constant vector a: coefficients of the rational normal form twist matrix
 		UMASK       equ		080000000H	; most significant w-r bits
 		LMASK       equ		07fffffffH	; least significant r bits
 
 .data
-
 	;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initialization arrays
-		
 		p		        DWORD  0		; Helper array
 		g2		        DWORD  0		; Noise generator initialization array
 		NoiseArray		DWORD  0		; Array for generated noise values
@@ -34,11 +30,10 @@ option casemap : none
 .data?
 	;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister data
-
-	    _state    DD    N     DUP (?) ; internal: random generator state.
-		_initf    DD    ?             ; set if the internal state has been initalized.
-		_left     DD    ?             ; number of generation left before a new internal state is required.
-		_next     DD    ?             ; holds pointer to the next internal state.
+	    _state    DD    N     DUP (?)	; internal: random generator state
+		_initf    DD    ?				; set if the internal state has been initalized
+		_left     DD    ?				; number of generation left before a new internal state is required
+		_next     DD    ?				; holds pointer to the next internal state
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -55,8 +50,8 @@ option casemap : none
 	includelib \masm32\lib\Masm32.lib
 
 .code
-	;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;;;; Include other modules
+	;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Include other modules
 		include DataStructures.asm
 		include Helpers.asm
 		include MersenneTwister.asm
@@ -65,7 +60,7 @@ option casemap : none
 		
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Normalizes REAL8 2D vector 
+	;; Normalizes REAL8 2D vector
 	Normalize PROC vector : DWORD
 
 		MOV	   eax, vector
@@ -83,7 +78,7 @@ option casemap : none
 		RET
 	Normalize ENDP
 	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initializes program arrays
 	_Init PROC USES ebx ecx edx edi w : DWORD, h : DWORD
 
@@ -188,7 +183,7 @@ option casemap : none
 		RET
 	_Init ENDP
 	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Generate noisy bitmap with applied effect
 	_PerlinNoiseBmp PROC USES ebx args : PARAMS
 		

@@ -6,8 +6,8 @@
 
 PERLINPUREC_API void GeneratePerlinNoiseBitmap(ThreadParameters params)
 {
-	PerlinNoise2D(NoiseArrayDynamic, params);
-	CreateBMP(NoiseArrayDynamic, params);
+	PerlinNoise2D(NoiseArray, params);
+	CreateBMP(NoiseArray, params);
 }
 
 static void normalize(double v[2])
@@ -25,7 +25,7 @@ PERLINPUREC_API void Init(size_t width, size_t height)
 
 	p = (int*)malloc((B + B + 2) * sizeof(int));
 	g2 = alloc2DArray(2, B + B + 2);
-	NoiseArrayDynamic = alloc2DArray(width, height);
+	NoiseArray = alloc2DArray(width, height);
 
 	for (i = 0; i < B; i++)
 	{
@@ -56,5 +56,5 @@ PERLINPUREC_API void Finalize(size_t height)
 {
 	free(p);
 	free2DArray(g2, B + B + 2);
-	free2DArray(NoiseArrayDynamic, height);
+	free2DArray(NoiseArray, height);
 }

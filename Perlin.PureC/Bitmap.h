@@ -56,15 +56,11 @@
 	// Creates BMP using data from NoiseArray
 	void CreateBMP(double **noiseArray, ThreadParameters params);
 
-
 	// Returns new pixel 
 	Pixel GetPixel(int x, int y, double *min, double *max, double **noiseArray, ThreadParameters *params);
 
 	// Returns colored pixel
 	Pixel GetColor(double value, double min, double max, Pixel color);
-
-	// Returns colored pixel with negative of given color
-	Pixel GetColorReversed(double value, double min, double max, Pixel color);
 
 	// Noise effects
 	void SinNoise(double *value, double *min, double *max, int x, int y);

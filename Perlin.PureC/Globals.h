@@ -13,6 +13,6 @@
 	// Initialization arrays
 	int *p;
 	double **g2;
-	double **NoiseArrayDynamic;
+	double **NoiseArray;
 
 #endif

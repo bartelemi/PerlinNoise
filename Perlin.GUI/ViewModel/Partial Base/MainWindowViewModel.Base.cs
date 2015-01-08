@@ -5,7 +5,7 @@ using Perlin.GUI.View.TabControls;
 
 namespace Perlin.GUI.ViewModel
 {
-    public sealed partial class MainWindowViewModel : ViewModelBase
+    public sealed class MainWindowViewModel : ViewModelBase
     {
         #region Properties
         public ObservableCollection<TabItem> TabItems { get; set; }
@@ -45,7 +45,6 @@ namespace Perlin.GUI.ViewModel
         public MainWindowViewModel()
         {
             InitializeTabs();
-            InitializeCommands();
         }
 
     }

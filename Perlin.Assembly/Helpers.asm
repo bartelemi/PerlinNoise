@@ -73,20 +73,6 @@
 ;;;;;;;;;;;;;;;;;;
 ;; ARRAY FUNCTIONS
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Allocs 2-dimensional array and initializes it with 0's (calloc)
-	;; Returns allocated memory pointer in eax
-	Alloc2DArray PROC FAR w : DWORD, h : DWORD
-
-		MOV eax, w		; eax <- width
-		IMUL eax, h		; eax <- width * height
-
-		INVOKE crt_calloc, eax, 8
-		
-		RET
-	Alloc2DArray ENDP
-
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Finds min and max value in arr and stores them into given
 	;; max and min pointers.
