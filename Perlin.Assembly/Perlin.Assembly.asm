@@ -67,7 +67,7 @@
 		MOVUPD xmm0, [eax]	; Move two values of vector to xmm0
 		MOVAPD xmm2, xmm0	; Store vector for later use
 		MULPD  xmm0, xmm0	; Calculate square of each value
-		MOVAPD xmm1, xmm0	; Store vector for calculations
+		PSHUFD xmm1, xmm0, 4Eh	; Store vector for calculations
 		ADDPD  xmm0, xmm1	; Add squares of vector components
 		SQRTPD xmm0, xmm0	; Calculate square root of added components
 							;
@@ -84,6 +84,7 @@
 
 		LOCAL tmp     :  DWORD
 
+
 		; Initialize random number generator with processor tick count
 			XCHG	 rv(GetTickCount), tmp
 			INVOKE	 init_genenerator, tmp
@@ -94,7 +95,6 @@
 			SHL		 eax, 3		; eax <- (B + 1) * 2 * sizeof(DWORD)
 			MOV		 tmp, eax	; tmp <- eax
 			XCHG	 rv(crt_malloc, tmp), p
-			
 			
 			XCHG	 rv(crt_malloc, tmp), g2
 			MOV		 esi, g2	; ebx <- address of g2
@@ -114,70 +114,70 @@
 			XCHG	 rv(crt_calloc, eax, sizeof REAL8), NoiseArray
 			
 		; Initialize xmm registers
-			MOV		 eax, B
-			PINSRD   xmm1, eax, 00b
-			PINSRD   xmm1, eax, 01b
-			CVTDQ2PD xmm1, xmm1
-			SHL		 eax, 1
-			PINSRD   xmm2, eax, 00b
-			PINSRD   xmm2, eax, 01b
-			CVTDQ2PD xmm2, xmm2
+			MOV		 eax, B					; eax <- B
+			PINSRD   xmm1, eax, 00b			; xmm1[0-31] <- B
+			PINSRD   xmm1, eax, 01b			; xmm1[32-63] <- B
+			CVTDQ2PD xmm1, xmm1				; Convert B to REAL8
+			SHL		 eax, 1					; eax <- 2B
+			DEC		 eax					; eax <- 2B - 1
+			PINSRD   xmm2, eax, 00b			; xmm2[0-31] <- 2B - 1
+			PINSRD   xmm2, eax, 01b			; xmm2[32-63] <- 2B - 1
+			CVTDQ2PD xmm2, xmm2 			; Convert (2B - 1) to REAL8
 
 		; Initialize arrays for generating Perlin Noise
 			MOV edi, p						; Load address of p
 			MOV esi, g2						; Load address of g2
-			
+
 			MOV ecx, B						; Copy value of B to ecx
-			InitArr_First:					;
+			@InitArr_L1:					;
 				DEC		 ecx				; Go to next index
 				MOV		 [edi + 4*ecx], ecx	; p[i] <- i
 											;
 				INVOKE   RandInt32			; Generate random number for g2[ecx][0]
 				PINSRD   xmm0, eax, 00b		; Store result in xmm0[0-31]
 				INVOKE   RandInt32			; Generate random number for g2[ecx][1]
-				PINSRD   xmm0, eax, 01b		; Store result in xmm0[64-95]					
+				PINSRD   xmm0, eax, 01b		; Store result in xmm0[32-63]					
 				CVTDQ2PD xmm0, xmm0			; Convert both results to doubles
-				ANDPD    xmm0, xmm2			; Both modulo (B+B)
+				ANDPD    xmm0, xmm2			; Both and (2B-1) (== modulo 2B)
 				SUBPD	 xmm0, xmm1			; Both minus B
 				DIVPD	 xmm0, xmm1			; Both divide by B
 											;
 				MOV		 edx, [esi + 4*ecx]	; Load address of vector
 				MOVUPD	 [edx], xmm0		; g2[ecx] <- xmm0 
-				MOV		 tmp, edx			; Store address in variable
-				INVOKE	 Normalize, tmp		; Normalize vector
+				INVOKE	 Normalize, edx		; Normalize vector
 											;
 				TEST	 ecx, ecx			; Test if ecx == 0
-				JNZ		 InitArr_First		; Loop
+				JNZ		 @InitArr_L1		; Loop
 
 			MOV ecx, B						; Copy value of B to ecx
-			InitArr_Second:					;
+			@InitArr_L2:					;
 				DEC	   ecx					; Go to next index
 				INVOKE RandInt32			; Generate random number
 				AND    eax, BMask			; eax <- rand() % B
 				MOV    edx, [edi + 4*eax]	; edx <- p[rand() % B]
 				MOV    [edi + 4*ecx], edx	; p[ecx] <- p[rand() % B]
-				MOV    [edi + 4*eax], ecx	; p[rand() % B] <- p[ecx]
+				MOV    [edi + 4*eax], ecx	; p[rand() % B] <- p[ecx] = ecx
 											;
 				TEST   ecx, ecx				; Test if ecx == 0
-				JNZ	   InitArr_Second		; Loop
+				JNZ	   @InitArr_L2			; Loop
 			
 			MOV ecx, B						; Copy value of B to ecx
 			ADD ecx, 2						; Increase ecx by 2
-			InitArr_Third:					;
+			@InitArr_L3:					;
 				DEC	   ecx					; Go to next index
-				MOV	   ebx, B				; ebx <- B
-				ADD	   ebx, ecx				; ebx <- (B + ecx)
+				MOV	   edx, B				; ebx <- B
+				ADD	   edx, ecx				; ebx <- (B + ecx)
 											;
 		  		MOV	   eax, [edi + 4*ecx]	; eax <- p[ecx]
-				MOV	   [edi + 4*ebx], eax	; p[B+ecx] <- eax
+				MOV	   [edi + 4*edx], eax	; p[B+ecx] <- eax
 											;
 				MOV	   eax, [esi + 4*ecx]	; Load address of vector
 				MOVUPD xmm0, [eax]			; xmm0 <- g2[ecx] 
-				MOV	   eax, [esi + 4*ebx]	; eax <- g2[B+ecx]
+				MOV	   eax, [esi + 4*edx]	; eax <- g2[B+ecx]
 				MOVUPD [eax], xmm0			; g2[B+ecx] <- g2[ecx]
 											;
 				TEST   ecx, ecx				; Test if ecx == 0
-				JNZ	   InitArr_Third		; Loop
+				JNZ	   @InitArr_L3		; Loop
 
 		XOR eax, eax
 		RET
@@ -185,14 +185,14 @@
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Generate noisy bitmap with applied effect
-	_PerlinNoiseBmp PROC USES ebx args : PARAMS
+	_PerlinNoise PROC USES ebx args : PARAMS
 		
 		INVOKE PerlinNoise2D, args	; Generate noise array with parameters
 		INVOKE CreateBMP, args		; Create bitmap from noise array
 		
 		XOR eax, eax
 		RET
-	_PerlinNoiseBmp ENDP
+	_PerlinNoise ENDP
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Cleans up memory

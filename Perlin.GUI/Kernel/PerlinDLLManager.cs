@@ -19,7 +19,7 @@ namespace Perlin.GUI.Kernel
         private static extern void InitPureC(int width, int height);
 
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "GeneratePerlinNoiseBitmap", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GeneratePerlinNoiseBitmapC(ThreadParameters threadParameters);
+        private static extern void GeneratePerlinNoisePureC(ThreadParameters threadParameters);
 
         [DllImport("libs\\Perlin.PureC.dll", EntryPoint = "Finalize", CallingConvention = CallingConvention.Cdecl)]
         private static extern void FinalizePureC(int height);
@@ -29,8 +29,8 @@ namespace Perlin.GUI.Kernel
         [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Init", CallingConvention = CallingConvention.StdCall)]
         private static extern void InitAsm(int width, int height);
 
-        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoiseBmp", CallingConvention = CallingConvention.StdCall)]
-        private static extern void GeneratePerlinNoiseBitmapAssembly(ThreadParameters threadParameters);
+        [DllImport("Perlin.Assembly.dll", EntryPoint = "_PerlinNoise", CallingConvention = CallingConvention.StdCall)]
+        private static extern void GeneratePerlinNoiseAssembly(ThreadParameters threadParameters);
 
         [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Finalize", CallingConvention = CallingConvention.StdCall)]
         private static extern void FinalizeAsm(int height);
@@ -146,10 +146,10 @@ namespace Perlin.GUI.Kernel
                 switch (_generatorParameters.GeneratingLibrary)
                 {
                     case Library.Asm:
-                        GeneratePerlinNoiseBitmapAssembly(currendThreadParameters); 
+                        GeneratePerlinNoiseAssembly(currendThreadParameters); 
                         break;
                     case Library.PureC:
-                        GeneratePerlinNoiseBitmapC(currendThreadParameters);
+                        GeneratePerlinNoisePureC(currendThreadParameters);
                         break;
                     default:
                         break;

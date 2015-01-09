@@ -19,7 +19,7 @@ static void normalize(double v[2])
 
 PERLINPUREC_API void Init(size_t width, size_t height)
 {
-	int i, j, k;
+	int i, j;
 
 	srand((unsigned)time(NULL));
 
@@ -39,9 +39,9 @@ PERLINPUREC_API void Init(size_t width, size_t height)
 
 	while (--i)
 	{
-		k = p[i];
-		p[i] = p[j = rand() % B];
-		p[j] = k;
+		j = rand() % B;
+		p[i] = p[j];
+		p[j] = i;
 	}
 
 	for (i = 0; i < B + 2; i++)

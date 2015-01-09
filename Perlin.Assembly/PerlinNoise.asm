@@ -9,7 +9,7 @@ at2 MACRO rx, ry, q, res
 	MOVUPD  xmm1, [q]				; xmm1[0-127]  <- q
 	MULPD   xmm0, xmm1				; xmm0[0-63]   <- rx * q[0]; xmm0[64-127] <- ry * q[1] 
 	MOVHLPS xmm1, xmm0				; xmm1[0-63]   <- ry * q[1]
-	ADDSD   xmm0, xmm1				; xmm[0-63]    <- rx*q[0] + ry*q[1]
+	ADDSD   xmm0, xmm1				; xmm0[0-63]   <- rx * q[0] + ry * q[1]
 	MOVSD   REAL8 PTR [res], xmm0	; [res]		   <- result
 	
 ENDM
@@ -165,7 +165,6 @@ PerlinNoise2D PROC USES ebx args : PARAMS
 		MOVSD    xmm6, REAL8 PTR [args._persistence]	; Load value of persistence
 		Power    xmm6, ebx								; Calculate persistence^k
 		MOVDDUP  xmm6, xmm0			 					; Store freq result in both quadwords of xmm6
-
 		; Initialize i-loop variables
 			MOV ecx, args._offset 						; ecx stores i-loop current value
 

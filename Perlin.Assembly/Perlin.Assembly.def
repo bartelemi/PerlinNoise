@@ -2,4 +2,4 @@ LIBRARY "Perlin.Assembly"
 EXPORTS
 _Init
 _Finalize
-_PerlinNoiseBmp
+_PerlinNoise

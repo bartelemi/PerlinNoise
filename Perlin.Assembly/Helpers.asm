@@ -8,9 +8,8 @@
 	;; Only for REAL8! (doubles)
 	EaseCurve MACRO res, x
 		
-		MOVDDUP  xmm0, REAL8 PTR [x]    ; xmm0[0-63]   <- x, xmm0[64-127]   <- x
-		MOVAPD   xmm1, xmm0				; xmm1[0-63]   <- x, xmm1[64-127]   <- x
-		MULPD    xmm0, xmm1				; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
+		MOVDDUP  xmm0, REAL8 PTR [x]    ; xmm0[0-63]   <- x,   xmm0[64-127]   <- x
+		MULPD    xmm0, xmm0				; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
 		MOV      eax, 2					; eax		   <- 2
 		PINSRD   xmm2, eax, 00b			; xmm2[0-31]   <- 2
 		CVTSS2SD xmm2, xmm2				; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
@@ -129,8 +128,8 @@
 				MOVSD xmm5, xmm3				; Copy new min				
 
 			@NextStep:
-				MOVSD  xmm0, xmm5					; Restore current min
-				MOVSD  xmm1, xmm6					; Restore current max
+				MOVSD  xmm0, xmm5				; Restore current min
+				MOVSD  xmm1, xmm6				; Restore current max
 				INC edi							; Increment counter
 				CMP edi, n						; Compare with array size
 				JNE @MaxMinLoop					; Loop

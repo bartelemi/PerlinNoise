@@ -26,26 +26,25 @@ TODO:																									  |
 	  Gotowe (nietestowane):																			  |
 		Bitmap/CreateBMP																				  |
 		Bitmap/GetPixelValues																			  |
-	    Bitmap/ScaleToChar																			      |
-		Bitmap/GetColor																					  |
-		Helpers/Alloc2DArray																		      |
 	    Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
-		Helpers/MaxMinFrom2DArray																		  |
-		Helpers/Power																					  | 
 		PerlinNoise/Noise																				  | 
 		PerlinNoise/PerlinNoise2D																	      |
 		PerlinNoise/Setup																				  |
+																										  |
+	  Gotowe (testowane):																				  |
+		Helpers/MaxMin																					  |
+		Helpers/memCopy																					  |
+		Helpers/Power																					  | 
+		Bitmap/GetColor																				      |
+		Bitmap/FillHeader																				  |
+		Bitmap/WriteFileHdr																				  |
+		Bitmap/ScaleToChar																			      |
 		PerlinNoise/at2																					  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
-		Perlin.Assembly/_PerlinNoiseBmp																	  |
+		Perlin.Assembly/_PerlinNoise																	  |
 		Perlin.Assembly/_Finalize																		  |
-																										  |
-	  Gotowe (testowane):																				  |
-		Helpers/memCopy																					  |
-		Bitmap/FillHeader																				  |
-		Bitmap/WriteFileHdr																				  |
 																										  |
 ==========================================================================================================+
 
@@ -60,3 +59,7 @@ Optymalizacja ASM:
 
 	PerlinNoise: sprawdzić co w jakich pętlach się zmienia i przenieść jakieś
 				 najczęściej używane wartości do rejestrów xmm na stałe (np. wartość 100)
+
+
+BOOST:
+Normailize: nie przerzucać z pamięci do pamięci, tylko zostawić wartość w xmm0 i wywołać Normalize
