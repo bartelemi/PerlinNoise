@@ -8,6 +8,6 @@
 void PerlinNoise2D(double** noise, ThreadParameters params);
 
 // Returns noise value for point (x, y)
-double noise2(double x, double y);
+double Noise(double x, double y);
 
 #endif

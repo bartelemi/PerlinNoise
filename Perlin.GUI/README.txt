@@ -24,13 +24,7 @@ TODO:																									  |
 		5. Bitmap/Experimental3																			  |
 	  																									  | 
 	  Gotowe (nietestowane):																			  |
-		Bitmap/CreateBMP																				  |
-		Bitmap/GetPixelValues																			  |
-	    Helpers/EaseCurve																				  | 
-		Helpers/LineraInterpolation																		  |
-		PerlinNoise/Noise																				  | 
 		PerlinNoise/PerlinNoise2D																	      |
-		PerlinNoise/Setup																				  |
 																										  |
 	  Gotowe (testowane):																				  |
 		Helpers/MaxMin																					  |
@@ -40,7 +34,13 @@ TODO:																									  |
 		Bitmap/FillHeader																				  |
 		Bitmap/WriteFileHdr																				  |
 		Bitmap/ScaleToChar																			      |
+		Bitmap/CreateBMP			(raczej wsio ok)													  |
+		Bitmap/GetPixelValues		(raczej wsio ok)													  |
+	    PerlinNoise/Noise			(raczej wsio ok)													  | 
 		PerlinNoise/at2																					  |
+		PerlinNoise/Setup																				  |
+		Helpers/EaseCurve																				  | 
+		Helpers/LineraInterpolation																		  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/Normalize																		  |
 		Perlin.Assembly/_PerlinNoise																	  |
@@ -56,10 +56,4 @@ Element_Address = Base_Address + (rowindex * col_size + colindex) * Element_Size
 ==========================================================================================================+
 
 Optymalizacja ASM:
-
-	PerlinNoise: sprawdzić co w jakich pętlach się zmienia i przenieść jakieś
-				 najczęściej używane wartości do rejestrów xmm na stałe (np. wartość 100)
-
-
-BOOST:
-Normailize: nie przerzucać z pamięci do pamięci, tylko zostawić wartość w xmm0 i wywołać Normalize
+	Normailize: nie przerzucać z pamięci do pamięci, tylko zostawić wartość w xmm0 i wywołać Normalize

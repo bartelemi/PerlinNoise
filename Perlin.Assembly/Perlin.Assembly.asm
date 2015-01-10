@@ -9,31 +9,31 @@
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
-		B			equ		1000h		; Array size
-		BMask		equ		0FFFh		; Array size mask
+		B			equ		1000h			; Array size
+		BMask		equ		0FFFh			; Array size mask
 										
 	;;;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister consts										
-		N           equ		624			; degree of recurrence: number of 32-bit integers in the  internal state array
-		M           equ		397			; middle word, or the number of parallel sequences, 1 <= m <= n
-		MATRIX_A    equ		09908b0dfH	; constant vector a: coefficients of the rational normal form twist matrix
-		UMASK       equ		080000000H	; most significant w-r bits
-		LMASK       equ		07fffffffH	; least significant r bits
+		N           equ		624				; degree of recurrence: number of 32-bit integers in the  internal state array
+		M           equ		397				; middle word, or the number of parallel sequences, 1 <= m <= n
+		MATRIX_A    equ		09908b0dfh		; constant vector a: coefficients of the rational normal form twist matrix
+		UMASK       equ		080000000h		; most significant w-r bits
+		LMASK       equ		07fffffffh		; least significant r bits
 
 .data
 	;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initialization arrays
-		p		        DWORD  0		; Helper array
-		g2		        DWORD  0		; Noise generator initialization array
-		NoiseArray		DWORD  0		; Array for generated noise values
+		p		        DWORD	0			; Helper array
+		g2		        DWORD	0			; Noise generator initialization array
+		NoiseArray		DWORD	0			; Array for generated noise values
 
 .data?
 	;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister data
-	    _state    DD    N     DUP (?)	; internal: random generator state
-		_initf    DD    ?				; set if the internal state has been initalized
-		_left     DD    ?				; number of generation left before a new internal state is required
-		_next     DD    ?				; holds pointer to the next internal state
+	    _state			DWORD	N	DUP (?)	; internal: random generator state
+		_initf			DWORD   ?			; set if the internal state has been initalized
+		_left			DWORD   ?			; number of generation left before a new internal state is required
+		_next			DWORD   ?			; holds pointer to the next internal state
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

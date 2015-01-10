@@ -9,21 +9,19 @@
 	EaseCurve MACRO res, x
 		
 		MOVDDUP  xmm0, REAL8 PTR [x]    ; xmm0[0-63]   <- x,   xmm0[64-127]   <- x
-		MULPD    xmm0, xmm0				; xmm0[0-63]   <- x*x, xmm0[64-127] <- x*x  
+		MOVAPD	 xmm1, xmm0				; xmm1[0-63]   <- x,   xmm1[64-127]   <- x
+		MULPD    xmm0, xmm0				; xmm0[0-63]   <- x*x, xmm0[64-127]   <- x*x  
 		MOV      eax, 2					; eax		   <- 2
-		PINSRD   xmm2, eax, 00b			; xmm2[0-31]   <- 2
-		CVTSS2SD xmm2, xmm2				; xmm2[0-63]   <- 2.0  (conversion) [OLD: MOVLPD  xmm2, [two]]
+		CVTSI2SD xmm2, eax				; xmm2[0-63]   <- 2.0
 		MULSD    xmm1, xmm2				; xmm1[0-63]   <- 2.0 * x
-		MOV      eax, 3					; eax		  <- 3
-		PINSRD   xmm2, eax, 00b			; xmm2[0-31]   <- 3
-		CVTSS2SD xmm2, xmm2				; xmm2[0-63]   <- 3.0  (conversion) [OLD: MOVHPD  xmm2, [three]]
+		MOV      eax, 3					; eax		   <- 3
+		CVTSI2SD xmm2, eax				; xmm2[0-63]   <- 3.0
 		MOVLHPS  xmm1, xmm2	   			; xmm1[63-127] <- 3.0  
-		MULPD    xmm0, xmm1    			; xmm0[0-63]   <- x*x*x*2.0 , xmm0[64-127] <- x*X*3.0
+		MULPD    xmm0, xmm1    			; xmm0[0-63]   <- x*x*x*2.0 , xmm0[64-127] <- x*x*3.0
 		MOVHLPS  xmm1, xmm0    			; xmm1[0-63]   <- x*x*x*2.0
-		PSRLDQ   xmm0, 8	   			; xmm0[0-63]   <- x*x*3.0
-		SUBSD    xmm0, xmm1	   			; xmm0[0-63]   <- x*x*(3.0-(x*2.0))
+		SUBSD    xmm1, xmm0	   			; xmm1[0-63]   <- x*x*(3.0-(x*2.0))
 								 		;
-		MOVSD    REAL8 PTR [res], xmm0	; store the result back to the variable 
+		MOVSD    REAL8 PTR [res], xmm1	; store the result back to the variable 
 
 	ENDM
 
@@ -39,7 +37,8 @@
 		MOVSD xmm2, REAL8 PTR [tmp]	; xmm2[0-63] <- t
 		SUBSD xmm0, xmm1			; xmm0[0-63] <- v1 - v0
 		MULSD xmm0, xmm2			; xmm0[0-63] <- t*(v1 - v0)
-		ADDSD xmm0, xmm1			; xmm0[0-63] <- v0 + t*(v1 - v0)		
+		ADDSD xmm0, xmm1			; xmm0[0-63] <- v0 + t*(v1 - v0)
+									;		
 		MOVSD res, xmm0				; Store the result
 
 	ENDM
@@ -54,10 +53,10 @@
 	;; Result in xmm0
 	Power MACRO base, exp
 		
-		XOR eax, eax		; eax <- 0
-		INC eax				; eax <- 1
+		XOR      eax, eax	; eax <- 0
+		INC      eax		; eax <- 1
 		CVTSI2SD xmm0, eax	; xmm0 <- 1.0
-		MOVSD xmm1, base	; xmm1 <- base
+		MOVSD    xmm1, base	; xmm1 <- base
 
 		XOR eax, eax
 		@@:

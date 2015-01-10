@@ -14,7 +14,7 @@ void PerlinNoise2D(double** noiseArray, ThreadParameters params)
 	int k;
 	size_t i, j;
 
-	for (k = 0; k < params.octaves - 1; k++)
+	for (k = 0; k < params.octaves; k++)
 	{
 		double x, y;
 		double amplitude = Power(2, k);
@@ -26,13 +26,13 @@ void PerlinNoise2D(double** noiseArray, ThreadParameters params)
 			{
 				x = frequency * (i + ((rand() % 100) / 100.0));
 				y = frequency * (j + ((rand() % 100) / 100.0));
-				noiseArray[i][j] += amplitude * noise2(x, y);
+				noiseArray[i][j] += amplitude * Noise(x, y);
 			}
 		}
 	}
 }
 
-double noise2(double x, double y)
+double Noise(double x, double y)
 {
 	int bx0, bx1, by0, by1, bxy;
 	double rx0, rx1, ry0, ry1, *q, a, b, u, v, t;
@@ -44,7 +44,6 @@ double noise2(double x, double y)
 	i = p[bx0];
 	j = p[bx1];
 
-	t = EASE_CURVE(rx0);
 	bxy = p[i + by0]; 
 	q = g2[bxy];
 	u = at2(rx0, ry0);
@@ -52,6 +51,8 @@ double noise2(double x, double y)
 	bxy = p[j + by0]; 
 	q = g2[bxy];
 	v = at2(rx1, ry0);
+
+	t = EASE_CURVE(rx0);
 	a = LERP(u, v, t);
 
 	bxy = p[i + by1]; 
@@ -61,6 +62,7 @@ double noise2(double x, double y)
 	bxy = p[j + by1]; 
 	q = g2[bxy]; 
 	v = at2(rx1, ry1);
+
 	b = LERP(u, v, t);
 
 	t = EASE_CURVE(ry0);
