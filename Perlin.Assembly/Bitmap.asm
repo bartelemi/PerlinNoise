@@ -17,56 +17,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns filled BMPFILEHEADER
 FillHeader PROC USES ebx w : DWORD, h : DWORD
-		
-	LOCAL fSize : DWORD
 
-
-	MOV edx, w	    ; Compute file size in bytes
-	IMUL edx, 3	    ; 
-	MOV eax, edx    ; sizeof(BMPFILEHEADER)
-	AND eax, 3      ; +(height * (width * 3
-	MOV ebx, 4      ; +((4 - ((width * 3) & 3)) & 3)))
-	SUB ebx, eax;	;
-	AND ebx, 3;		;
-	ADD edx, ebx;	;
+	MOV  eax, w	    ; Compute file size in bytes
+	MOV  ecx, 3		; ebx <- 3
+	MUL  ecx		; eax <- width * 3
+	MOV  edx, eax	; Store in edx
+	AND  eax, ecx   ; sizeof(BMPFILEHEADER)
+	INC  ecx		; +(height * (width * 3
+	SUB  ecx, eax	; +((4 - ((width * 3) & 3)) & 3)))
+	DEC  ecx		;
+	AND  ebx, ecx	;
+	ADD  edx, ebx	;
 	IMUL edx, h     ; 
-	ADD edx, 54		;
-	MOV fSize, edx  ; And store result in var
+	ADD  edx, 54	; sizeof(BMPFILEHEADER)
 
 	INVOKE crt_malloc, 54	; Allocate memory for header
 
 	; Fill bitmap file structure
-	XOR ebx, ebx
-	MOV WORD PTR[eax + ebx], 4D42h    ; Load signature 'B''M'
-	ADD ebx, 2
-	MOV edx, fSize
-	MOV DWORD PTR[eax + ebx], edx     ; File size
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0       ; Reserved 0 and reserved 1
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 54      ; Offset
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 40      ; BMP size
-	ADD ebx, 4
-	MOV edx, w
-	MOV DWORD PTR[eax + ebx], edx     ; BMP width
-	ADD ebx, 4
-	MOV edx, h
-	MOV DWORD PTR[eax + ebx], edx     ; BMP height
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 180001h ; BMP planes and bit count
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0       ; BMP compression
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0		  ; BMP image size
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0EC4h	  ; BMP x-axis DPI
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0EC4h	  ; BMP y-axis DPI
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0		  ; BMP colors used
-	ADD ebx, 4
-	MOV DWORD PTR[eax + ebx], 0		  ; BMP important colors
+	MOV WORD PTR[eax + 0], 4D42h		; Load signature 'B''M'
+	MOV DWORD PTR[eax + 2], edx			; File size
+	MOV DWORD PTR[eax + 6], 0			; Reserved 0 and reserved 1
+	MOV DWORD PTR[eax + 10], 54			; Offset
+	MOV DWORD PTR[eax + 14], 40			; BMP size
+	MOV edx, w							; edx <- width
+	MOV DWORD PTR[eax + 18], edx		; BMP width
+	MOV edx, h							; edx <- height
+	MOV DWORD PTR[eax + 22], edx		; BMP height
+	MOV DWORD PTR[eax + 26], 180001h	; Planes and bit count
+	MOV DWORD PTR[eax + 30], 0			; Compression
+	MOV DWORD PTR[eax + 34], 0			; Image size
+	MOV DWORD PTR[eax + 38], 0EC4h		; X-axis DPI
+	MOV DWORD PTR[eax + 42], 0EC4h		; Y-axis DPI
+	MOV DWORD PTR[eax + 46], 0			; Colors used
+	MOV DWORD PTR[eax + 50], 0			; Important colors
 
 	RET
 FillHeader ENDP
@@ -107,7 +90,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 			INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row pad
 			MOV pad, eax							; Store allocated memory pointer
 													;
-			MOV eax, [args._imgPtr]					; Load address of pointer to bitmap
+			MOV eax, args._imgPtr					; Load address of pointer to bitmap
 			MOV pointer, eax						; Copy pointer to picture array
 													;							
 			MOV eax, args._offset					; Calculate end of image offset
@@ -115,7 +98,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 			MOV offsetEnd, eax						; Store value in local variable
 													;
 			MOV eax, sizeof PIXEL					; Calculate size of single row
-			MUL args._width									; eax <- width*sizeof(PIXEL)
+			MUL args._width							; eax <- width*sizeof(PIXEL)
 			ADD eax, nPad							; eax <- width*sizeof(PIXEL) + nPad					
 			MOV rowSize, eax						; Store value in local variable
 
@@ -172,25 +155,20 @@ CreateBMP ENDP
 
 ALIGN 16
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns new pixel 
 ;;
 ;;
 ;; Returns pointer to new PIXEL in eax
 GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS 
 
-	LOCAL _x			  :  DWORD
-	LOCAL _y			  :  DWORD
 	LOCAL pmin			  :  DWORD
 	LOCAL pmax			  :  DWORD
 	LOCAL value           :  REAL8
 	LOCAL minAfterEffect  :  REAL8
 	LOCAL maxAfterEffect  :  REAL8
 
-	MOV eax, x							; Copy value of x
-	MOV _x, eax							; Store value of x in local variable
-	MOV eax, y							; Copy value of y
-	MOV _y, eax							; Store value of y in local variable
+
 	MOV eax, min						; Copy value of min
 	MOV pmin, eax						; Store value of min in local variable
 	MOV eax, max						; Copy value of max
@@ -199,9 +177,8 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	MOV eax, x							; eax <- x index
 	MUL args._width						; eax <- x * width
 	ADD eax, y							; eax <- x * width + y
-	SHL eax, 3							; eax <- (x * width + y) * (sizeof REAL8) - current array offset
 	MOV esi, NoiseArray					; esi <- base address of NoiseArray
-	MOVSD xmm0, REAL8 PTR [esi + eax]	; Init value
+	MOVSD xmm0, REAL8 PTR [esi + 8*eax]	; Init value
 	MOVSD value, xmm0					; Store value in local variable
 										;
 	MOV eax, pmin						; eax <- address of min
@@ -249,6 +226,9 @@ GetPixelValues ENDP
 ;; Noise effects
 SinNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 
+	
+
+
 	XOR eax, eax
 	RET
 SinNoise ENDP
@@ -257,6 +237,36 @@ SinNoise ENDP
 ;; Noise effects
 SqrtNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 
+	XOR      eax, eax
+	CVTSI2SD xmm0, eax					; xmm0 <- 0.0
+	MOV eax, value
+	MOVSD    xmm2, REAL8 PTR [eax]
+	MOVSD	 xmm3, xmm2
+	CMPSD    xmm0, xmm3, 010b	 
+	PEXTRD   eax, xmm1, 00B				; Extract low dword of result to eax
+	NOT      eax						; Reverse eax
+	TEST     eax, eax					; Test eax for 0
+	JZ @Positive
+		SUBSD xmm2, xmm3
+		SUBSD xmm2, xmm3
+
+	@Positive:
+	 MOV eax, min
+	 MOVSD xmm0, REAL8 PTR [eax]
+	 MOV eax, max
+	 MOVSD xmm1, REAL8 PTR [eax]
+	 MULSD xmm2, xmm1
+	 SQRTSD xmm2, xmm2
+	 MOV eax, value
+	 MOVSD REAL8 PTR [eax], xmm2
+
+	 MOV eax, max
+	 MULSD xmm1, xmm1
+	 MOVSD REAL8 PTR [eax], xmm1
+
+	 MOV eax, min
+	 SUBSD xmm1, xmm1
+	 MOVSD REAL8 PTR [eax], xmm1
 
 	XOR eax, eax
 	RET

@@ -33,7 +33,7 @@ namespace Perlin.GUI.Kernel
         private static extern void GeneratePerlinNoiseAssembly(ThreadParameters threadParameters);
 
         [DllImport("libs\\Perlin.Assembly.dll", EntryPoint = "_Finalize", CallingConvention = CallingConvention.StdCall)]
-        private static extern void FinalizeAsm(int height);
+        private static extern void FinalizeAsm();
         #endregion // Assembly
         #endregion // Import DLLs
 
@@ -89,7 +89,7 @@ namespace Perlin.GUI.Kernel
             }
             else 
             {
-                FinalizeAsm(_generatorParameters.Height);
+                FinalizeAsm();
             }
             return GeneratedFileArray;
         }

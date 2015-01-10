@@ -130,7 +130,7 @@ Noise PROC USES ebx ecx edi esi x : REAL8, y : REAL8
 		EaseCurve t, ry0
 
 	; Final interpolation on both parts of vector
-		LinearInterpolation xmm0, a, b, t
+		LinearInterpolation t, a, b, t
 
 	XOR eax, eax
 	RET
