@@ -1,3 +1,4 @@
+ALIGN 16
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MATHEMATICAL FUNCTIONS
 

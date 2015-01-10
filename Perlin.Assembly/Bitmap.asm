@@ -11,7 +11,7 @@
 	Experimental1	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 	Experimental2	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 	Experimental3	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	ScaleToChar		PROTO x : REAL8, min:REAL8, max:REAL8
+	ScaleToChar		PROTO value : REAL8, min : REAL8, max : REAL8
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -170,6 +170,8 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 	RET
 CreateBMP ENDP
 
+ALIGN 16
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns new pixel 
 ;;
@@ -298,54 +300,55 @@ Experimental3 ENDP
 ;;           max - min
 ;;
 ;; Result in eax.
-ScaleToChar PROC x : REAL8, min : REAL8, max : REAL8
+ScaleToChar PROC value : REAL8, min : REAL8, max : REAL8
 
-	MOVLPD  xmm0, REAL8 PTR [x]		; Store x to lower quadword of xmm0
-	MOVHPD  xmm0, REAL8 PTR [max]	; Store max to upper quadword of xmm0
-	MOVDDUP xmm1, REAL8 PTR [min]	; Store min to lower and upper quadword of xmm1
-	SUBPD   xmm0, xmm1				; xmm0[63-0] <- (x-min);  xmm0[127-64] <- (max-min) 
-	MOVHLPS xmm1, xmm0				; xmm1[63-0] <- (max-min)
-	DIVSD	xmm0, xmm1				; xmm0[63-0] <- (x-min) / (max-min)
-	MOV eax, 255					; eax		 <- 255
+	MOVLPD   xmm0, REAL8 PTR [value]; Store x to lower quadword of xmm0
+	MOVHPD   xmm0, REAL8 PTR [max]	; Store max to upper quadword of xmm0
+	MOVDDUP  xmm1, REAL8 PTR [min]	; Store min to lower and upper quadword of xmm1
+	SUBPD    xmm0, xmm1				; xmm0[63-0] <- (x-min);  xmm0[127-64] <- (max-min) 
+	MOVHLPS  xmm1, xmm0				; xmm1[63-0] <- (max-min)
+	DIVSD	 xmm0, xmm1				; xmm0[63-0] <- (x-min) / (max-min)
+	MOV      eax, 255				; eax		 <- 255
 	CVTSI2SD xmm1, eax				; xmm1[63-0] <- 255.0
-	MULSD xmm0, xmm1				; xmm0[63-0] <- 255.0 * (x-min) / (max-min)
+	MULSD    xmm0, xmm1				; xmm0[63-0] <- 255.0 * (x-min) / (max-min)
 	CVTSD2SI eax, xmm0				; eax		 <- (int)(255.0 * (x-min) / (max-min))
 	
 	RET
 ScaleToChar ENDP
 
+ALIGN 4
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Returns colored pixel in eax
 GetColor PROC USES ebx value : REAL8, min : REAL8, max : REAL8, color : DWORD
 	
-	XCHG rv(crt_malloc, 24), edi		; Alloc memory for new pixel
+	XCHG   rv(crt_malloc, 24), edi		; Alloc memory for new pixel
 	INVOKE ScaleToChar, value, min, max	; Scale given value
-	TEST eax, eax						; Test if returned value is equal to zero
-	JNE CalcColor						; If it's not, then continue
+	TEST   eax, eax						; Test if returned value is equal to zero
+	JNZ @CalcColor						; If it's not, then continue
 		INC eax							; Else eax <- 1
 
-	CalcColor:
+	@CalcColor:
 		SHL eax, 8						; eax <- value * 256
 		MOV ebx, eax					; ebx <- value * 256 (for later use)
 		MOV esi, [color]				; esi <- address of color
 		XOR ecx, ecx					; ecx <- 0
 										;
 		MOV cl, BYTE PTR [esi + 2]		; cl <- blue value 
-		INC ecx							;
+		INC ecx							; ecx <- blue value + 1
 		XOR edx, edx					; edx <- 0 before div
-		DIV ecx							;
+		DIV ecx							; 
 		MOV BYTE PTR [edi + 2], al		;
 										;
-		MOV eax, ebx					;
+		MOV eax, ebx					; eax <- value * 256
 		MOV cl, BYTE PTR [esi + 1]		; cl <- green value
-		INC ecx							;
+		INC ecx							; ecx <- green value + 1
 		XOR edx, edx					; edx <- 0 before div
 		DIV ecx							;
 		MOV BYTE PTR [edi + 1], al		;
 										;
-		MOV eax, ebx					;
+		MOV eax, ebx					; eax <- value * 256
 		MOV cl, BYTE PTR [esi]			; cl <- red value
-		INC ecx							;
+		INC ecx							; ecx <- red value + 1
 		XOR edx, edx					; edx <- 0 before div
 		DIV ecx							;
 		MOV BYTE PTR [edi], al			;

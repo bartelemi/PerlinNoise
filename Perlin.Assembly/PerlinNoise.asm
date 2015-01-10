@@ -139,7 +139,7 @@ Noise ENDP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initializes noise array with noise values, 
 ;; according to params (octaves, persistence)
-PerlinNoise2D PROC USES edx args : PARAMS
+PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 	LOCAL i_max		:  DWORD
 	LOCAL x			:  REAL8
 	LOCAL y			:  REAL8
@@ -163,39 +163,25 @@ PerlinNoise2D PROC USES edx args : PARAMS
 		 MOVSD    xmm6, REAL8 PTR [args._persistence]	; Load value of persistence
 		 Power    xmm6, ebx								
 		 MOVDDUP  xmm6, xmm0			 				; Store freq result in both quadwords of xmm6
-
+		 
 		MOV ecx, args._offset 							; ecx stores i-loop current value
 		@NoiseLoopI:
 				
 			XOR edi, edi								; edi stores j-loop current value
 			@NoiseLoopJ:
-				INVOKE   RandInt32						; Generate random dot product for x
-				PINSRD   xmm0, eax, 00b					; Insert first random to xmm0[0-31]			
-				INVOKE   RandInt32						; Generate random dot product for y
-				PINSRD   xmm0, eax, 01b					; Insert second random to xmm0[32-63]
-				CVTDQ2PD xmm0, xmm0						; Convert x and y randoms to doubles
+				CALL	RandReal						; Generate random dot product for y	[0; 1)
+				MOVLHPS xmm0, xmm0						; Move result to upper quadword of xmm0
+				CALL	RandReal						; Generate random dot product for x [0; 1)
 														;
 				PINSRD   xmm1, ecx, 00b					; Insert i to xmm1[0-31]
 				PINSRD   xmm1, edi, 01b					; Insert j to xmm1[32-63]
 				CVTDQ2PD xmm1, xmm1						; Convert i and j from integers to doubles
 														;
-				MOV		 eax, 99						; eax <- 99
-				PINSRD   xmm2, eax, 00b					; Insert 99 to xmm2[0-31]
-				PINSRD   xmm2, eax, 01b					; Insert 99 to xmm2[32-63]
-				CVTDQ2PD xmm2, xmm2						; Convert xmm2 values from integers to doubles
-														;
-				INC      eax							; eax <- 100
-				PINSRD   xmm3, eax, 00b					; Insert 100 to xmm3[0-31]
-				PINSRD   xmm3, eax, 01b					; Insert 100 to xmm3[32-63]
-				CVTDQ2PD xmm3, xmm3						; Convert xmm3 values from integers to doubles
-														;
-				ANDPD    xmm0, xmm2						; rand() and 99 (== modulo 100)
-				DIVPD    xmm0, xmm3						; Divide by 100 to make it dot product
 				ADDPD    xmm0, xmm1						; xmm0[0-63] += i; xmm0[64-127] += j
 				MULPD    xmm0, xmm6						; Multiply upper and lower doubles by freq
 														;
-				MOVLPS   REAL8 PTR [x], xmm0			; Store calculated x in local var
-				MOVHPS   REAL8 PTR [y], xmm0			; Store calculated y in local var
+				MOVLPS   x, xmm0						; Store calculated x in local var
+				MOVHPS   y, xmm0						; Store calculated y in local var
 														;
 				INVOKE   Noise, x, y					; Calculate Noise value for given (x,y) [result in xmm0]
 				MULSD    xmm0, xmm5						; Noise * amplitude				
@@ -203,10 +189,9 @@ PerlinNoise2D PROC USES edx args : PARAMS
 				MOV	     eax, ecx						; eax <- current i index
 				MUL      args._width					; eax <- i * width
 				ADD	     eax, edi						; eax <- (i * width) + j 
-				SHL	     eax, 3							; eax <- (i * width + j) * (sizeof REAL8) - current array offset
-				MOVSD    xmm1, REAL8 PTR [esi + eax]	; xmm1 <- NoiseArray[i][j]
+				MOVSD    xmm1, REAL8 PTR [esi + 8*eax]	; xmm1 <- NoiseArray[i][j]
 				ADDSD    xmm0, xmm1						; xmm0 <- xmm1 + NoiseArray[i][j]
-				MOVSD    REAL8 PTR [esi + eax], xmm0	; NoiseArray[i][j] <- new value
+				MOVSD    REAL8 PTR [esi + 8*eax], xmm0	; NoiseArray[i][j] <- new value
 
 				INC edi
 				CMP edi, args._width

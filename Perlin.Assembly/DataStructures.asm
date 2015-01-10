@@ -8,6 +8,7 @@
 		_red		BYTE  ?
 	PIXEL ENDS
 
+	ALIGN 4
 	;; Thread parameters structure
 	PARAMS STRUCT
 		_imgPtr			DWORD  ?
@@ -24,5 +25,4 @@
 		_threadsCount	DWORD  ?
 	PARAMS ENDS
 
-	; Reset alignment
-	ALIGN 8
+	ALIGN 16

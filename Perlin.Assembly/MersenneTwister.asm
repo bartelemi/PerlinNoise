@@ -114,13 +114,13 @@ next_state PROC USES ecx edx esi
 	RET
 next_state endp
  
-;============================================================
+;=========================================================================
 ; Function: RandInt32
 ;      generates a 32-bit random number on [0,0xffffffff] interval.
 ; ARGS: None 
 ; Output: an integer, the result is placed in the EAX register. 
 ; Precondition: One of the initialization functions must have been called.
-;============================================================    
+;=========================================================================
 RandInt32 PROC USES ecx edx
  
 	DEC DWORD PTR _left
@@ -152,4 +152,40 @@ RandInt32 PROC USES ecx edx
 		
 	XOR eax, ecx    
 	RET
-RandInt32 endp
+RandInt32 ENDP
+
+;===========================================================================
+; Macro: RandInt32Pos
+;      generates a 32-bit positive random number on [0,0x7fffffff] interval.
+; ARGS: None 
+; Output: an integer, the result is placed in the EAX register. 
+; Precondition: One of the initialization functions must have been called.
+;===========================================================================    
+RandInt32Pos MACRO
+ 
+    call RandInt32
+    shr eax, 1
+ 
+ENDM
+
+;=========================================================================
+; Function: gen_real1
+;     Generates a random number on [0,1) real interval
+; ARGS: None 
+; Output: a double precision (REAL8 / QWORD) number. 
+;    On function exit, the output is placed in xmm0 low quadword.
+; Precondition: One of the initialization functions must have been called.
+;=========================================================================    
+RandReal PROC
+
+    CALL     RandInt32
+    CVTSI2SD xmm0, eax
+    TEST     eax, eax
+    JNS @integer_not_signed
+    ADDSD    xmm0, TWOPOW32 ; make sure it's >= 0
+
+	@integer_not_signed:
+     MULSD   xmm0, ONEDIV2POW32M1
+ 
+    RET    
+RandReal ENDP

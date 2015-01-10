@@ -17,7 +17,7 @@ void PerlinNoise2D(double** noiseArray, ThreadParameters params)
 	for (k = 0; k < params.octaves; k++)
 	{
 		double x, y;
-		double amplitude = Power(2, k);
+ 		double amplitude = Power(2, k);
 		double frequency = Power(params.persistence, k);
 
 		for (i = params.offset; i < params.height + params.offset; i++)

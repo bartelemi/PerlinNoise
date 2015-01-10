@@ -5,7 +5,8 @@
 .xmm
 
 .const
-	ALIGN 16
+
+ALIGN 16
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
@@ -26,10 +27,14 @@
 		p		        DWORD	0			; Helper array
 		g2		        DWORD	0			; Noise generator initialization array
 		NoiseArray		DWORD	0			; Array for generated noise values
-
-.data?
+	
 	;;;;;;;;;;;;;;;;;;;;;;;;				
 	;; Mersenne twister data
+		TWOPOW32        REAL8   4294967296.0		; double(2^32)
+		ONEDIV2POW32M1  REAL8	03df0000000100000r	; 1.0 / (double(2^32) - 1.0)
+.data?
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;; Mersenne twister uninitialized data
 	    _state			DWORD	N	DUP (?)	; internal: random generator state
 		_initf			DWORD   ?			; set if the internal state has been initalized
 		_left			DWORD   ?			; number of generation left before a new internal state is required
@@ -78,9 +83,11 @@
 		RET
 	Normalize ENDP
 	
+	ALIGN 4
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Initializes program arrays
-	_Init PROC USES ebx ecx edx edi w : DWORD, h : DWORD
+	_Init PROC USES ebx ecx edi w : DWORD, h : DWORD
 
 		LOCAL tmp     :  DWORD
 
@@ -97,9 +104,9 @@
 			XCHG	 rv(crt_malloc, tmp), p
 			
 			XCHG	 rv(crt_malloc, tmp), g2
-			MOV		 esi, g2	; ebx <- address of g2
-			MOV		 ebx, tmp	; edi <- (2B + 2) * sizeof(DWORD)
-			SHR		 ebx, 2		; edi <- 2B + 2 - index count of g2
+			MOV		 esi, g2	; esi <- address of g2
+			MOV		 ebx, tmp	; ebx <- (2B + 2) * sizeof(DWORD)
+			SHR		 ebx, 2		; ebx <- 2B + 2 - index count of g2
 			@allocRow:
 				DEC	   ebx							; Go to next index
 				INVOKE crt_calloc, 2, sizeof REAL8	;
@@ -109,8 +116,8 @@
 			    TEST	ebx, ebx					; Test if it was last index
 				JNZ		@allocRow					; Loop
 
-			MOV		 eax, w		; eax <- width
-			MUL		 h			; eax <- width * height
+			MOV		 eax, h							; eax <- width
+			MUL		 w								; eax <- width * height
 			XCHG	 rv(crt_calloc, eax, sizeof REAL8), NoiseArray
 			
 		; Initialize xmm registers
@@ -133,9 +140,9 @@
 				DEC		 ecx				; Go to next index
 				MOV		 [edi + 4*ecx], ecx	; p[i] <- i
 											;
-				INVOKE   RandInt32			; Generate random number for g2[ecx][0]
+				RandInt32Pos				; Generate random number for g2[ecx][0]
 				PINSRD   xmm0, eax, 00b		; Store result in xmm0[0-31]
-				INVOKE   RandInt32			; Generate random number for g2[ecx][1]
+				RandInt32Pos				; Generate random number for g2[ecx][1]
 				PINSRD   xmm0, eax, 01b		; Store result in xmm0[32-63]					
 				CVTDQ2PD xmm0, xmm0			; Convert both results to doubles
 				ANDPD    xmm0, xmm2			; Both and (2B-1) (== modulo 2B)
@@ -151,12 +158,12 @@
 
 			MOV ecx, B						; Copy value of B to ecx
 			@InitArr_L2:					;
-				DEC	   ecx					; Go to next index
-				INVOKE RandInt32			; Generate random number
-				AND    eax, BMask			; eax <- rand() % B
-				MOV    edx, [edi + 4*eax]	; edx <- p[rand() % B]
-				MOV    [edi + 4*ecx], edx	; p[ecx] <- p[rand() % B]
-				MOV    [edi + 4*eax], ecx	; p[rand() % B] <- p[ecx] = ecx
+				DEC	 ecx					; Go to next index
+				RandInt32Pos				; Generate random number
+				AND  eax, BMask				; eax <- rand() % B
+				MOV  edx, [edi + 4*eax]		; edx <- p[rand() % B]
+				MOV  [edi + 4*ecx], edx		; p[ecx] <- p[rand() % B]
+				MOV  [edi + 4*eax], ecx		; p[rand() % B] <- p[ecx] = ecx
 											;
 				TEST   ecx, ecx				; Test if ecx == 0
 				JNZ	   @InitArr_L2			; Loop
@@ -165,8 +172,8 @@
 			ADD ecx, 2						; Increase ecx by 2
 			@InitArr_L3:					;
 				DEC	   ecx					; Go to next index
-				MOV	   edx, B				; ebx <- B
-				ADD	   edx, ecx				; ebx <- (B + ecx)
+				MOV	   edx, B				; edx <- B
+				ADD	   edx, ecx				; edx <- (B + ecx)
 											;
 		  		MOV	   eax, [edi + 4*ecx]	; eax <- p[ecx]
 				MOV	   [edi + 4*edx], eax	; p[B+ecx] <- eax
