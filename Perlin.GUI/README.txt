@@ -31,8 +31,7 @@ TODO:																									  |
 		Helpers/memCopy																					  |
 		Helpers/Power																					  | 
 		Bitmap/GetColor																				      |
-		Bitmap/FillHeader																				  |
-		Bitmap/WriteFileHdr																				  |
+		Bitmap/WriteFileHeader																			  |
 		Bitmap/ScaleToChar																			      |
 		Bitmap/CreateBMP			(raczej wsio ok)													  |
 		Bitmap/GetPixelValues		(raczej wsio ok)													  |

@@ -1,8 +1,7 @@
 ;;;;;;;;;
 ;; PROTOS
 		
-	FillHeader		PROTO w : DWORD, h : DWORD
-	WriteFileHdr	PROTO filePtr : DWORD, w : DWORD, h : DWORD
+	WriteFileHeader	PROTO filePtr : DWORD, w : DWORD, h : DWORD
 	CreateBMP		PROTO args : PARAMS
 	GetColor		PROTO value : REAL8, min : REAL8, max : REAL8, color : DWORD 
 	GetPixelValues	PROTO x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS 
@@ -14,57 +13,52 @@
 	ScaleToChar		PROTO value : REAL8, min : REAL8, max : REAL8
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Returns filled BMPFILEHEADER
-FillHeader PROC USES ebx w : DWORD, h : DWORD
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Creates BMPFILEHEADER and saves to file pointer
+WriteFileHeader PROC USES ebx filePtr : DWORD, w : DWORD, h : DWORD
 
-	MOV  eax, w	    ; Compute file size in bytes
-	MOV  ecx, 3		; ebx <- 3
-	MUL  ecx		; eax <- width * 3
-	MOV  edx, eax	; Store in edx
-	AND  eax, ecx   ; sizeof(BMPFILEHEADER)
-	INC  ecx		; +(height * (width * 3
-	SUB  ecx, eax	; +((4 - ((width * 3) & 3)) & 3)))
-	DEC  ecx		;
-	AND  ebx, ecx	;
-	ADD  edx, ebx	;
-	IMUL edx, h     ; 
-	ADD  edx, 54	; sizeof(BMPFILEHEADER)
+	; Compute file size in bytes
+		MOV  eax, w	    ; eax <- width
+		MOV  ecx, 3		; ecx <- 3
+		MUL  ecx		; eax <- width * 3
+		MOV  edx, eax	; Store in edx
+		AND  eax, ecx   ; sizeof(BMPFILEHEADER)
+		INC  ecx		; +(height * (width * 3
+		SUB  ecx, eax	; +((4 - ((width * 3) & 3)) & 3)))
+		DEC  ecx		;
+		AND  ebx, ecx	;
+		ADD  edx, ebx	;
+		IMUL edx, h     ; 
+		ADD  edx, 54	; sizeof(BMPFILEHEADER)
 
-	INVOKE crt_malloc, 54	; Allocate memory for header
+	; Allocate memory for header
+		INVOKE crt_malloc, 54	
 
 	; Fill bitmap file structure
-	MOV WORD PTR[eax + 0], 4D42h		; Load signature 'B''M'
-	MOV DWORD PTR[eax + 2], edx			; File size
-	MOV DWORD PTR[eax + 6], 0			; Reserved 0 and reserved 1
-	MOV DWORD PTR[eax + 10], 54			; Offset
-	MOV DWORD PTR[eax + 14], 40			; BMP size
-	MOV edx, w							; edx <- width
-	MOV DWORD PTR[eax + 18], edx		; BMP width
-	MOV edx, h							; edx <- height
-	MOV DWORD PTR[eax + 22], edx		; BMP height
-	MOV DWORD PTR[eax + 26], 180001h	; Planes and bit count
-	MOV DWORD PTR[eax + 30], 0			; Compression
-	MOV DWORD PTR[eax + 34], 0			; Image size
-	MOV DWORD PTR[eax + 38], 0EC4h		; X-axis DPI
-	MOV DWORD PTR[eax + 42], 0EC4h		; Y-axis DPI
-	MOV DWORD PTR[eax + 46], 0			; Colors used
-	MOV DWORD PTR[eax + 50], 0			; Important colors
-
-	RET
-FillHeader ENDP
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Write file header
-WriteFileHdr PROC filePtr : DWORD, w : DWORD, h : DWORD
-
-	INVOKE FillHeader, w, h
-	memCopy eax, filePtr, 54
-	INVOKE crt_free, eax
+		MOV WORD PTR[eax + 0], 4D42h		; Load signature 'B''M'
+		MOV DWORD PTR[eax + 2], edx			; File size
+		MOV DWORD PTR[eax + 6], 0			; Reserved 0 and reserved 1
+		MOV DWORD PTR[eax + 10], 54			; Offset
+		MOV DWORD PTR[eax + 14], 40			; BMP size
+		MOV edx, w							; edx <- width
+		MOV DWORD PTR[eax + 18], edx		; BMP width
+		MOV edx, h							; edx <- height
+		MOV DWORD PTR[eax + 22], edx		; BMP height
+		MOV DWORD PTR[eax + 26], 180001h	; Planes and bit count
+		MOV DWORD PTR[eax + 30], 0			; Compression
+		MOV DWORD PTR[eax + 34], 0			; Image size
+		MOV DWORD PTR[eax + 38], 0EC4h		; X-axis DPI
+		MOV DWORD PTR[eax + 42], 0EC4h		; Y-axis DPI
+		MOV DWORD PTR[eax + 46], 0			; Colors used
+		MOV DWORD PTR[eax + 50], 0			; Important colors
+	
+	; Copy header to file and free memory
+		memCopy eax, filePtr, 54
+		INVOKE crt_free, eax
 
 	XOR eax, eax
 	RET
-WriteFileHdr ENDP
+WriteFileHeader ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creates BMP using data from NoiseArray
@@ -72,79 +66,68 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 
 	LOCAL min		:  REAL8
 	LOCAL max		:  REAL8
-	LOCAL rowSize   :  DWORD
-	LOCAL nPad		:  DWORD
 	LOCAL pad		:  DWORD
+	LOCAL nPad		:  DWORD
 	LOCAL pointer   :  DWORD
 	LOCAL offsetEnd :  DWORD
 
 	; Initialize local variables
-			MOV eax, sizeof PIXEL					; Calculate pad size
-			MUL args._width							;
-			AND eax, 3								;
-			MOV ebx, 4								;
-			SUB ebx, eax							;
-			AND ebx, 3								;
-			MOV nPad, ebx							; Store pad size to local var
-													;
-			INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row pad
-			MOV pad, eax							; Store allocated memory pointer
-													;
-			MOV eax, args._imgPtr					; Load address of pointer to bitmap
-			MOV pointer, eax						; Copy pointer to picture array
-													;							
-			MOV eax, args._offset					; Calculate end of image offset
-			ADD eax, args._height					;
-			MOV offsetEnd, eax						; Store value in local variable
-													;
-			MOV eax, sizeof PIXEL					; Calculate size of single row
-			MUL args._width							; eax <- width*sizeof(PIXEL)
-			ADD eax, nPad							; eax <- width*sizeof(PIXEL) + nPad					
-			MOV rowSize, eax						; Store value in local variable
+	 ; Calculate pad size
+		MOV eax, sizeof PIXEL					; eax <- sizeof(PIXEL)
+		MUL args._width							; eax <- width * sizeof(PIXEL)
+		AND eax, 3								; eax <- (width * sizeof(PIXEL)) & 3
+		MOV ebx, 4								; ebx <- 4
+		SUB ebx, eax							; ebx <- 4 - eax
+		AND ebx, 3								; ebx <- (4 - eax) & 3
+		MOV nPad, ebx							; Store pad size to local var
+												;
+		INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row padding
+		MOV pad, eax							; Store allocated memory pointer
+												;							
+		MOV eax, args._offset					; Calculate end of image offset
+		ADD eax, args._height					; eax <- offset + current height
+		MOV offsetEnd, eax						; Store value in local variable
 
-	; Check if current thread has Id==0 and if so create file header
-			MOV    eax, args._threadId		
-			TEST   eax, eax
-			JNZ    @Skip
-			INVOKE WriteFileHdr, pointer, args._width, args._height
+	 ; Calculate offset to image for current thread
+		MUL args._offset
+		ADD eax, 54
+		ADD eax, args._imgPtr
+		MOV pointer, eax
 
-	@Skip:
 	; Get min and max from generated noise array
 		MOV    eax, args._width
 		MUL    args._wholeHeight
 		LEA    ebx, [min]
 		LEA    ecx, [max]
 		INVOKE MaxMin, NoiseArray, eax, ebx, ecx
+	
+	; Check if current thread has Id==0 and if so create file header
+		MOV    eax, args._threadId		
+		TEST   eax, eax
+		JNZ    @Skip
+		INVOKE WriteFileHeader, args._imgPtr, args._width, args._height
 
-	; Calculate offset to image for current thread
-		MOV eax, sizeof PIXEL 
-		MUL args._width
-		ADD eax, nPad
-		MUL args._offset
-		ADD eax, 54
-		ADD pointer, eax							
-			
-		MOV ebx, args._offset
+		@Skip:	
+
+		MOV edx, pointer
+		MOV ebx, args._offset	; ebx stores current index of column loop
 		@ColumnLoop:
-			XOR ecx, ecx	; ecx holds current position in noise array
-			XOR edx, edx	; edx holds current position in image array
+
+			XOR ecx, ecx			; ecx holds current position in noise array
 			@RowLoop:
-				LEA     edi, [min]
-				LEA     esi, [max]
+				LEA     edi, [min]			; edi <- pointer to min
+				LEA     esi, [max]			; esi <- pointer to max
 				INVOKE  GetPixelValues, ebx, ecx, edi, esi, args
-				MOV     edi, pointer
-				ADD		edi, edx
-				memCopy eax, edi, sizeof PIXEL
-			INC ecx
+				memCopy eax, edx, sizeof PIXEL
+			
 			ADD edx, sizeof PIXEL
+			INC ecx
 			CMP ecx, args._width
 			JNE @RowLoop
 
-			memCopy pad, pointer, nPad
-			MOV     eax, pointer
-			ADD     eax, rowSize
-			MOV     pointer, eax
-
+			memCopy pad, edx, nPad
+		
+		ADD edx, nPad
 		INC ebx
 		CMP ebx, offsetEnd
 		JNE @ColumnLoop	
@@ -194,26 +177,25 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 	LEA ecx, [maxAfterEffect]			; Load pointer to minAfterEffect
 										;	
 	MOV edx, args._effect
-	DEC edx
-	JNZ @F 
-		
-	INVOKE SinNoise, eax, ebx, ecx, x, y
+		DEC edx
+		JNZ @F 
+		INVOKE SinNoise, eax, ebx, ecx, x, y
 	@@:	
 		DEC edx
 		JNZ @F 
-	INVOKE SqrtNoise, eax, ebx, ecx, x, y
+		INVOKE SqrtNoise, eax, ebx, ecx, x, y
 	@@:
 		DEC edx
 		JNZ @F 
-	INVOKE Experimental1, eax, ebx, ecx, x, y
+		INVOKE Experimental1, eax, ebx, ecx, x, y
 	@@:
 		DEC edx
 		JNZ @F 
-	INVOKE Experimental2, eax, ebx, ecx, x, y
+		INVOKE Experimental2, eax, ebx, ecx, x, y
 	@@:
 		DEC edx
 		JNZ @F 
-	INVOKE Experimental3, eax, ebx, ecx, x, y
+		INVOKE Experimental3, eax, ebx, ecx, x, y
 	@@:	
 
 	LEA ebx, args._color
@@ -237,12 +219,12 @@ SinNoise ENDP
 ;; Noise effects
 SqrtNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 
-	XOR      eax, eax
+	XOR      eax, eax					; eax  <- 0
 	CVTSI2SD xmm0, eax					; xmm0 <- 0.0
-	MOV eax, value
-	MOVSD    xmm2, REAL8 PTR [eax]
-	MOVSD	 xmm3, xmm2
-	CMPSD    xmm0, xmm3, 010b	 
+	MOV eax, value						; eax <- pointer to value
+	MOVSD    xmm2, REAL8 PTR [eax]		; xmm2 <- value
+	MOVSD	 xmm3, xmm2					; xmm3 <- value
+	CMPSD    xmm0, xmm3, 010b			
 	PEXTRD   eax, xmm1, 00B				; Extract low dword of result to eax
 	NOT      eax						; Reverse eax
 	TEST     eax, eax					; Test eax for 0

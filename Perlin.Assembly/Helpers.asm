@@ -148,22 +148,23 @@ ALIGN 16
 	;; Copies len bytes from src to dst
 	memCopy MACRO src, dst, len 
 
-		PUSH esi ; preserve ESI
-		PUSH edi ; preserve EDI
-		PUSH ecx ; preserve ECX
+		PUSH esi		; preserve ESI
+		PUSH edi		; preserve EDI
+		PUSH ecx		; preserve ECX
+
 		CLD 
-		MOV esi, src ; source
-		MOV edi, dst ; destination
-		MOV ecx, len ; length 
+		MOV esi, src	; Load source
+		MOV edi, dst	; Load destination
+		MOV ecx, len	; Load length 
 
-		SHR ecx, 2 
+		SHR ecx, 2		; ecx <- length * 4
 		REP MOVSD
 
-		MOV ecx, len ; length 
-		AND ecx, 3 
+		MOV ecx, len	; Load length 
+		AND ecx, 3		; ecx <- length & 3
 		REP MOVSD
 
-		POP ecx ; restore ECX
-		POP edi ; restore EDI
-		POP esi ; restore ESI 
+		POP ecx			; Restore ECX
+		POP edi			; Restore EDI
+		POP esi			; Restore ESI 
 	ENDM
