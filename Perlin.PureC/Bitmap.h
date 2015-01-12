@@ -18,14 +18,6 @@
 		unsigned short int bmpFileReserved1;// 2 bytes
 		unsigned short int bmpFileReserved2;// 2 bytes
 		unsigned int bmpFileOffsetBits;		// 4 bytes
-	} HEADER;			
-
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-
-	// Bitmap information
-	typedef struct BMPINFOHEADER {
 		unsigned int bmpSize;				// 4 bytes
 		int bmpWidth;						// 4 bytes
 		int bmpHeight;						// 4 bytes
@@ -37,19 +29,13 @@
 		int bmpYPelsPerMeter;				// 4 bytes
 		unsigned int bmpColorUsed;			// 4 bytes
 		unsigned int bmpColorImportant;		// 4 bytes
-	} INFOHEADER;
+	} HEADER;			
 
 #pragma pack(pop)
 
 /***********************************
 		FUNCTION PROTOTYPES
 ***********************************/
-	// Returns filled BMPFILEHEADER
-	HEADER* FillHeader(int width, int height);
-
-	// Returns filled BMPINFOHEADER
-	INFOHEADER* FillInfoHeader(int width, int height);
-
 	// Write file header
 	void WriteFileHeader(void *pointer, int width, int height);
 

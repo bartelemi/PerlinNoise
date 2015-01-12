@@ -1,23 +1,16 @@
 ﻿#include "stdafx.h"
 
-HEADER* FillHeader(int width, int height)
+void WriteFileHeader(void *pointer, int width, int height)
 {
 	HEADER *header = malloc(sizeof(HEADER));
+
 	(*header).bmpFileType = 0x4D42;
-	(*header).bmpFileSize = sizeof(HEADER) 
-						  + sizeof(INFOHEADER) 
-						  + (height * (width * 3 
+	(*header).bmpFileSize = sizeof(HEADER)
+						  + (height * (width * 3
 						  + ((4 - ((width * 3) & 3)) & 3)));
-	(*header).bmpFileReserved1 = 0;		  
+	(*header).bmpFileReserved1 = 0;
 	(*header).bmpFileReserved2 = 0;
 	(*header).bmpFileOffsetBits = 54;
-
-	return header;
-}
-
-INFOHEADER* FillInfoHeader(int width, int height)
-{
-	INFOHEADER* header = malloc(sizeof(INFOHEADER));
 	(*header).bmpSize = 40;
 	(*header).bmpWidth = width;
 	(*header).bmpHeight = height;
@@ -30,19 +23,9 @@ INFOHEADER* FillInfoHeader(int width, int height)
 	(*header).bmpColorUsed = 0;
 	(*header).bmpColorImportant = 0;
 
-	return header;
-}
-
-void WriteFileHeader(void *pointer, int width, int height)
-{
-	HEADER* header = FillHeader(width, height);
-	INFOHEADER* info = FillInfoHeader(width, height);
-
 	memcpy(pointer, header, sizeof(HEADER));
-	memcpy((unsigned char*)pointer + sizeof(HEADER), info, sizeof(INFOHEADER));
 
 	free(header);
-	free(info);
 }
 
 void CreateBMP(double **noiseArray, ThreadParameters params)
@@ -62,8 +45,7 @@ void CreateBMP(double **noiseArray, ThreadParameters params)
 	MaxMinFrom2DArray(noiseArray, width, height, &min, &max);
 
 	// Move pointer by current thread offset
-	pointer += sizeof(HEADER) + sizeof(INFOHEADER) 
-			+  ((params.offset)*(width*sizeof(Pixel) + npad));
+	pointer += sizeof(HEADER) +  ((params.offset)*(width*sizeof(Pixel) + npad));
 
 	for (i = params.offset; i < height + params.offset; i++)
 	{

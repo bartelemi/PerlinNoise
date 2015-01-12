@@ -69,6 +69,31 @@ ALIGN 16
 		@@:
 	ENDM
 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Copies len bytes from src to dst
+	memCopy MACRO src, dst, len 
+
+		PUSH esi		; preserve ESI
+		PUSH edi		; preserve EDI
+		PUSH ecx		; preserve ECX
+
+		CLD 
+		MOV esi, src	; Load source
+		MOV edi, dst	; Load destination
+		MOV ecx, len	; Load length 
+
+		SHR ecx, 2		; ecx <- length * 4
+		REP MOVSD
+
+		MOV ecx, len	; Load length 
+		AND ecx, 3		; ecx <- length & 3
+		REP MOVSD
+
+		POP ecx			; Restore ECX
+		POP edi			; Restore EDI
+		POP esi			; Restore ESI 
+	ENDM
+
 ;;;;;;;;;;;;;;;;;;
 ;; ARRAY FUNCTIONS
 
@@ -143,28 +168,3 @@ ALIGN 16
 		XOR eax, eax
 		RET
 	MaxMin ENDP
-
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Copies len bytes from src to dst
-	memCopy MACRO src, dst, len 
-
-		PUSH esi		; preserve ESI
-		PUSH edi		; preserve EDI
-		PUSH ecx		; preserve ECX
-
-		CLD 
-		MOV esi, src	; Load source
-		MOV edi, dst	; Load destination
-		MOV ecx, len	; Load length 
-
-		SHR ecx, 2		; ecx <- length * 4
-		REP MOVSD
-
-		MOV ecx, len	; Load length 
-		AND ecx, 3		; ecx <- length & 3
-		REP MOVSD
-
-		POP ecx			; Restore ECX
-		POP edi			; Restore EDI
-		POP esi			; Restore ESI 
-	ENDM

@@ -105,7 +105,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 		MOV    eax, args._threadId		
 		TEST   eax, eax
 		JNZ    @Skip
-		INVOKE WriteFileHeader, args._imgPtr, args._width, args._height
+		INVOKE WriteFileHeader, args._imgPtr, args._width, args._wholeHeight
 
 		@Skip:	
 
@@ -132,6 +132,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 		CMP ebx, offsetEnd
 		JNE @ColumnLoop	
 
+	INVOKE crt_free, pad
 	XOR eax, eax
 	RET
 CreateBMP ENDP
@@ -198,7 +199,7 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 		INVOKE Experimental3, eax, ebx, ecx, x, y
 	@@:	
 
-	LEA ebx, args._color
+	LEA ebx, [args._color]
 	INVOKE GetColor, value, minAfterEffect, maxAfterEffect, ebx
 
 	RET

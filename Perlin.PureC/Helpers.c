@@ -4,11 +4,12 @@
 double Power(double base, int exponent)
 {
 	int i;
-	double tmp = base;
+	double tmp = 1.0;
 	for (i = 0; i < exponent; i++)
 	{
 		tmp *= base;
 	}
+
 	return tmp;
 }
 

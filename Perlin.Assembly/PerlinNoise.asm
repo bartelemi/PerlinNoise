@@ -153,6 +153,7 @@ PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 
 	XOR ebx, ebx			 							; ebx stores k-loop current value
 	@NoiseLoopK:
+		INC ebx											; Loop starts from 1
 		; Calculate 2^k
 		 MOV      eax, 2								; Base to eax
 		 CVTSI2SD xmm5, eax								; Move eax to xmm4 and convert to REAL8
@@ -199,7 +200,6 @@ PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 			INC ecx
 			CMP ecx, i_max
 			JNE @NoiseLoopI
-		INC ebx
 		CMP ebx, args._octaves
 		JNE @NoiseLoopK
 

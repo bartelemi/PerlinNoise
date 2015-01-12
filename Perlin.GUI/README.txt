@@ -18,32 +18,29 @@ TODO:																									  |
   * funkcje 																							  | 
       TBD:																								  |
 		1. Bitmap/SinNoise																	     		  |
-		2. Bitmap/SqrtNoise																				  |
-		3. Bitmap/Experimental1																			  |
-		4. Bitmap/Experimental2																			  |
-		5. Bitmap/Experimental3																			  |
-	  																									  | 
-	  Gotowe (nietestowane):																			  |
-		PerlinNoise/PerlinNoise2D																	      |
+		2. Bitmap/Experimental1																			  |
+		3. Bitmap/Experimental2																			  |
+		4. Bitmap/Experimental3																			  |
 																										  |
 	  Gotowe (testowane):																				  |
-		Helpers/MaxMin																					  |
-		Helpers/memCopy																					  |
-		Helpers/Power																					  | 
-		Bitmap/GetColor																				      |
-		Bitmap/WriteFileHeader																			  |
-		Bitmap/ScaleToChar																			      |
-		Bitmap/CreateBMP			(raczej wsio ok)													  |
-		Bitmap/GetPixelValues		(raczej wsio ok)													  |
-	    PerlinNoise/Noise			(raczej wsio ok)													  | 
+		Bitmap/SqrtNoise																		 		  |
+		PerlinNoise/PerlinNoise2D																	      |																				  |
+	    PerlinNoise/Noise																				  | 
 		PerlinNoise/at2																					  |
 		PerlinNoise/Setup																				  |
 		Helpers/EaseCurve																				  | 
 		Helpers/LineraInterpolation																		  |
 		Perlin.Assembly/_Init																			  |
-		Perlin.Assembly/Normalize																		  |
 		Perlin.Assembly/_PerlinNoise																	  |
-		Perlin.Assembly/_Finalize																		  |
+		Perlin.Assembly/_Finalize		OK																  |
+		Helpers/MaxMin					OK																  |
+		Helpers/Power					OK C-tested														  |
+		Helpers/memCopy					OK C-tested														  | 
+		Bitmap/GetColor					OK C-tested													      |
+		Bitmap/ScaleToChar				OK C-tested													      |
+		Bitmap/CreateBMP				OK C-tested														  |
+		Bitmap/GetPixelValues			OK C-tested														  |
+		Bitmap/WriteFileHeader			OK C-tested														  |
 																										  |
 ==========================================================================================================+
 
@@ -53,6 +50,7 @@ For a two-dimension column major array:																	  |
 Element_Address = Base_Address + (rowindex * col_size + colindex) * Element_Size						  |
 																										  |
 ==========================================================================================================+
+Wielowątkowość:
+	Prawdopodobnie wysypuje się przez MersenneTwister - następny stan generatora etc.
 
 Optymalizacja ASM:
-	Normailize: nie przerzucać z pamięci do pamięci, tylko zostawić wartość w xmm0 i wywołać Normalize
