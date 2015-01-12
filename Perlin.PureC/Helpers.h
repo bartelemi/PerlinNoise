@@ -7,7 +7,7 @@
 	#define EASE_CURVE(t) ((t) * (t) * (3.0 - (2.0 * (t))))
 
 	// Precise linear interpolation
-	#define LERP(v0, v1, t) ((v0) + (t) * ((v1) - (v0)))
+	#define LERP(v0, v1, t) ((v0) + (t) * ((v1) - (v0)))			
 
 	// Calculates base^exponent
 	double Power(double base, int exponent);

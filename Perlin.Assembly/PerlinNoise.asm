@@ -26,31 +26,31 @@ ENDM
 Setup MACRO i, b0, b1, r0, r1
 		
 	; Calculate tmp
-		MOV		 eax, B					; eax <- B
-		CVTSI2SD xmm0, eax				; Convert B in xmm0 to double
-		ADDSD    xmm0, i				; xmm0 stores tmp whole time
+		MOV		  eax, B				; eax <- B
+		CVTSI2SD  xmm0, eax				; Convert B in xmm0 to double
+		ADDSD     xmm0, [i]				; xmm0 stores tmp whole time
 
 	; Calculate b0
-		CVTSD2SI eax, xmm0				; Calculate (int)tmp and store in eax
-		CVTSI2SD xmm1, eax				; Store (int)tmp for later use
-		AND		 eax, BMask				; Make sure that value of b0 isn't bigger than array size
-		MOV		 b0, eax				; Store into b0
+		CVTTSD2SI eax, xmm0				; Calculate (int)tmp and store in eax
+		CVTSI2SD  xmm1, eax				; Store (int)tmp for later use
+		AND		  eax, BMask			; Make sure that value of b0 isn't bigger than array size
+		MOV       b0, eax				; Store into b0
 
 	; Calculate b1
-		INC		 eax					; Increment value of b0
-		AND		 eax, BMask				; Make sure that value of b1 isn't bigger than array size
-		MOV		 b1, eax				; Store value into b1
+		INC		  eax					; eax <- b0 + 1
+		AND		  eax, BMask			; Make sure that value of b1 isn't bigger than array size
+		MOV  	  b1, eax				; Store value into b1
 
 	; Calculate r0
-		SUBSD	 xmm0, xmm1				; Calculate tmp - (int)tmp
-		MOVSD    REAL8 PTR [r0], xmm0	; Store value into r0
+		SUBSD	  xmm0, xmm1			; Calculate tmp - (int)tmp
+		MOVSD     REAL8 PTR [r0], xmm0	; Store value into r0
 
 	; Calculate r1
-		XOR      eax, eax				; eax  <- 0
-		INC      eax					; eax  <- 1
-		CVTSI2SD xmm1, eax				; xmm1 <- 1.0
-		SUBSD    xmm0, xmm1				; xmm0 <- r0 - 1.0
-		MOVSD    REAL8 PTR [r1], xmm0	; Store value into r0
+		XOR       eax, eax				; eax  <- 0
+		INC       eax					; eax  <- 1
+		CVTSI2SD  xmm1, eax				; xmm1 <- 1.0
+		SUBSD     xmm0, xmm1			; xmm0 <- r0 - 1.0
+		MOVSD     REAL8 PTR [r1], xmm0	; Store value into r0
 
 ENDM
 

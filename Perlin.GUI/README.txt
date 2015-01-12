@@ -26,14 +26,14 @@ TODO:																									  |
 		Bitmap/SqrtNoise																		 		  |
 		PerlinNoise/PerlinNoise2D																	      |																				  |
 	    PerlinNoise/Noise																				  | 
-		PerlinNoise/at2																					  |
 		PerlinNoise/Setup																				  |
-		Helpers/EaseCurve																				  | 
-		Helpers/LineraInterpolation																		  |
 		Perlin.Assembly/_Init																			  |
 		Perlin.Assembly/_PerlinNoise																	  |
+		PerlinNoise/at2					OK																  |
 		Perlin.Assembly/_Finalize		OK																  |
 		Helpers/MaxMin					OK																  |
+		Helpers/EaseCurve				OK C-tested														  | 
+		Helpers/LineraInterpolation		OK C-tested														  |
 		Helpers/Power					OK C-tested														  |
 		Helpers/memCopy					OK C-tested														  | 
 		Bitmap/GetColor					OK C-tested													      |
