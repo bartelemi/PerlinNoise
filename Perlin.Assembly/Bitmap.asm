@@ -119,7 +119,7 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 				LEA     esi, [max]			; esi <- pointer to max
 				INVOKE  GetPixelValues, ebx, ecx, edi, esi, args
 				memCopy eax, edx, sizeof PIXEL
-			
+
 			ADD edx, sizeof PIXEL
 			INC ecx
 			CMP ecx, args._width

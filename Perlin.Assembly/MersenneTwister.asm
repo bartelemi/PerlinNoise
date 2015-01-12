@@ -123,8 +123,14 @@ next_state endp
 ;=========================================================================
 RandInt32 PROC USES ecx edx
  
+	@WaitForLockRelease:
+	CMP TwisterLock, 0
+	JNE @WaitForLockRelease
+	
+	INC TwisterLock
+
 	DEC DWORD PTR _left
-	JNE @L1_RandInt32
+	JNZ @L1_RandInt32
 		INVOKE next_state
  
 	@L1_RandInt32:
@@ -150,23 +156,11 @@ RandInt32 PROC USES ecx edx
 		MOV eax, ecx
 		SHR eax, 18
 		
+		MOV TwisterLock, 0
+
 	XOR eax, ecx    
 	RET
 RandInt32 ENDP
-
-;===========================================================================
-; Macro: RandInt32Pos
-;      generates a 32-bit positive random number on [0,0x7fffffff] interval.
-; ARGS: None 
-; Output: an integer, the result is placed in the EAX register. 
-; Precondition: One of the initialization functions must have been called.
-;===========================================================================    
-RandInt32Pos MACRO
- 
-    call RandInt32
-    shr eax, 1
- 
-ENDM
 
 ;=========================================================================
 ; Function: gen_real1

@@ -32,7 +32,7 @@ ALIGN 16
 	;; Mersenne twister data
 		TWOPOW32        REAL8   4294967296.0		; double(2^32)
 		ONEDIV2POW32M1  REAL8	03df0000000100000r	; 1.0 / (double(2^32) - 1.0)
-
+		TwisterLock		DWORD	0					; Lock for multithreading
 .data?
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	;; Mersenne twister uninitialized data
