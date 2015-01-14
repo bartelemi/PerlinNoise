@@ -20,9 +20,8 @@ static void normalize(double v[2])
 PERLINPUREC_API void Init(size_t width, size_t height)
 {
 	int i, j;
-
 	srand((unsigned)time(NULL));
-
+	
 	p = (int*)malloc((B + B + 2) * sizeof(int));
 	g2 = alloc2DArray(2, B + B + 2);
 	NoiseArray = alloc2DArray(width, height);

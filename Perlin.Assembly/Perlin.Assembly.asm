@@ -4,22 +4,14 @@
  option casemap : none
 .xmm
 
-.const
+Public RandSeed
 
-ALIGN 16
+.const
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Perlin Noise arrays consts
 		B			equ		1000h			; Array size
 		BMask		equ		0FFFh			; Array size mask
-										
-	;;;;;;;;;;;;;;;;;;;;;;;;;;				
-	;; Mersenne twister consts										
-		N           equ		624				; degree of recurrence: number of 32-bit integers in the  internal state array
-		M           equ		397				; middle word, or the number of parallel sequences, 1 <= m <= n
-		MATRIX_A    equ		09908b0dfh		; constant vector a: coefficients of the rational normal form twist matrix
-		UMASK       equ		080000000h		; most significant w-r bits
-		LMASK       equ		07fffffffh		; least significant r bits
 
 .data
 	;;;;;;;;;;;;;;;;;;;;;;;;
@@ -32,15 +24,10 @@ ALIGN 16
 	;; Mersenne twister data
 		TWOPOW32        REAL8   4294967296.0		; double(2^32)
 		ONEDIV2POW32M1  REAL8	03df0000000100000r	; 1.0 / (double(2^32) - 1.0)
-		TwisterLock		DWORD	0					; Lock for multithreading
-.data?
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-	;; Mersenne twister uninitialized data
-	    _state			DWORD	N	DUP (?)	; internal: random generator state
-		_initf			DWORD   ?			; set if the internal state has been initalized
-		_left			DWORD   ?			; number of generation left before a new internal state is required
-		_next			DWORD   ?			; holds pointer to the next internal state
+		sLock			DWORD	0
 
+.data?
+		RandSeed		DWORD	?
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; External includes
@@ -59,7 +46,7 @@ ALIGN 16
 	;; Include other modules
 		include DataStructures.asm
 		include Helpers.asm
-		include MersenneTwister.asm
+		include Random.asm
 		include PerlinNoise.asm
 		include Bitmap.asm
 	
@@ -74,7 +61,7 @@ ALIGN 16
 
 		; Initialize random number generator with processor tick count
 			XCHG	 rv(GetTickCount), tmp
-			INVOKE	 init_genenerator, tmp
+			CALL	 Randomize
 
 		; Allocate memory for arrays
 			MOV		 eax, B		; eax <- B
@@ -192,7 +179,7 @@ ALIGN 16
 	;; Cleans up memory
 	_Finalize PROC USES ebx
 
-		INVOKE crt_free, NoiseArray
+ 		INVOKE crt_free, NoiseArray
 		INVOKE crt_free, g2
 		INVOKE crt_free, p
 		

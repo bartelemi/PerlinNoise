@@ -33,7 +33,7 @@
     <MASM Include="PerlinNoise.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="MersenneTwister.asm">
+    <MASM Include="Random.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

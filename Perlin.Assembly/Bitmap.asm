@@ -4,12 +4,8 @@
 	WriteFileHeader	PROTO filePtr : DWORD, w : DWORD, h : DWORD
 	CreateBMP		PROTO args : PARAMS
 	GetColor		PROTO value : REAL8, min : REAL8, max : REAL8, color : DWORD 
-	GetPixelValues	PROTO x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS 
-	SinNoise		PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	SqrtNoise		PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	Experimental1	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	Experimental2	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	Experimental3	PROTO value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
+	GetPixelValues	PROTO x : DWORD, y : DWORD, min : DWORD, max : DWORD, args : PARAMS
+	SqrtNoise		PROTO value : DWORD, min : DWORD, max : DWORD
 	ScaleToChar		PROTO value : REAL8, min : REAL8, max : REAL8
 
 
@@ -73,20 +69,19 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 
 	; Initialize local variables
 	 ; Calculate pad size
-		MOV eax, sizeof PIXEL					; eax <- sizeof(PIXEL)
-		MUL args._width							; eax <- width * sizeof(PIXEL)
-		AND eax, 3								; eax <- (width * sizeof(PIXEL)) & 3
-		MOV ebx, 4								; ebx <- 4
-		SUB ebx, eax							; ebx <- 4 - eax
-		AND ebx, 3								; ebx <- (4 - eax) & 3
-		MOV nPad, ebx							; Store pad size to local var
-												;
-		INVOKE crt_calloc, nPad, sizeof BYTE	; Allocate memory for row padding
-		MOV pad, eax							; Store allocated memory pointer
-												;							
-		MOV eax, args._offset					; Calculate end of image offset
-		ADD eax, args._height					; eax <- offset + current height
-		MOV offsetEnd, eax						; Store value in local variable
+		MOV eax, sizeof PIXEL						; eax <- sizeof(PIXEL)
+		MUL args._width								; eax <- width * sizeof(PIXEL)
+		AND eax, 3									; eax <- (width * sizeof(PIXEL)) & 3
+		MOV ebx, 4									; ebx <- 4
+		SUB ebx, eax								; ebx <- 4 - eax
+		AND ebx, 3									; ebx <- (4 - eax) & 3
+		MOV nPad, ebx								; Store pad size to local var
+													;
+		XCHG rv(crt_calloc, nPad, sizeof BYTE), pad	; Allocate memory for row padding
+													;							
+		MOV eax, args._offset						; Calculate end of image offset
+		ADD eax, args._height						; eax <- offset + current height
+		MOV offsetEnd, eax							; Store value in local variable
 
 	 ; Calculate offset to image for current thread
 		MUL args._offset
@@ -119,6 +114,11 @@ CreateBMP PROC USES ebx ecx edx args : PARAMS
 				LEA     esi, [max]			; esi <- pointer to max
 				INVOKE  GetPixelValues, ebx, ecx, edi, esi, args
 				memCopy eax, edx, sizeof PIXEL
+				PUSH ecx
+				PUSH edx
+				INVOKE crt_free, eax
+				POP edx
+				POP ecx
 
 			ADD edx, sizeof PIXEL
 			INC ecx
@@ -179,24 +179,9 @@ GetPixelValues PROC USES ebx ecx edx x : DWORD, y : DWORD, min : DWORD, max : DW
 										;	
 	MOV edx, args._effect
 		DEC edx
-		JNZ @F 
-		INVOKE SinNoise, eax, ebx, ecx, x, y
-	@@:	
 		DEC edx
 		JNZ @F 
-		INVOKE SqrtNoise, eax, ebx, ecx, x, y
-	@@:
-		DEC edx
-		JNZ @F 
-		INVOKE Experimental1, eax, ebx, ecx, x, y
-	@@:
-		DEC edx
-		JNZ @F 
-		INVOKE Experimental2, eax, ebx, ecx, x, y
-	@@:
-		DEC edx
-		JNZ @F 
-		INVOKE Experimental3, eax, ebx, ecx, x, y
+		INVOKE SqrtNoise, eax, ebx, ecx
 	@@:	
 
 	LEA ebx, [args._color]
@@ -207,18 +192,7 @@ GetPixelValues ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Noise effects
-SinNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-
-	
-
-
-	XOR eax, eax
-	RET
-SinNoise ENDP
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Noise effects
-SqrtNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
+SqrtNoise PROC value : DWORD, min : DWORD, max : DWORD
 
 	XOR      eax, eax					; eax  <- 0
 	CVTSI2SD xmm0, eax					; xmm0 <- 0.0
@@ -254,33 +228,6 @@ SqrtNoise PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
 	XOR eax, eax
 	RET
 SqrtNoise ENDP
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Noise effects
-Experimental1 PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-		
-	XOR eax, eax
-	RET
-Experimental1 ENDP
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Noise effects
-Experimental2 PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD, y : DWORD
-	
-	XOR eax, eax
-	RET
-Experimental2 ENDP
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Noise effects
-Experimental3 PROC value : DWORD, min : DWORD, max : DWORD, x : DWORD , y : DWORD
-	
-	MOV eax, x
-	ADD eax, y
-
-	XOR eax, eax
-	RET
-Experimental3 ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scaling x in [min; max] -> [a; b]

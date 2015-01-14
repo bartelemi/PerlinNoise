@@ -153,6 +153,7 @@ PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 
 	XOR ebx, ebx			 							; ebx stores k-loop current value
 	@NoiseLoopK:
+		
 		INC ebx											; Loop starts from 1
 		; Calculate 2^k
 		 MOV      eax, 2								; Base to eax
@@ -170,9 +171,17 @@ PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 				
 			XOR edi, edi								; edi stores j-loop current value
 			@NoiseLoopJ:
+				PUSH ecx
+				PUSH ebx
 				CALL	RandReal						; Generate random dot product for y	[0; 1)
+				POP  ebx
+				POP  ecx
 				MOVLHPS xmm0, xmm0						; Move result to upper quadword of xmm0
+				PUSH ecx
+				PUSH ebx
 				CALL	RandReal						; Generate random dot product for x [0; 1)
+				POP  ebx
+				POP  ecx
 														;
 				PINSRD   xmm1, ecx, 00b					; Insert i to xmm1[0-31]
 				PINSRD   xmm1, edi, 01b					; Insert j to xmm1[32-63]
@@ -189,11 +198,10 @@ PerlinNoise2D PROC USES ebx ecx edx args : PARAMS
 														;
 				MOV	     eax, ecx						; eax <- current i index
 				MUL      args._width					; eax <- i * width
-				ADD	     eax, edi						; eax <- (i * width) + j 
+				ADD	     eax, edi						; eax <- (i * width) + j
 				MOVSD    xmm1, REAL8 PTR [esi + 8*eax]	; xmm1 <- NoiseArray[i][j]
-				ADDSD    xmm0, xmm1						; xmm0 <- xmm1 + NoiseArray[i][j]
+				ADDSD    xmm0, xmm1						; xmm0 <- xmm1 + NoiseArray[i][j]				
 				MOVSD    REAL8 PTR [esi + 8*eax], xmm0	; NoiseArray[i][j] <- new value
-
 				INC edi
 				CMP edi, args._width
 				JNE @NoiseLoopJ
